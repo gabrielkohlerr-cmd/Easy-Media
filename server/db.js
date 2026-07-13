@@ -85,3 +85,14 @@ function adicionarColunaSeNaoExistir(tabela, coluna, definicao) {
 
 adicionarColunaSeNaoExistir("usuarios", "foto_perfil_url", "TEXT");
 adicionarColunaSeNaoExistir("usuarios", "bio", "TEXT");
+
+adicionarColunaSeNaoExistir("clientes", "instagram_user_id", "TEXT");
+adicionarColunaSeNaoExistir("clientes", "instagram_username", "TEXT");
+adicionarColunaSeNaoExistir("clientes", "instagram_access_token", "TEXT");
+adicionarColunaSeNaoExistir("clientes", "instagram_token_expira_em", "TEXT");
+adicionarColunaSeNaoExistir("clientes", "instagram_conectado_em", "TEXT");
+
+adicionarColunaSeNaoExistir("posts", "instagram_media_id", "TEXT");
+adicionarColunaSeNaoExistir("posts", "instagram_permalink", "TEXT");
+adicionarColunaSeNaoExistir("posts", "instagram_publicado_em", "TEXT");
+adicionarColunaSeNaoExistir("posts", "instagram_erro", "TEXT");

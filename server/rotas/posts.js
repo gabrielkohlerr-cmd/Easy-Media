@@ -2,6 +2,7 @@ import { Router } from "express";
 import { db } from "../db.js";
 import { autenticar } from "../auth.js";
 import { uploadMidiasPost } from "../uploads.js";
+import * as ig from "../instagram.js";
 
 export const rotaPosts = Router();
 
@@ -35,7 +36,42 @@ function serializarPost(post, clienteNome) {
     status: post.status,
     feedback: post.feedback,
     midias: carregarMidias(post.id),
+    instagramMediaId: post.instagram_media_id,
+    instagramPermalink: post.instagram_permalink,
+    instagramErro: post.instagram_erro,
   };
+}
+
+/* tenta publicar de verdade no Instagram do cliente quando o post é aprovado.
+   Falha silenciosamente (grava o erro em instagram_erro) sem quebrar a aprovação —
+   o cliente pode não ter Instagram conectado, ou a chamada pode falhar por vários
+   motivos fora do nosso controle (token expirado, mídia não acessível publicamente etc). */
+async function tentarPublicarNoInstagram(post, cliente, baseUrl) {
+  if (!cliente.instagram_access_token) return;
+
+  const midias = carregarMidias(post.id);
+  if (!midias.length) return;
+
+  if (midias.some(m => m.tipo === "video")) {
+    db.prepare("UPDATE posts SET instagram_erro = ? WHERE id = ?")
+      .run("Publicação automática de vídeo ainda não é suportada — publique manualmente pelo Instagram.", post.id);
+    return;
+  }
+
+  const urls = midias.map(m => `${baseUrl}${m.url}`);
+  try {
+    const resultado = urls.length > 1
+      ? await ig.publicarCarrossel(cliente.instagram_user_id, cliente.instagram_access_token, urls, post.legenda)
+      : await ig.publicarImagemUnica(cliente.instagram_user_id, cliente.instagram_access_token, urls[0], post.legenda);
+
+    db.prepare(`
+      UPDATE posts SET status = 'publicado', instagram_media_id = ?, instagram_permalink = ?,
+        instagram_publicado_em = datetime('now'), instagram_erro = NULL
+      WHERE id = ?
+    `).run(resultado.mediaId, resultado.permalink, post.id);
+  } catch (err) {
+    db.prepare("UPDATE posts SET instagram_erro = ? WHERE id = ?").run(err.message, post.id);
+  }
 }
 
 /* lista todos os posts dos clientes acessíveis ao usuário autenticado */
@@ -77,19 +113,22 @@ rotaPosts.post("/clientes/:clienteId", autenticar, uploadMidiasPost.array("midia
   res.status(201).json({ post: serializarPost(post, cliente.nome) });
 });
 
-rotaPosts.patch("/:id", autenticar, (req, res) => {
+rotaPosts.patch("/:id", autenticar, async (req, res) => {
   const post = db.prepare("SELECT * FROM posts WHERE id = ?").get(req.params.id);
-  if (!post || !clienteAcessivel(req.usuario, post.cliente_id)) {
-    return res.status(404).json({ erro: "Post não encontrado." });
-  }
+  const cliente = post && clienteAcessivel(req.usuario, post.cliente_id);
+  if (!post || !cliente) return res.status(404).json({ erro: "Post não encontrado." });
 
   const { status, feedback } = req.body || {};
   if (!STATUS_VALIDOS.includes(status)) return res.status(400).json({ erro: "Status inválido." });
 
   db.prepare("UPDATE posts SET status = ?, feedback = ? WHERE id = ?").run(status, feedback?.trim() || null, post.id);
 
+  if (status === "agendado") {
+    const baseUrl = `${req.protocol}://${req.get("host")}`;
+    await tentarPublicarNoInstagram(post, cliente, baseUrl);
+  }
+
   const atualizado = db.prepare("SELECT * FROM posts WHERE id = ?").get(post.id);
-  const cliente = db.prepare("SELECT nome FROM clientes WHERE id = ?").get(post.cliente_id);
   res.json({ post: serializarPost(atualizado, cliente.nome) });
 });
 
@@ -118,11 +157,15 @@ function postDoClientePorToken(token, postId) {
   return post ? { post, cliente } : null;
 }
 
-rotaPosts.post("/acesso/:token/:postId/aprovar", (req, res) => {
+rotaPosts.post("/acesso/:token/:postId/aprovar", async (req, res) => {
   const achado = postDoClientePorToken(req.params.token, req.params.postId);
   if (!achado) return res.status(404).json({ erro: "Post não encontrado." });
 
   db.prepare("UPDATE posts SET status = 'agendado', feedback = NULL WHERE id = ?").run(achado.post.id);
+
+  const baseUrl = `${req.protocol}://${req.get("host")}`;
+  await tentarPublicarNoInstagram(achado.post, achado.cliente, baseUrl);
+
   res.json({ ok: true });
 });
 

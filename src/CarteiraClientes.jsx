@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { LAVANDA, LAVANDA_2, TINTA, CINZA } from "./theme.js";
-import { Botao, Cartao } from "./components.jsx";
+import { ROXO, LAVANDA, LAVANDA_2, TINTA, CINZA } from "./theme.js";
+import { Botao, Cartao, Pill } from "./components.jsx";
 import { useAuth } from "./AuthContext.jsx";
 import { api } from "./api.js";
 
@@ -33,10 +33,11 @@ export default function CarteiraClientes({ mostrar }) {
     if (!nomeNovo.trim()) return;
     setCriando(true);
     try {
-      await api.criarCliente(nomeNovo.trim());
+      const { cliente } = await api.criarCliente(nomeNovo.trim());
       setNomeNovo("");
       mostrar("✓ Cliente adicionado à carteira");
       recarregar();
+      return cliente;
     } catch (err) {
       mostrar(err.message);
     } finally {
@@ -62,6 +63,21 @@ export default function CarteiraClientes({ mostrar }) {
     recarregar();
   };
 
+  const conectarInstagram = async cliente => {
+    try {
+      const { url } = await api.obterUrlAutorizacaoInstagram(cliente.id);
+      window.location.href = url;
+    } catch (err) {
+      mostrar(err.message);
+    }
+  };
+
+  const desconectarInstagram = async cliente => {
+    await api.desconectarInstagram(cliente.id);
+    mostrar("Instagram desconectado");
+    recarregar();
+  };
+
   if (carregando) return null;
 
   return (
@@ -71,6 +87,7 @@ export default function CarteiraClientes({ mostrar }) {
       </h3>
       <p style={{ margin: "0 0 14px", fontSize: 13, color: CINZA, fontWeight: 600 }}>
         Cada cliente tem um link único e sem senha para acompanhar e aprovar os próprios posts.
+        Conecte o Instagram do cliente pra publicar e responder comentários direto por aqui.
       </p>
 
       {podeGerenciar && (
@@ -91,19 +108,31 @@ export default function CarteiraClientes({ mostrar }) {
       ) : (
         <div style={{ display: "grid", gap: 8 }}>
           {clientes.map(c => (
-            <div key={c.id} style={{
-              display: "flex", justifyContent: "space-between", alignItems: "center",
-              background: LAVANDA, borderRadius: 14, padding: "10px 14px", gap: 10, flexWrap: "wrap",
-            }}>
-              <div style={{ fontWeight: 800, color: TINTA, fontSize: 14 }}>{c.nome}</div>
-              {c.token_acesso ? (
-                <div style={{ display: "flex", gap: 8 }}>
-                  <Botao pequeno variante="fantasma" onClick={() => copiarLink(c)}>Copiar link do cliente</Botao>
-                  <Botao pequeno variante="fantasma" onClick={() => rotacionarLink(c)}>Renovar link</Botao>
-                  <Botao pequeno variante="perigo" onClick={() => remover(c.id)}>Remover</Botao>
+            <div key={c.id} style={{ background: LAVANDA, borderRadius: 14, padding: "10px 14px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                <div style={{ fontWeight: 800, color: TINTA, fontSize: 14 }}>{c.nome}</div>
+                {c.token_acesso ? (
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    <Botao pequeno variante="fantasma" onClick={() => copiarLink(c)}>Copiar link do cliente</Botao>
+                    <Botao pequeno variante="fantasma" onClick={() => rotacionarLink(c)}>Renovar link</Botao>
+                    <Botao pequeno variante="perigo" onClick={() => remover(c.id)}>Remover</Botao>
+                  </div>
+                ) : (
+                  <span style={{ fontSize: 12, color: CINZA, fontWeight: 600 }}>Gerenciado pela sua agência</span>
+                )}
+              </div>
+
+              {podeGerenciar && (
+                <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                  {c.instagram_conectado ? (
+                    <>
+                      <Pill cor={ROXO} bg="#fff">📸 @{c.instagram_username}</Pill>
+                      <Botao pequeno variante="fantasma" onClick={() => desconectarInstagram(c)}>Desconectar Instagram</Botao>
+                    </>
+                  ) : (
+                    <Botao pequeno variante="fantasma" onClick={() => conectarInstagram(c)}>📸 Conectar Instagram</Botao>
+                  )}
                 </div>
-              ) : (
-                <span style={{ fontSize: 12, color: CINZA, fontWeight: 600 }}>Gerenciado pela sua agência</span>
               )}
             </div>
           ))}

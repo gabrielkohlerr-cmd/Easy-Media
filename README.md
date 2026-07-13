@@ -78,3 +78,40 @@ O repositório já inclui um `render.yaml` pronto:
 (`server/easymedia.db`) e os arquivos enviados (`uploads/`) são apagados a
 cada novo deploy. Ótimo pra testar a aplicação; pra manter os dados entre
 deploys, é preciso um plano pago com "Persistent Disk".
+
+## Conectar o Instagram de um cliente
+
+Cada cliente da carteira pode ter o próprio Instagram conectado (botão
+"📸 Conectar Instagram" na tela de clientes), autorizando a Easy Media a
+publicar posts e responder comentários em nome daquela conta. Isso usa a
+API oficial do Instagram (via Meta) e **exige credenciais reais** — sem
+elas, o botão mostra um aviso e nada quebra, mas a conexão não funciona.
+
+Passo a passo pra habilitar:
+
+1. Crie uma conta em [developers.facebook.com](https://developers.facebook.com)
+   e um novo App (tipo "Business").
+2. No painel do App, adicione o produto **Instagram** (Instagram API with
+   Instagram Login).
+3. Em **Configurações do produto Instagram**, adicione como "URI de
+   redirecionamento OAuth válido":
+   `https://SEU-DOMINIO/api/instagram/callback`
+   (troque `SEU-DOMINIO` pela URL do seu deploy, ex: a do Render).
+4. Copie o **App ID** e o **App Secret** do painel e configure como
+   variáveis de ambiente no Render (Settings → Environment):
+   - `INSTAGRAM_APP_ID`
+   - `INSTAGRAM_APP_SECRET`
+5. Em modo de desenvolvimento (padrão de um App novo), só contas do
+   Instagram adicionadas manualmente como **"Testador do Instagram"** no
+   painel do App conseguem autorizar a conexão — a própria conta do
+   Instagram precisa aceitar o convite de testador (Configurações do
+   Instagram → Apps e sites → Convites de testador). Pra funcionar com
+   qualquer cliente sem esse passo manual, o App precisa passar pela
+   revisão do Meta (App Review + verificação de negócio).
+
+Limitações da integração atual:
+- Publica imagem única e carrossel de imagens automaticamente quando o
+  cliente aprova o post. Vídeo ainda não é publicado automaticamente
+  (fica registrado o motivo no post, pra publicar manualmente).
+- Os tokens de acesso são de longa duração (~60 dias) mas não há rotina
+  automática de renovação ainda — reconectar manualmente quando expirar.

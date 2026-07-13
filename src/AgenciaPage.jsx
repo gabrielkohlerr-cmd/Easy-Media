@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ROXO, LAVANDA, LAVANDA_2, TINTA, CINZA } from "./theme.js";
 import { Pill, Botao, Cartao, Toast } from "./components.jsx";
 import { useAuth } from "./AuthContext.jsx";
@@ -142,12 +142,21 @@ function SecaoSquad({ mostrar }) {
 export default function AgenciaPage() {
   const { usuario, sair } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [toast, setToast] = useState("");
 
   const mostrar = msg => {
     setToast(msg);
     setTimeout(() => setToast(""), 2800);
   };
+
+  useEffect(() => {
+    const resultado = searchParams.get("instagram");
+    if (!resultado) return;
+    mostrar(resultado === "conectado" ? "✓ Instagram conectado" : "Não deu pra conectar o Instagram. Tente novamente.");
+    setSearchParams({}, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   return (
     <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA }}>

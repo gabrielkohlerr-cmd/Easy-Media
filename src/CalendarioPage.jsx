@@ -30,6 +30,70 @@ function gerarGrade(ano, mes) {
   return dias;
 }
 
+function SecaoComentarios({ post }) {
+  const [comentarios, setComentarios] = useState(null);
+  const [erro, setErro] = useState("");
+  const [respondendoId, setRespondendoId] = useState(null);
+  const [resposta, setResposta] = useState("");
+  const [enviando, setEnviando] = useState(false);
+
+  useEffect(() => {
+    api.listarComentariosInstagram(post.id)
+      .then(({ comentarios }) => setComentarios(comentarios))
+      .catch(err => setErro(err.message));
+  }, [post.id]);
+
+  const enviarResposta = async comentarioId => {
+    if (!resposta.trim()) return;
+    setEnviando(true);
+    try {
+      await api.responderComentarioInstagram(post.id, comentarioId, resposta.trim());
+      setResposta("");
+      setRespondendoId(null);
+    } catch (err) {
+      setErro(err.message);
+    } finally {
+      setEnviando(false);
+    }
+  };
+
+  return (
+    <div style={{ marginTop: 14, borderTop: `1px solid ${LAVANDA_2}`, paddingTop: 14 }}>
+      <div style={{ fontSize: 12, fontWeight: 800, color: CINZA, marginBottom: 8 }}>COMENTÁRIOS DO INSTAGRAM</div>
+      {erro && <div style={{ fontSize: 13, color: "#F43F5E", fontWeight: 600 }}>{erro}</div>}
+      {!erro && comentarios === null && <div style={{ fontSize: 13, color: CINZA, fontWeight: 600 }}>Carregando…</div>}
+      {comentarios?.length === 0 && (
+        <div style={{ fontSize: 13, color: CINZA, fontWeight: 600 }}>Nenhum comentário ainda.</div>
+      )}
+      <div style={{ display: "grid", gap: 8 }}>
+        {comentarios?.map(c => (
+          <div key={c.id} style={{ background: LAVANDA, borderRadius: 12, padding: 10 }}>
+            <div style={{ fontSize: 13, fontWeight: 800, color: TINTA }}>@{c.username}</div>
+            <div style={{ fontSize: 13, color: TINTA, fontWeight: 600 }}>{c.text}</div>
+            {respondendoId === c.id ? (
+              <div style={{ marginTop: 8, display: "flex", gap: 6 }}>
+                <input
+                  value={resposta} onChange={e => setResposta(e.target.value)} placeholder="Escreva sua resposta…"
+                  style={{
+                    flex: 1, borderRadius: 10, border: `2px solid ${LAVANDA_2}`, padding: "6px 10px",
+                    fontFamily: "inherit", fontWeight: 600, fontSize: 13, outline: "none",
+                  }}
+                />
+                <Botao pequeno onClick={() => enviarResposta(c.id)}>{enviando ? "…" : "Enviar"}</Botao>
+              </div>
+            ) : (
+              <button onClick={() => { setRespondendoId(c.id); setResposta(""); }} className="em-btn" style={{
+                marginTop: 4, border: "none", background: "transparent", cursor: "pointer",
+                fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: ROXO, padding: 0,
+              }}>Responder</button>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ModalPost({ post, aoFechar }) {
   const s = STATUS[post.status];
   return (
@@ -38,7 +102,7 @@ function ModalPost({ post, aoFechar }) {
       display: "flex", alignItems: "center", justifyContent: "center",
       padding: 20, zIndex: 100,
     }}>
-      <div onClick={e => e.stopPropagation()} style={{ width: "100%", maxWidth: 420 }}>
+      <div onClick={e => e.stopPropagation()} style={{ width: "100%", maxWidth: 420, maxHeight: "90vh", overflowY: "auto" }}>
         <Cartao style={{ padding: 24 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
             <Pill cor={ROXO} bg={LAVANDA_2}>{TIPO_LABEL[post.tipo] || post.tipo}</Pill>
@@ -68,6 +132,20 @@ function ModalPost({ post, aoFechar }) {
               <div style={{ fontSize: 13, color: TINTA, fontWeight: 600 }}>“{post.feedback}”</div>
             </div>
           )}
+          {post.instagramErro && (
+            <div style={{ marginTop: 12, background: "#FFF1F2", borderRadius: 14, padding: 12 }}>
+              <div style={{ fontSize: 12, fontWeight: 800, color: "#F43F5E", marginBottom: 2 }}>
+                Não publicou no Instagram automaticamente
+              </div>
+              <div style={{ fontSize: 13, color: TINTA, fontWeight: 600 }}>{post.instagramErro}</div>
+            </div>
+          )}
+          {post.instagramPermalink && (
+            <a href={post.instagramPermalink} target="_blank" rel="noreferrer" style={{
+              display: "inline-block", marginTop: 12, fontSize: 13, fontWeight: 800, color: ROXO,
+            }}>Ver no Instagram ↗</a>
+          )}
+          {post.instagramMediaId && <SecaoComentarios post={post} />}
         </Cartao>
       </div>
     </div>

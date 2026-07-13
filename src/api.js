@@ -64,4 +64,12 @@ export const api = {
   listarReunioes: (inicio, fim) => requisitar(`/agenda?inicio=${inicio}&fim=${fim}`),
   criarReuniao: dados => requisitar("/agenda", { method: "POST", body: JSON.stringify(dados) }),
   removerReuniao: id => requisitar(`/agenda/${id}`, { method: "DELETE" }),
+
+  obterUrlAutorizacaoInstagram: clienteId => requisitar(`/instagram/clientes/${clienteId}/autorizar`),
+  desconectarInstagram: clienteId => requisitar(`/instagram/clientes/${clienteId}/desconectar`, { method: "POST" }),
+  listarComentariosInstagram: postId => requisitar(`/instagram/posts/${postId}/comentarios`),
+  responderComentarioInstagram: (postId, comentarioId, mensagem) =>
+    requisitar(`/instagram/posts/${postId}/comentarios/${comentarioId}/responder`, {
+      method: "POST", body: JSON.stringify({ mensagem }),
+    }),
 };

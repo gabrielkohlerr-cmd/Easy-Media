@@ -20,6 +20,8 @@ rotaClientes.get("/", autenticar, (req, res) => {
     id: c.id,
     nome: c.nome,
     criado_em: c.criado_em,
+    instagram_username: c.instagram_username,
+    instagram_conectado: Boolean(c.instagram_access_token),
     ...(ehDono ? { token_acesso: c.token_acesso } : {}),
   }));
   res.json({ clientes });
