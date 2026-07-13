@@ -60,4 +60,8 @@ export const api = {
     requisitar(`/posts/acesso/${token}/${postId}/reprovar`, { method: "POST", body: JSON.stringify({ feedback }) }),
 
   atualizarPerfil: formData => requisitar("/auth/perfil", { method: "PATCH", body: formData }),
+
+  listarReunioes: (inicio, fim) => requisitar(`/agenda?inicio=${inicio}&fim=${fim}`),
+  criarReuniao: dados => requisitar("/agenda", { method: "POST", body: JSON.stringify(dados) }),
+  removerReuniao: id => requisitar(`/agenda/${id}`, { method: "DELETE" }),
 };

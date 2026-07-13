@@ -17,15 +17,26 @@ usuário, fluxo de aprovação de cliente e relatórios de desempenho.
 
 Cada usuário também pode personalizar o próprio perfil (foto, nome, bio) em
 "Meu perfil". Os relatórios (gráficos de alcance/engajamento) ainda usam
-dados de demonstração fixos — o resto (contas, squads, carteira de clientes
-e os posts com mídia) é real e persistido em banco/disco.
+dados de demonstração fixos, mas agora com seletor pra escolher de qual
+cliente ver o desempenho — o resto (contas, squads, carteira de clientes,
+posts com mídia, calendário de conteúdo e agenda de reuniões) é real e
+persistido em banco/disco.
+
+Duas ferramentas de calendário, para não confundir:
+- **Calendário** — visão por cliente das postagens agendadas (o conteúdo
+  que vai pro Instagram).
+- **Agenda** — compromissos/reuniões do social media, semana a semana, com
+  convite de participantes externos por e-mail e um botão "Adicionar ao
+  Google Agenda" (usa o link oficial de criação de evento do Google, sem
+  precisar de credenciais de API — o próprio Google envia o convite aos
+  e-mails informados quando a reunião é salva).
 
 ## Estrutura
 
 - `src/` — frontend (Vite + React + react-router).
 - `server/` — API (Express) com banco SQLite (`node:sqlite`), autenticação
   por e-mail/senha (JWT), upload de arquivos (`multer`, salvos em `uploads/`)
-  e as rotas de squad/convites/clientes/posts/perfil.
+  e as rotas de squad/convites/clientes/posts/perfil/agenda.
 
 ## Desenvolvimento
 

@@ -152,8 +152,19 @@ export function PreviaPost({ post, grande }) {
 
 /* ---------- gráficos / relatório ---------- */
 
-function Relatorio() {
+function Relatorio({ clientes, nomeFixo }) {
   const [periodo, setPeriodo] = useState("mensal");
+  const [clienteSelecionado, setClienteSelecionado] = useState(nomeFixo || clientes?.[0]?.nome || "Nakai Sushi");
+
+  useEffect(() => {
+    if (nomeFixo) return;
+    if (clientes?.length && !clientes.some(c => c.nome === clienteSelecionado)) {
+      setClienteSelecionado(clientes[0].nome);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clientes, nomeFixo]);
+
+  const nomeExibido = nomeFixo || clienteSelecionado;
   const serie = periodo === "mensal" ? SERIE_MENSAL : periodo === "trimestral" ? SERIE_TRI : SERIE_SEM;
   const abas = [
     { id: "mensal", rotulo: "Mensal" },
@@ -163,7 +174,23 @@ function Relatorio() {
   return (
     <Cartao>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
-        <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: TINTA }}>Desempenho · Nakai Sushi</h3>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+          <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: TINTA }}>Desempenho ·</h3>
+          {!nomeFixo && clientes?.length > 1 ? (
+            <select
+              value={clienteSelecionado} onChange={e => setClienteSelecionado(e.target.value)}
+              style={{
+                borderRadius: 999, border: `2px solid ${LAVANDA_2}`, padding: "6px 14px",
+                fontFamily: "inherit", fontWeight: 800, fontSize: 14, color: ROXO, outline: "none",
+                background: LAVANDA,
+              }}
+            >
+              {clientes.map(c => <option key={c.id} value={c.nome}>{c.nome}</option>)}
+            </select>
+          ) : (
+            <span style={{ fontSize: 18, fontWeight: 800, color: TINTA }}>{nomeExibido}</span>
+          )}
+        </div>
         <div style={{ display: "flex", gap: 6, background: LAVANDA, borderRadius: 999, padding: 4 }}>
           {abas.map(a => (
             <button key={a.id} onClick={() => setPeriodo(a.id)} className="em-btn" style={{
@@ -292,7 +319,7 @@ function VisaoSocialMedia({ posts, clientes, podeCriarPost, mostrarFormulario, a
         </div>
       </Cartao>
 
-      <Relatorio />
+      <Relatorio clientes={clientes} />
     </div>
   );
 }
@@ -399,7 +426,7 @@ export function VisaoCliente({ posts, aoAprovar, aoReprovar, nomeCliente = "Naka
         </Cartao>
       )}
 
-      <Relatorio />
+      <Relatorio nomeFixo={nomeCliente} />
     </div>
   );
 }
@@ -418,7 +445,7 @@ function carregarPosts() {
   return POSTS_INICIAIS;
 }
 
-export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia, aoAbrirPerfil, aoAbrirClientes, aoAbrirCalendario }) {
+export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia, aoAbrirPerfil, aoAbrirClientes, aoAbrirCalendario, aoAbrirAgenda }) {
   const podeVerVisaoCliente = !usuario || usuario.tipo === "agencia";
   const [visao, setVisao] = useState("sm");
   const [posts, setPosts] = useState(carregarPosts);
@@ -554,6 +581,9 @@ export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia
                 )}
                 {aoAbrirCalendario && (
                   <Botao pequeno variante="fantasma" onClick={aoAbrirCalendario}>📅 Calendário</Botao>
+                )}
+                {aoAbrirAgenda && (
+                  <Botao pequeno variante="fantasma" onClick={aoAbrirAgenda}>🗓️ Agenda</Botao>
                 )}
                 <button onClick={aoAbrirPerfil} className="em-btn" style={{
                   display: "flex", alignItems: "center", gap: 8, border: "none", background: "transparent",

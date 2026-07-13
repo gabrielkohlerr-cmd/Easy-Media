@@ -57,6 +57,23 @@ db.exec(`
     tipo TEXT NOT NULL CHECK(tipo IN ('imagem','video')),
     ordem INTEGER NOT NULL DEFAULT 0
   );
+
+  CREATE TABLE IF NOT EXISTS reunioes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    titulo TEXT NOT NULL,
+    descricao TEXT,
+    local TEXT,
+    inicio TEXT NOT NULL,
+    fim TEXT NOT NULL,
+    criado_em TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS reunioes_convidados (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    reuniao_id INTEGER NOT NULL REFERENCES reunioes(id) ON DELETE CASCADE,
+    email TEXT NOT NULL
+  );
 `);
 
 function adicionarColunaSeNaoExistir(tabela, coluna, definicao) {

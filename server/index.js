@@ -5,6 +5,7 @@ import { rotaAuth } from "./rotas/auth.js";
 import { rotaSquad } from "./rotas/squad.js";
 import { rotaClientes } from "./rotas/clientes.js";
 import { rotaPosts } from "./rotas/posts.js";
+import { rotaAgenda } from "./rotas/agenda.js";
 import { PASTA_UPLOADS } from "./uploads.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -18,6 +19,7 @@ app.use("/api/auth", rotaAuth);
 app.use("/api/squad", rotaSquad);
 app.use("/api/clientes", rotaClientes);
 app.use("/api/posts", rotaPosts);
+app.use("/api/agenda", rotaAgenda);
 
 const DIST = path.join(__dirname, "..", "dist");
 app.use(express.static(DIST));
