@@ -9,6 +9,7 @@ import {
 import { Pill, Botao, Cartao, Toast, Marca } from "./components.jsx";
 import { api } from "./api.js";
 import NovoPostForm from "./NovoPostForm.jsx";
+import RevisarPostForm from "./RevisarPostForm.jsx";
 
 /* ============ EASY MEDIA — protótipo funcional ============
    Roxo + branco · minimalista · tipografia bold arredondada
@@ -234,7 +235,8 @@ function Relatorio({ clientes, nomeFixo }) {
 
 /* ---------- visão do social media ---------- */
 
-function VisaoSocialMedia({ posts, clientes, podeCriarPost, mostrarFormulario, aoAbrirFormulario, aoFecharFormulario, aoPostCriado }) {
+function VisaoSocialMedia({ posts, clientes, podeCriarPost, mostrarFormulario, aoAbrirFormulario, aoFecharFormulario, aoPostCriado, aoPostReenviado }) {
+  const [revisandoId, setRevisandoId] = useState(null);
   const aguardando = posts.filter(p => p.status === "aguardando").length;
   const agendados = posts.filter(p => p.status === "agendado").length;
   const alteracoes = posts.filter(p => p.status === "alteracao");
@@ -254,12 +256,24 @@ function VisaoSocialMedia({ posts, clientes, podeCriarPost, mostrarFormulario, a
             ✏️ Alterações solicitadas pelo cliente
           </h3>
           {alteracoes.map(p => (
-            <div key={p.id} style={{ display: "flex", gap: 12, alignItems: "center", background: "#fff", borderRadius: 18, padding: 12, marginBottom: 8 }}>
-              <div style={{ width: 56, flexShrink: 0 }}><PreviaPost post={p} /></div>
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontWeight: 800, color: TINTA, fontSize: 14 }}>{p.titulo}</div>
-                <div style={{ fontSize: 13, color: CINZA, fontWeight: 600 }}>“{p.feedback}”</div>
+            <div key={p.id} style={{ display: "grid", gap: 10, background: "#fff", borderRadius: 18, padding: 12, marginBottom: 8 }}>
+              <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                <div style={{ width: 56, flexShrink: 0 }}><PreviaPost post={p} /></div>
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <div style={{ fontWeight: 800, color: TINTA, fontSize: 14 }}>{p.titulo}</div>
+                  <div style={{ fontSize: 13, color: CINZA, fontWeight: 600 }}>“{p.feedback}”</div>
+                </div>
+                {podeCriarPost && revisandoId !== p.id && (
+                  <Botao pequeno onClick={() => setRevisandoId(p.id)}>✏️ Revisar</Botao>
+                )}
               </div>
+              {revisandoId === p.id && (
+                <RevisarPostForm
+                  post={p}
+                  aoReenviado={() => { setRevisandoId(null); aoPostReenviado(); }}
+                  aoCancelar={() => setRevisandoId(null)}
+                />
+              )}
             </div>
           ))}
         </Cartao>
@@ -623,6 +637,10 @@ export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia
               aoPostCriado={() => {
                 setMostrarNovoPost(false);
                 mostrar("✓ Post enviado pro cliente aprovar");
+                recarregarReal();
+              }}
+              aoPostReenviado={() => {
+                mostrar("✓ Post revisado e reenviado pro cliente aprovar");
                 recarregarReal();
               }}
             />

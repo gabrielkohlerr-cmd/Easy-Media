@@ -52,6 +52,7 @@ export const api = {
   criarPost: (clienteId, formData) => requisitar(`/posts/clientes/${clienteId}`, { method: "POST", body: formData }),
   atualizarStatusPost: (id, status, feedback) =>
     requisitar(`/posts/${id}`, { method: "PATCH", body: JSON.stringify({ status, feedback }) }),
+  reenviarPost: (id, formData) => requisitar(`/posts/${id}/reenviar`, { method: "PATCH", body: formData }),
   removerPost: id => requisitar(`/posts/${id}`, { method: "DELETE" }),
 
   listarPostsClientePublico: token => requisitar(`/posts/acesso/${token}`),

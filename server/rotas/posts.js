@@ -1,7 +1,9 @@
 import { Router } from "express";
+import path from "node:path";
+import fs from "node:fs";
 import { db } from "../db.js";
 import { autenticar } from "../auth.js";
-import { uploadMidiasPost } from "../uploads.js";
+import { uploadMidiasPost, PASTA_UPLOADS } from "../uploads.js";
 import * as ig from "../instagram.js";
 
 export const rotaPosts = Router();
@@ -126,6 +128,47 @@ rotaPosts.patch("/:id", autenticar, async (req, res) => {
   if (status === "agendado") {
     const baseUrl = `${req.protocol}://${req.get("host")}`;
     await tentarPublicarNoInstagram(post, cliente, baseUrl);
+  }
+
+  const atualizado = db.prepare("SELECT * FROM posts WHERE id = ?").get(post.id);
+  res.json({ post: serializarPost(atualizado, cliente.nome) });
+});
+
+/* revisa um post com alteração solicitada e reenvia pro cliente aprovar de novo,
+   permitindo trocar título/legenda/data/hora e opcionalmente substituir a mídia
+   (geralmente é o motivo do pedido de alteração: algum detalhe na imagem) */
+rotaPosts.patch("/:id/reenviar", autenticar, uploadMidiasPost.array("midias", 10), (req, res) => {
+  const post = db.prepare("SELECT * FROM posts WHERE id = ?").get(req.params.id);
+  const cliente = post && clienteAcessivel(req.usuario, post.cliente_id);
+  if (!post || !cliente) return res.status(404).json({ erro: "Post não encontrado." });
+  if (post.status !== "alteracao") {
+    return res.status(400).json({ erro: "Só é possível revisar posts com alteração solicitada pelo cliente." });
+  }
+
+  const { titulo, legenda, data, hora } = req.body || {};
+  if (!titulo?.trim()) return res.status(400).json({ erro: "Informe um título para o post." });
+  if (post.tipo !== "carrossel" && req.files?.length > 1) {
+    return res.status(400).json({ erro: "Apenas o formato Carrossel aceita mais de um arquivo." });
+  }
+
+  db.prepare(`
+    UPDATE posts SET titulo = ?, legenda = ?, data_agendada = ?, hora_agendada = ?,
+      status = 'aguardando', feedback = NULL
+    WHERE id = ?
+  `).run(titulo.trim(), legenda?.trim() || null, data || null, hora || null, post.id);
+
+  if (req.files?.length) {
+    const antigas = carregarMidias(post.id);
+    db.prepare("DELETE FROM posts_midias WHERE post_id = ?").run(post.id);
+    antigas.forEach(m => {
+      fs.unlink(path.join(PASTA_UPLOADS, m.url.replace("/uploads/", "")), () => {});
+    });
+
+    const inserirMidia = db.prepare("INSERT INTO posts_midias (post_id, url, tipo, ordem) VALUES (?, ?, ?, ?)");
+    req.files.forEach((arquivo, indice) => {
+      const tipoMidia = arquivo.mimetype.startsWith("video/") ? "video" : "imagem";
+      inserirMidia.run(post.id, `/uploads/posts/${arquivo.filename}`, tipoMidia, indice);
+    });
   }
 
   const atualizado = db.prepare("SELECT * FROM posts WHERE id = ?").get(post.id);
