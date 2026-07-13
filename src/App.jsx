@@ -20,7 +20,7 @@ const STATUS = {
   alteracao: { label: "Alteração solicitada", cor: ROSA, bg: "#FFE4E6" },
 };
 
-const POSTS_INICIAIS = [
+export const POSTS_INICIAIS = [
   {
     id: 1, cliente: "Nakai Sushi", tipo: "Reels", emoji: "🍣",
     titulo: "Bastidores do combinado premium",
@@ -257,16 +257,16 @@ function VisaoSocialMedia({ posts }) {
 
 /* ---------- visão do cliente ---------- */
 
-function VisaoCliente({ posts, aoAprovar, aoReprovar }) {
+export function VisaoCliente({ posts, aoAprovar, aoReprovar, nomeCliente = "Nakai Sushi" }) {
   const [feedbackAberto, setFeedbackAberto] = useState(null);
   const [texto, setTexto] = useState("");
-  const pendentes = posts.filter(p => p.cliente === "Nakai Sushi" && p.status === "aguardando");
-  const publicado = posts.find(p => p.status === "publicado" && p.metricas);
+  const pendentes = posts.filter(p => p.cliente === nomeCliente && p.status === "aguardando");
+  const publicado = posts.find(p => p.cliente === nomeCliente && p.status === "publicado" && p.metricas);
 
   return (
     <div style={{ display: "grid", gap: 20 }}>
       <Cartao style={{ background: `linear-gradient(135deg, ${ROXO}, ${ROXO_CLARO})` }}>
-        <h2 style={{ margin: 0, fontSize: 24, fontWeight: 800, color: "#fff" }}>Olá, Nakai Sushi 👋</h2>
+        <h2 style={{ margin: 0, fontSize: 24, fontWeight: 800, color: "#fff" }}>Olá, {nomeCliente} 👋</h2>
         <p style={{ margin: "4px 0 0", color: "#EDE9FE", fontWeight: 600, fontSize: 14 }}>
           Você tem {pendentes.length} {pendentes.length === 1 ? "post aguardando" : "posts aguardando"} sua aprovação.
           Aprovou? A publicação é agendada automaticamente no seu Instagram.
@@ -369,7 +369,7 @@ function carregarPosts() {
   return POSTS_INICIAIS;
 }
 
-export default function EasyMedia({ aoSair }) {
+export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia }) {
   const [visao, setVisao] = useState("sm");
   const [posts, setPosts] = useState(carregarPosts);
   const [toast, setToast] = useState("");
@@ -441,12 +441,27 @@ export default function EasyMedia({ aoSair }) {
               fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: CINZA,
               textDecoration: "underline", padding: 0,
             }}>Reiniciar demo</button>
-            {aoSair && (
-              <button onClick={aoSair} className="em-btn" style={{
-                border: "none", background: "transparent", cursor: "pointer",
-                fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: CINZA,
-                textDecoration: "underline", padding: 0,
-              }}>← Voltar ao site</button>
+
+            {usuario ? (
+              <>
+                {usuario.tipo === "agencia" && aoAbrirAgencia && (
+                  <Botao pequeno onClick={aoAbrirAgencia}>Squad e clientes</Botao>
+                )}
+                <span style={{ fontSize: 12, fontWeight: 700, color: CINZA }}>Olá, {usuario.nome}</span>
+                <button onClick={aoSairConta} className="em-btn" style={{
+                  border: "none", background: "transparent", cursor: "pointer",
+                  fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: CINZA,
+                  textDecoration: "underline", padding: 0,
+                }}>Sair</button>
+              </>
+            ) : (
+              aoSair && (
+                <button onClick={aoSair} className="em-btn" style={{
+                  border: "none", background: "transparent", cursor: "pointer",
+                  fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: CINZA,
+                  textDecoration: "underline", padding: 0,
+                }}>← Voltar ao site</button>
+              )
             )}
           </div>
         </div>

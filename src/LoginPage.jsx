@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
-  ROXO, ROXO_ESCURO, LAVANDA, LAVANDA_2, TINTA, CINZA,
+  ROXO, ROXO_ESCURO, LAVANDA, LAVANDA_2, TINTA, CINZA, ROSA,
 } from "./theme.js";
 import { Pill, Botao, Cartao, Toast } from "./components.jsx";
+import { useAuth } from "./AuthContext.jsx";
 
 /* ============ EASY MEDIA — página de login / captação ============
    Landing + login voltada a converter agências e social medias
@@ -11,11 +13,12 @@ import { Pill, Botao, Cartao, Toast } from "./components.jsx";
 
 const PERSONAS = [
   {
-    id: "social",
+    id: "social_media",
     emoji: "🎯",
     titulo: "Sou Social Media",
     texto: "Centralize a aprovação de todos os seus clientes em um só lugar e feche mais contas mostrando resultado de verdade.",
     cta: "Quero ser Social Media",
+    rotuloNegocio: "Nome do seu negócio (opcional)",
   },
   {
     id: "agencia",
@@ -23,13 +26,7 @@ const PERSONAS = [
     titulo: "Sou Agência",
     texto: "Dê organização e visibilidade pro time inteiro, com relatório automático pra cada cliente da carteira.",
     cta: "Cadastrar minha agência",
-  },
-  {
-    id: "cliente",
-    emoji: "🧾",
-    titulo: "Sou Cliente",
-    texto: "Aprove os posts da sua marca em segundos, direto do celular — sem precisar entender de social media.",
-    cta: "Acompanhar meus posts",
+    rotuloNegocio: "Nome da agência",
   },
 ];
 
@@ -70,8 +67,25 @@ function scrollPara(id) {
 /* ---------- modal de login ---------- */
 
 function ModalLogin({ aoFechar, aoEntrar }) {
+  const { entrar } = useAuth();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState("");
+  const [enviando, setEnviando] = useState(false);
+
+  const submeter = async e => {
+    e.preventDefault();
+    setErro("");
+    setEnviando(true);
+    try {
+      const usuario = await entrar(email, senha);
+      aoEntrar(usuario);
+    } catch (err) {
+      setErro(err.message);
+    } finally {
+      setEnviando(false);
+    }
+  };
 
   return (
     <div style={{
@@ -88,7 +102,7 @@ function ModalLogin({ aoFechar, aoEntrar }) {
               cursor: "pointer", fontWeight: 800, color: CINZA, fontSize: 16,
             }}>×</button>
           </div>
-          <form onSubmit={e => { e.preventDefault(); aoEntrar(); }} style={{ display: "grid", gap: 12 }}>
+          <form onSubmit={submeter} style={{ display: "grid", gap: 12 }}>
             <label style={{ display: "grid", gap: 6, fontSize: 13, fontWeight: 700, color: CINZA }}>
               E-mail
               <input
@@ -111,7 +125,8 @@ function ModalLogin({ aoFechar, aoEntrar }) {
                 }}
               />
             </label>
-            <Botao type="submit">Entrar na minha conta</Botao>
+            {erro && <div style={{ fontSize: 13, fontWeight: 700, color: ROSA }}>{erro}</div>}
+            <Botao type="submit">{enviando ? "Entrando…" : "Entrar na minha conta"}</Botao>
           </form>
         </Cartao>
       </div>
@@ -122,15 +137,29 @@ function ModalLogin({ aoFechar, aoEntrar }) {
 /* ---------- formulário de cadastro por persona ---------- */
 
 function FormularioCadastro({ persona, aoCadastrar }) {
+  const { registrar } = useAuth();
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
   const [negocio, setNegocio] = useState("");
+  const [erro, setErro] = useState("");
+  const [enviando, setEnviando] = useState(false);
 
-  const rotuloNegocio = {
-    social: "Quantos clientes você atende hoje?",
-    agencia: "Nome da agência",
-    cliente: "Nome da sua marca",
-  }[persona.id];
+  const submeter = async e => {
+    e.preventDefault();
+    setErro("");
+    setEnviando(true);
+    try {
+      const usuario = await registrar({
+        nome, email, senha, tipo: persona.id, nomeNegocio: negocio,
+      });
+      aoCadastrar(usuario);
+    } catch (err) {
+      setErro(err.message);
+    } finally {
+      setEnviando(false);
+    }
+  };
 
   return (
     <Cartao style={{ marginTop: 16, border: `2px solid ${ROXO}` }}>
@@ -141,10 +170,7 @@ function FormularioCadastro({ persona, aoCadastrar }) {
           <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: TINTA }}>{persona.titulo}</h3>
         </div>
       </div>
-      <form
-        onSubmit={e => { e.preventDefault(); if (!nome.trim() || !email.trim()) return; aoCadastrar(); }}
-        style={{ display: "grid", gap: 12 }}
-      >
+      <form onSubmit={submeter} style={{ display: "grid", gap: 12 }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
           <label style={{ display: "grid", gap: 6, fontSize: 13, fontWeight: 700, color: CINZA }}>
             Nome
@@ -167,25 +193,97 @@ function FormularioCadastro({ persona, aoCadastrar }) {
             />
           </label>
         </div>
-        <label style={{ display: "grid", gap: 6, fontSize: 13, fontWeight: 700, color: CINZA }}>
-          {rotuloNegocio}
-          <input
-            value={negocio} onChange={e => setNegocio(e.target.value)} placeholder="Opcional"
-            style={{
-              borderRadius: 14, border: `2px solid ${LAVANDA_2}`, padding: "12px 14px",
-              fontFamily: "inherit", fontWeight: 700, fontSize: 14, color: TINTA, outline: "none",
-            }}
-          />
-        </label>
-        <Botao type="submit" grande>{persona.cta} →</Botao>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
+          <label style={{ display: "grid", gap: 6, fontSize: 13, fontWeight: 700, color: CINZA }}>
+            Senha
+            <input
+              type="password" required minLength={6} value={senha} onChange={e => setSenha(e.target.value)}
+              placeholder="mínimo 6 caracteres"
+              style={{
+                borderRadius: 14, border: `2px solid ${LAVANDA_2}`, padding: "12px 14px",
+                fontFamily: "inherit", fontWeight: 700, fontSize: 14, color: TINTA, outline: "none",
+              }}
+            />
+          </label>
+          <label style={{ display: "grid", gap: 6, fontSize: 13, fontWeight: 700, color: CINZA }}>
+            {persona.rotuloNegocio}
+            <input
+              value={negocio} onChange={e => setNegocio(e.target.value)} placeholder="Opcional"
+              style={{
+                borderRadius: 14, border: `2px solid ${LAVANDA_2}`, padding: "12px 14px",
+                fontFamily: "inherit", fontWeight: 700, fontSize: 14, color: TINTA, outline: "none",
+              }}
+            />
+          </label>
+        </div>
+        {erro && <div style={{ fontSize: 13, fontWeight: 700, color: ROSA }}>{erro}</div>}
+        <Botao type="submit" grande>{enviando ? "Criando conta…" : `${persona.cta} →`}</Botao>
       </form>
+    </Cartao>
+  );
+}
+
+/* ---------- lead de cliente (sem conta própria: acesso é via link da agência/social media) ---------- */
+
+function CartaoLeadCliente({ aoEnviar }) {
+  const [nome, setNome] = useState("");
+  const [contato, setContato] = useState("");
+  const [enviado, setEnviado] = useState(false);
+
+  return (
+    <Cartao style={{ marginTop: 16, border: `2px solid ${ROXO}` }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+        <span style={{ fontSize: 28 }}>🧾</span>
+        <div>
+          <div style={{ fontSize: 12, fontWeight: 800, color: ROXO }}>SOU CLIENTE</div>
+          <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: TINTA }}>Acompanhar meus posts</h3>
+        </div>
+      </div>
+      <p style={{ marginTop: 0, fontSize: 14, color: CINZA, fontWeight: 600, lineHeight: 1.5 }}>
+        O acesso do cliente é feito por um link único, gerado pela sua agência ou social media
+        dentro da Easy Media — não é preciso criar senha. Se ainda não recebeu esse link, deixe
+        seu contato abaixo que a gente te ajuda a apresentar a ferramenta pra quem cuida da sua marca.
+      </p>
+      {enviado ? (
+        <div style={{ fontWeight: 800, color: ROXO }}>✓ Recebemos seu contato, obrigado!</div>
+      ) : (
+        <form
+          onSubmit={e => { e.preventDefault(); if (!nome.trim() || !contato.trim()) return; setEnviado(true); aoEnviar(); }}
+          style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}
+        >
+          <label style={{ display: "grid", gap: 6, fontSize: 13, fontWeight: 700, color: CINZA }}>
+            Sua marca
+            <input
+              required value={nome} onChange={e => setNome(e.target.value)} placeholder="Nome da sua marca"
+              style={{
+                borderRadius: 14, border: `2px solid ${LAVANDA_2}`, padding: "12px 14px",
+                fontFamily: "inherit", fontWeight: 700, fontSize: 14, color: TINTA, outline: "none",
+              }}
+            />
+          </label>
+          <label style={{ display: "grid", gap: 6, fontSize: 13, fontWeight: 700, color: CINZA }}>
+            E-mail ou WhatsApp
+            <input
+              required value={contato} onChange={e => setContato(e.target.value)} placeholder="Como falamos com você"
+              style={{
+                borderRadius: 14, border: `2px solid ${LAVANDA_2}`, padding: "12px 14px",
+                fontFamily: "inherit", fontWeight: 700, fontSize: 14, color: TINTA, outline: "none",
+              }}
+            />
+          </label>
+          <div style={{ gridColumn: "1 / -1" }}>
+            <Botao type="submit" grande>Enviar contato →</Botao>
+          </div>
+        </form>
+      )}
     </Cartao>
   );
 }
 
 /* ---------- página ---------- */
 
-export default function PaginaLogin({ aoVerDemo }) {
+export default function PaginaLogin() {
+  const navigate = useNavigate();
   const [loginAberto, setLoginAberto] = useState(false);
   const [personaAtiva, setPersonaAtiva] = useState(null);
   const [toast, setToast] = useState("");
@@ -193,6 +291,12 @@ export default function PaginaLogin({ aoVerDemo }) {
   const mostrar = msg => {
     setToast(msg);
     setTimeout(() => setToast(""), 2800);
+  };
+
+  const aoEntrarOuCadastrar = usuario => {
+    setLoginAberto(false);
+    setPersonaAtiva(null);
+    navigate(usuario.tipo === "agencia" ? "/agencia" : "/painel");
   };
 
   return (
@@ -216,13 +320,11 @@ export default function PaginaLogin({ aoVerDemo }) {
             </span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            {aoVerDemo && (
-              <button onClick={aoVerDemo} className="em-btn" style={{
-                border: "none", background: "transparent", cursor: "pointer",
-                fontFamily: "inherit", fontWeight: 700, fontSize: 13, color: CINZA,
-                textDecoration: "underline", padding: 0,
-              }}>Ver demonstração</button>
-            )}
+            <button onClick={() => navigate("/painel")} className="em-btn" style={{
+              border: "none", background: "transparent", cursor: "pointer",
+              fontFamily: "inherit", fontWeight: 700, fontSize: 13, color: CINZA,
+              textDecoration: "underline", padding: 0,
+            }}>Ver demonstração</button>
             <button onClick={() => setLoginAberto(true)} className="em-btn" style={{
               border: "none", background: "transparent", cursor: "pointer",
               fontFamily: "inherit", fontWeight: 800, fontSize: 14, color: ROXO, padding: 0,
@@ -295,15 +397,28 @@ export default function PaginaLogin({ aoVerDemo }) {
                 </div>
               </Cartao>
             ))}
+            <Cartao style={{
+              display: "flex", flexDirection: "column",
+              border: personaAtiva === "cliente" ? `2px solid ${ROXO}` : `1px solid ${LAVANDA_2}`,
+            }}>
+              <span style={{ fontSize: 34 }}>🧾</span>
+              <h3 style={{ margin: "12px 0 6px", fontSize: 18, fontWeight: 800, color: TINTA }}>Sou Cliente</h3>
+              <p style={{ margin: 0, fontSize: 14, color: CINZA, fontWeight: 600, lineHeight: 1.5, flex: 1 }}>
+                Aprove os posts da sua marca em segundos, direto do celular — sem precisar entender de social media.
+              </p>
+              <div style={{ marginTop: 18 }}>
+                <Botao onClick={() => setPersonaAtiva("cliente")}>Acompanhar meus posts</Botao>
+              </div>
+            </Cartao>
           </div>
 
-          {personaAtiva && (
+          {personaAtiva === "cliente" && (
+            <CartaoLeadCliente aoEnviar={() => mostrar("✓ Contato enviado! Vamos te ajudar por aqui.")} />
+          )}
+          {(personaAtiva === "social_media" || personaAtiva === "agencia") && (
             <FormularioCadastro
               persona={PERSONAS.find(p => p.id === personaAtiva)}
-              aoCadastrar={() => {
-                mostrar("✓ Conta criada! Nossa equipe vai entrar em contato em breve.");
-                setPersonaAtiva(null);
-              }}
+              aoCadastrar={aoEntrarOuCadastrar}
             />
           )}
         </section>
@@ -373,10 +488,7 @@ export default function PaginaLogin({ aoVerDemo }) {
       {loginAberto && (
         <ModalLogin
           aoFechar={() => setLoginAberto(false)}
-          aoEntrar={() => {
-            setLoginAberto(false);
-            mostrar("✓ Login realizado (demonstração)");
-          }}
+          aoEntrar={aoEntrarOuCadastrar}
         />
       )}
 

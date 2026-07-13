@@ -1,0 +1,38 @@
+import { DatabaseSync } from "node:sqlite";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const CAMINHO_DB = process.env.EASYMEDIA_DB_PATH || path.join(__dirname, "easymedia.db");
+
+export const db = new DatabaseSync(CAMINHO_DB);
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS usuarios (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    senha_hash TEXT NOT NULL,
+    tipo TEXT NOT NULL CHECK(tipo IN ('social_media','agencia')),
+    nome_negocio TEXT,
+    agencia_id INTEGER REFERENCES usuarios(id) ON DELETE SET NULL,
+    criado_em TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS clientes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL,
+    dono_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    token_acesso TEXT NOT NULL UNIQUE,
+    criado_em TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS convites_squad (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    agencia_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    token TEXT NOT NULL UNIQUE,
+    status TEXT NOT NULL DEFAULT 'pendente' CHECK(status IN ('pendente','aceito','revogado')),
+    aceito_por INTEGER REFERENCES usuarios(id) ON DELETE SET NULL,
+    criado_em TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+`);
