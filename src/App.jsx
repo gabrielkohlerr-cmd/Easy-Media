@@ -15,14 +15,14 @@ import NovoPostForm from "./NovoPostForm.jsx";
    Duas visões: Social Media (gestão) e Cliente (aprovação)
 =============================================================== */
 
-const STATUS = {
+export const STATUS = {
   aguardando: { label: "Aguardando aprovação", cor: AMBAR, bg: "#FEF3C7" },
   agendado: { label: "Aprovado · Agendado", cor: VERDE, bg: "#D1FAE5" },
   publicado: { label: "Publicado", cor: ROXO, bg: LAVANDA_2 },
   alteracao: { label: "Alteração solicitada", cor: ROSA, bg: "#FFE4E6" },
 };
 
-const TIPO_LABEL = { reels: "Reels", carrossel: "Carrossel", estatico: "Estático" };
+export const TIPO_LABEL = { reels: "Reels", carrossel: "Carrossel", estatico: "Estático" };
 
 export const POSTS_INICIAIS = [
   {
@@ -115,7 +115,7 @@ function Stat({ rotulo, valor, detalhe, destaque }) {
   );
 }
 
-function PreviaPost({ post, grande }) {
+export function PreviaPost({ post, grande }) {
   const altura = grande ? 200 : 120;
   const midia = post.midias?.[0];
 
@@ -418,7 +418,8 @@ function carregarPosts() {
   return POSTS_INICIAIS;
 }
 
-export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia, aoAbrirPerfil, aoAbrirClientes }) {
+export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia, aoAbrirPerfil, aoAbrirClientes, aoAbrirCalendario }) {
+  const podeVerVisaoCliente = !usuario || usuario.tipo === "agencia";
   const [visao, setVisao] = useState("sm");
   const [posts, setPosts] = useState(carregarPosts);
   const [clientesReais, setClientesReais] = useState([]);
@@ -506,19 +507,23 @@ export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia
             </span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <div style={{ display: "flex", gap: 6, background: LAVANDA, borderRadius: 999, padding: 4 }}>
-              {[
-                { id: "sm", rotulo: "Visão Social Media" },
-                { id: "cliente", rotulo: "Visão Cliente" },
-              ].map(v => (
-                <button key={v.id} onClick={() => setVisao(v.id)} className="em-btn" style={{
-                  border: "none", cursor: "pointer", fontFamily: "inherit",
-                  fontWeight: 800, fontSize: 13, padding: "10px 18px", borderRadius: 999,
-                  background: visao === v.id ? ROXO : "transparent",
-                  color: visao === v.id ? "#fff" : CINZA,
-                }}>{v.rotulo}</button>
-              ))}
-            </div>
+            {podeVerVisaoCliente ? (
+              <div style={{ display: "flex", gap: 6, background: LAVANDA, borderRadius: 999, padding: 4 }}>
+                {[
+                  { id: "sm", rotulo: "Visão Social Media" },
+                  { id: "cliente", rotulo: "Visão Cliente" },
+                ].map(v => (
+                  <button key={v.id} onClick={() => setVisao(v.id)} className="em-btn" style={{
+                    border: "none", cursor: "pointer", fontFamily: "inherit",
+                    fontWeight: 800, fontSize: 13, padding: "10px 18px", borderRadius: 999,
+                    background: visao === v.id ? ROXO : "transparent",
+                    color: visao === v.id ? "#fff" : CINZA,
+                  }}>{v.rotulo}</button>
+                ))}
+              </div>
+            ) : (
+              <span style={{ fontSize: 13, fontWeight: 800, color: TINTA }}>Visão Social Media</span>
+            )}
             {usuario && visao === "cliente" && clientesReais.length > 1 && (
               <select
                 value={clienteVisualizado} onChange={e => setClienteVisualizado(e.target.value)}
@@ -546,6 +551,9 @@ export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia
                 )}
                 {usuario.tipo === "social_media" && aoAbrirClientes && (
                   <Botao pequeno onClick={aoAbrirClientes}>Clientes</Botao>
+                )}
+                {aoAbrirCalendario && (
+                  <Botao pequeno variante="fantasma" onClick={aoAbrirCalendario}>📅 Calendário</Botao>
                 )}
                 <button onClick={aoAbrirPerfil} className="em-btn" style={{
                   display: "flex", alignItems: "center", gap: 8, border: "none", background: "transparent",

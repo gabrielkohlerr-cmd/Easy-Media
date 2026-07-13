@@ -7,6 +7,7 @@ import ConvitePage from './ConvitePage.jsx'
 import ClientePortal from './ClientePortal.jsx'
 import PerfilPage from './PerfilPage.jsx'
 import ClientesPage from './ClientesPage.jsx'
+import CalendarioPage from './CalendarioPage.jsx'
 
 function Painel() {
   const { usuario, sair } = useAuth()
@@ -20,6 +21,7 @@ function Painel() {
       aoAbrirAgencia={() => navigate('/agencia')}
       aoAbrirPerfil={() => navigate('/perfil')}
       aoAbrirClientes={() => navigate('/clientes')}
+      aoAbrirCalendario={() => navigate('/calendario')}
     />
   )
 }
@@ -45,6 +47,13 @@ function RotaPerfil() {
   return <PerfilPage />
 }
 
+function RotaCalendario() {
+  const { usuario, carregando } = useAuth()
+  if (carregando) return null
+  if (!usuario) return <Navigate to="/" replace />
+  return <CalendarioPage />
+}
+
 function Rotas() {
   const { carregando } = useAuth()
   if (carregando) return null
@@ -56,6 +65,7 @@ function Rotas() {
       <Route path="/agencia" element={<RotaAgencia />} />
       <Route path="/clientes" element={<RotaClientes />} />
       <Route path="/perfil" element={<RotaPerfil />} />
+      <Route path="/calendario" element={<RotaCalendario />} />
       <Route path="/convite/:token" element={<ConvitePage />} />
       <Route path="/cliente/:token" element={<ClientePortal />} />
     </Routes>
