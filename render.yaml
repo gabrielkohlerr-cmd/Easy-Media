@@ -7,7 +7,7 @@ services:
     startCommand: npm run server
     envVars:
       - key: NODE_VERSION
-        value: 22.11.0
+        value: 22.22.2
       - key: EASYMEDIA_JWT_SECRET
         generateValue: true
     # O plano gratuito usa disco efêmero: o banco (server/easymedia.db) e os
