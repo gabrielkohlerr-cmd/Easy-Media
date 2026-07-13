@@ -1,7 +1,13 @@
-# Easy Media
+# EZ Media
 
-Plataforma de gestão de conteúdo para redes sociais, com contas reais de
-usuário, fluxo de aprovação de cliente e relatórios de desempenho.
+**Make it EZ.** O sistema operacional para social medias e agências —
+centraliza clientes, conteúdos, aprovações, calendários, tarefas,
+compromissos, publicações e resultados numa única plataforma.
+
+> Nota técnica: o pacote npm, o serviço no Render e a variável de ambiente
+> `EASYMEDIA_JWT_SECRET` mantiveram o nome antigo (`easy-media`) por baixo do
+> capô, pra não quebrar o deploy já configurado — o rebrand pra "EZ Media" é
+> só na marca/interface visível pro usuário.
 
 ## Perfis
 
@@ -82,7 +88,7 @@ deploys, é preciso um plano pago com "Persistent Disk".
 ## Conectar o Instagram de um cliente
 
 Cada cliente da carteira pode ter o próprio Instagram conectado (botão
-"📸 Conectar Instagram" na tela de clientes), autorizando a Easy Media a
+"📸 Conectar Instagram" na tela de clientes), autorizando a EZ Media a
 publicar posts e responder comentários em nome daquela conta. Isso usa a
 API oficial do Instagram (via Meta) e **exige credenciais reais** — sem
 elas, o botão mostra um aviso e nada quebra, mas a conexão não funciona.

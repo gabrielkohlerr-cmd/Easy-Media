@@ -1,10 +1,13 @@
-export const ROXO = "#6D28D9";
-export const ROXO_ESCURO = "#4C1D95";
-export const ROXO_CLARO = "#8B5CF6";
-export const LAVANDA = "#F5F3FF";
-export const LAVANDA_2 = "#EDE9FE";
-export const TINTA = "#221448";
-export const CINZA = "#7A7290";
+/* Paleta da marca EZ Media — preto + creme, com um dourado como destaque
+   secundário. Os nomes das variáveis ficaram do sistema anterior (evita
+   reescrever todos os imports do app), só os valores mudaram. */
+export const ROXO = "#171310";
+export const ROXO_ESCURO = "#000000";
+export const ROXO_CLARO = "#B99B6B";
+export const LAVANDA = "#F8F4EC";
+export const LAVANDA_2 = "#EEE3CF";
+export const TINTA = "#171310";
+export const CINZA = "#867E72";
 export const VERDE = "#10B981";
 export const AMBAR = "#F59E0B";
 export const ROSA = "#F43F5E";

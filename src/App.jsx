@@ -6,7 +6,7 @@ import {
 import {
   ROXO, ROXO_ESCURO, ROXO_CLARO, LAVANDA, LAVANDA_2, TINTA, CINZA, VERDE, AMBAR, ROSA,
 } from "./theme.js";
-import { Pill, Botao, Cartao, Toast } from "./components.jsx";
+import { Pill, Botao, Cartao, Toast, Marca } from "./components.jsx";
 import { api } from "./api.js";
 import NovoPostForm from "./NovoPostForm.jsx";
 
@@ -433,7 +433,7 @@ export function VisaoCliente({ posts, aoAprovar, aoReprovar, nomeCliente = "Naka
 
 /* ---------- app ---------- */
 
-const CHAVE_ARMAZENAMENTO = "easymedia-posts";
+const CHAVE_ARMAZENAMENTO = "ezmedia-posts";
 
 function carregarPosts() {
   try {
@@ -523,16 +523,7 @@ export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia
           maxWidth: 960, margin: "0 auto", padding: "14px 20px",
           display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap",
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{
-              width: 40, height: 40, borderRadius: 14, background: ROXO,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              color: "#fff", fontWeight: 900, fontSize: 18,
-            }}>em</div>
-            <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: "-.5px" }}>
-              easy<span style={{ color: ROXO }}>media</span>
-            </span>
-          </div>
+          <Marca />
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
             {podeVerVisaoCliente ? (
               <div style={{ display: "flex", gap: 6, background: LAVANDA, borderRadius: 999, padding: 4 }}>

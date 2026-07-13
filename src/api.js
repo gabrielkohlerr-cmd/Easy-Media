@@ -1,4 +1,4 @@
-const CHAVE_TOKEN = "easymedia-token";
+const CHAVE_TOKEN = "ezmedia-token";
 
 export function obterToken() {
   return localStorage.getItem(CHAVE_TOKEN);

@@ -39,7 +39,7 @@ export default function ConvitePage() {
           <p style={{ color: CINZA, fontWeight: 600 }}>
             Esse link de convite já foi usado, revogado ou não existe.
           </p>
-          <Botao onClick={() => navigate("/")}>Ir para a Easy Media</Botao>
+          <Botao onClick={() => navigate("/")}>Ir para a EZ Media</Botao>
         </Cartao>
       </Tela>
     );

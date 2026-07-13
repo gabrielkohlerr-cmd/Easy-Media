@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ROXO, ROXO_ESCURO, LAVANDA, LAVANDA_2, TINTA, CINZA, ROSA } from "./theme.js";
-import { Botao, Cartao, Toast } from "./components.jsx";
+import { Botao, Cartao, Toast, Marca } from "./components.jsx";
 import { api } from "./api.js";
 
 const DIAS_SEMANA = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
@@ -262,16 +262,7 @@ export default function AgendaPage() {
           maxWidth: 1160, margin: "0 auto", padding: "14px 20px",
           display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap",
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{
-              width: 40, height: 40, borderRadius: 14, background: ROXO,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              color: "#fff", fontWeight: 900, fontSize: 18,
-            }}>em</div>
-            <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: "-.5px" }}>
-              easy<span style={{ color: ROXO }}>media</span>
-            </span>
-          </div>
+          <Marca />
           <Botao pequeno variante="fantasma" onClick={() => navigate("/painel")}>Ver painel de conteúdo</Botao>
         </div>
       </header>
