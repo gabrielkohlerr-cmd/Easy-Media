@@ -50,3 +50,20 @@ produção — sem isso, um segredo de desenvolvimento fixo é usado.
 npm run build   # gera dist/
 npm start       # build + sobe a API servindo o frontend, tudo na mesma porta
 ```
+
+## Deploy no Render
+
+O repositório já inclui um `render.yaml` pronto:
+
+1. Crie uma conta em [render.com](https://render.com) (tem plano gratuito).
+2. **New +** → **Blueprint** → conecte este repositório GitHub e selecione a
+   branch com o código (`claude/easy-media-prototype-v39ksn`).
+3. O Render lê o `render.yaml` automaticamente (build, start command e o
+   segredo do JWT já configurados) — clique em **Apply** e aguarde o deploy.
+4. Ao terminar, o Render mostra a URL pública (algo como
+   `https://easy-media.onrender.com`).
+
+**Importante:** no plano gratuito o disco é efêmero — o banco
+(`server/easymedia.db`) e os arquivos enviados (`uploads/`) são apagados a
+cada novo deploy. Ótimo pra testar a aplicação; pra manter os dados entre
+deploys, é preciso um plano pago com "Persistent Disk".

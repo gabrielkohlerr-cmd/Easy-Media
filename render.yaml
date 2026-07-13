@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: easy-media
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run server
+    envVars:
+      - key: NODE_VERSION
+        value: 22.11.0
+      - key: EASYMEDIA_JWT_SECRET
+        generateValue: true
+    # O plano gratuito usa disco efêmero: o banco (server/easymedia.db) e os
+    # arquivos enviados (uploads/) são apagados a cada novo deploy. Pra manter
+    # os dados entre deploys, adicione um "disk" (exige plano pago) montado
+    # em /opt/render/project/src e aponte EASYMEDIA_DB_PATH pra lá.
