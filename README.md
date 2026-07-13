@@ -38,17 +38,22 @@ Duas ferramentas de calendário, para não confundir:
   e-mails informados quando a reunião é salva).
 
 Além disso, tem um **Kanban** (aba própria) pra organizar o processo de
-produção com cartões arrastáveis entre 7 colunas fixas — Solicitações,
+produção com cartões arrastáveis entre 7 colunas — Solicitações,
 Urgência, Revisão Textual, Revisão das artes, Pit Stop, Aprovação do
-cliente e Entregue/Concluído. Cada cartão aceita membros, comentários,
-anexos e links. Todo usuário tem um quadro pessoal; quem é de uma agência
-(a própria agência e os social medias do squad) também divide um quadro
-compartilhado, visível a todo mundo do squad.
+cliente e Entregue/Concluído. O nome e a cor (bolinha ao lado do título)
+de cada coluna podem ser personalizados, por quadro — a mudança só vale
+pro quadro pessoal ou de squad em que foi feita, nunca pros dois ao mesmo
+tempo. Cada cartão aceita título editável, prazo (data/hora), membros,
+comentários, anexos e links. Todo usuário tem um quadro pessoal; quem é
+de uma agência (a própria agência e os social medias do squad) também
+divide um quadro compartilhado, visível a todo mundo do squad.
 
 Quem entra como Social Media cai primeiro numa tela de **Início**: um
-resumo com atalho pro Kanban, uma prévia da semana do calendário e da
-agenda, insights por cliente e sugestões de conteúdo ("tendências do
-dia") organizadas por segmento — tudo com base no **segmento** e
+resumo com os cartões do Kanban em urgência, perto do prazo ou já
+atrasados (de todos os quadros que o usuário acessa), uma prévia da
+semana do calendário e da agenda, insights por cliente e sugestões de
+conteúdo ("tendências do dia") organizadas por segmento — tudo com base
+no **segmento** e
 **nicho** do cliente, por isso os dois viraram campos obrigatórios ao
 cadastrar um cliente novo. As sugestões de tendência rodam num banco de
 conteúdo por segmento que muda diariamente (não vêm de uma API de

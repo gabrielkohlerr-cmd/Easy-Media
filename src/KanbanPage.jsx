@@ -1,21 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ROXO, LAVANDA, LAVANDA_2, TINTA, CINZA, ROSA } from "./theme.js";
+import { ROXO, LAVANDA, LAVANDA_2, TINTA, CINZA, ROSA, AMBAR } from "./theme.js";
 import { Botao, Cartao, Toast, Marca } from "./components.jsx";
 import {
-  IconeComentario, IconeAnexo, IconeLink, IconeMais, IconeUsuarios, IconeAlerta,
+  IconeComentario, IconeAnexo, IconeLink, IconeMais, IconeUsuarios, IconeAlerta, IconeLapis,
 } from "./icones.jsx";
 import { api } from "./api.js";
-
-const COLUNAS = [
-  { id: "solicitacoes", label: "Solicitações" },
-  { id: "urgencia", label: "Urgência" },
-  { id: "revisao_textual", label: "Revisão Textual" },
-  { id: "revisao_artes", label: "Revisão das artes" },
-  { id: "pit_stop", label: "Pit Stop" },
-  { id: "aprovacao_cliente", label: "Aprovação do cliente" },
-  { id: "entregue", label: "Entregue/Concluído" },
-];
+import { statusPrazo, rotuloPrazo } from "./prazos.js";
 
 const campoEstilo = {
   borderRadius: 14, border: `2px solid ${LAVANDA_2}`, padding: "10px 14px",
@@ -37,6 +28,23 @@ function Avatar({ nome, titulo }) {
   );
 }
 
+function BolinhaCor({ cor, tamanho = 9 }) {
+  return <span style={{ width: tamanho, height: tamanho, borderRadius: "50%", background: cor, flexShrink: 0 }} />;
+}
+
+function PrazoPill({ prazo }) {
+  const status = statusPrazo(prazo);
+  if (!status) return null;
+  const cor = status.estado === "atrasado" ? ROSA : status.estado === "proximo" ? AMBAR : CINZA;
+  const bg = status.estado === "atrasado" ? "#FFE4E6" : status.estado === "proximo" ? "#FEF3C7" : LAVANDA;
+  return (
+    <span style={{
+      fontSize: 10, fontWeight: 800, color: cor, background: bg,
+      padding: "3px 8px", borderRadius: 999, whiteSpace: "nowrap",
+    }}>{rotuloPrazo(prazo)}</span>
+  );
+}
+
 function CartaoMini({ cartao, aoAbrir, aoArrastar }) {
   return (
     <div
@@ -49,6 +57,7 @@ function CartaoMini({ cartao, aoAbrir, aoArrastar }) {
       }}
     >
       <div style={{ fontSize: 13, fontWeight: 800, color: TINTA, lineHeight: 1.35 }}>{cartao.titulo}</div>
+      {cartao.prazo && <div><PrazoPill prazo={cartao.prazo} /></div>}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
         <div style={{ display: "flex", gap: -6 }}>
           {cartao.membros.slice(0, 4).map(m => <Avatar key={m.id} nome={m.nome} />)}
@@ -72,13 +81,14 @@ function CartaoMini({ cartao, aoAbrir, aoArrastar }) {
 
 function NovoCartaoForm({ aoCriar, aoCancelar }) {
   const [titulo, setTitulo] = useState("");
+  const [prazo, setPrazo] = useState("");
   const [enviando, setEnviando] = useState(false);
 
   const submeter = async e => {
     e.preventDefault();
     if (!titulo.trim()) return;
     setEnviando(true);
-    await aoCriar(titulo.trim());
+    await aoCriar(titulo.trim(), prazo);
     setEnviando(false);
   };
 
@@ -91,6 +101,10 @@ function NovoCartaoForm({ aoCriar, aoCancelar }) {
         style={{ ...campoEstilo, resize: "vertical" }}
         onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) submeter(e); }}
       />
+      <label style={{ display: "grid", gap: 4, fontSize: 11, fontWeight: 700, color: CINZA }}>
+        Prazo (opcional)
+        <input type="datetime-local" value={prazo} onChange={e => setPrazo(e.target.value)} style={campoEstilo} />
+      </label>
       <div style={{ display: "flex", gap: 8 }}>
         <Botao pequeno type="submit" disabled={enviando}>Adicionar</Botao>
         <Botao pequeno variante="fantasma" onClick={aoCancelar}>Cancelar</Botao>
@@ -99,15 +113,54 @@ function NovoCartaoForm({ aoCriar, aoCancelar }) {
   );
 }
 
-function DetalheCartao({ cartaoId, membrosDisponiveis, aoFechar, aoMudou }) {
+function EditarColuna({ coluna, aoSalvar, aoCancelar }) {
+  const [nome, setNome] = useState(coluna.nome);
+  const [cor, setCor] = useState(coluna.cor);
+  const [enviando, setEnviando] = useState(false);
+
+  const salvar = async e => {
+    e.preventDefault();
+    if (!nome.trim()) return;
+    setEnviando(true);
+    await aoSalvar(nome.trim(), cor);
+    setEnviando(false);
+  };
+
+  return (
+    <form onSubmit={salvar} style={{
+      display: "grid", gap: 8, background: "#fff", borderRadius: 14, padding: 12,
+      border: `2px solid ${ROXO}`,
+    }}>
+      <input value={nome} onChange={e => setNome(e.target.value)} style={campoEstilo} />
+      <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, fontWeight: 700, color: CINZA }}>
+        Cor da coluna
+        <input type="color" value={cor} onChange={e => setCor(e.target.value)} style={{
+          width: 36, height: 28, border: "none", borderRadius: 8, cursor: "pointer", padding: 0,
+        }} />
+      </label>
+      <div style={{ display: "flex", gap: 8 }}>
+        <Botao pequeno type="submit" disabled={enviando}>Salvar</Botao>
+        <Botao pequeno variante="fantasma" onClick={aoCancelar}>Cancelar</Botao>
+      </div>
+    </form>
+  );
+}
+
+function DetalheCartao({ cartaoId, membrosDisponiveis, colunas, aoFechar, aoMudou }) {
   const [cartao, setCartao] = useState(null);
+  const [titulo, setTitulo] = useState("");
+  const [prazo, setPrazo] = useState("");
   const [comentario, setComentario] = useState("");
   const [link, setLink] = useState("");
   const [nomeLink, setNomeLink] = useState("");
   const [erro, setErro] = useState("");
 
   const carregar = () => {
-    api.obterCartaoKanban(cartaoId).then(({ cartao }) => setCartao(cartao)).catch(() => setCartao(null));
+    api.obterCartaoKanban(cartaoId).then(({ cartao }) => {
+      setCartao(cartao);
+      setTitulo(cartao.titulo);
+      setPrazo(cartao.prazo || "");
+    }).catch(() => setCartao(null));
   };
 
   useEffect(carregar, [cartaoId]);
@@ -133,6 +186,20 @@ function DetalheCartao({ cartaoId, membrosDisponiveis, aoFechar, aoMudou }) {
 
   const moverPara = async novaColuna => {
     await api.atualizarCartaoKanban(cartaoId, { coluna: novaColuna });
+    carregar();
+    aoMudou();
+  };
+
+  const salvarTitulo = async () => {
+    if (!titulo.trim() || titulo.trim() === cartao.titulo) { setTitulo(cartao.titulo); return; }
+    await api.atualizarCartaoKanban(cartaoId, { titulo: titulo.trim() });
+    carregar();
+    aoMudou();
+  };
+
+  const salvarPrazo = async novoPrazo => {
+    setPrazo(novoPrazo);
+    await api.atualizarCartaoKanban(cartaoId, { prazo: novoPrazo || null });
     carregar();
     aoMudou();
   };
@@ -185,22 +252,40 @@ function DetalheCartao({ cartaoId, membrosDisponiveis, aoFechar, aoMudou }) {
       <div onClick={e => e.stopPropagation()} style={{ width: "100%", maxWidth: 560, marginTop: 40 }}>
         <Cartao style={{ padding: 26, display: "grid", gap: 20 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10 }}>
-            <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: TINTA }}>{cartao.titulo}</h2>
+            <input
+              value={titulo} onChange={e => setTitulo(e.target.value)} onBlur={salvarTitulo}
+              style={{
+                margin: 0, fontSize: 18, fontWeight: 800, color: TINTA, border: "none",
+                background: "transparent", outline: "none", fontFamily: "inherit", flex: 1, padding: 0,
+              }}
+            />
             <button onClick={aoFechar} aria-label="Fechar" className="em-btn" style={{
               border: "none", background: LAVANDA, width: 30, height: 30, borderRadius: 999,
               cursor: "pointer", fontWeight: 800, color: CINZA, fontSize: 15, flexShrink: 0,
             }}>×</button>
           </div>
 
-          <label style={{ display: "grid", gap: 6, fontSize: 12, fontWeight: 800, color: CINZA }}>
-            ETAPA
-            <select
-              value={cartao.coluna} onChange={e => moverPara(e.target.value)}
-              style={{ ...campoEstilo, width: "auto" }}
-            >
-              {COLUNAS.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-            </select>
-          </label>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <label style={{ display: "grid", gap: 6, fontSize: 12, fontWeight: 800, color: CINZA }}>
+              ETAPA
+              <select
+                value={cartao.coluna} onChange={e => moverPara(e.target.value)}
+                style={campoEstilo}
+              >
+                {colunas.map(c => <option key={c.coluna} value={c.coluna}>{c.nome}</option>)}
+              </select>
+            </label>
+            <label style={{ display: "grid", gap: 6, fontSize: 12, fontWeight: 800, color: CINZA }}>
+              PRAZO
+              <input
+                type="datetime-local" value={prazo}
+                onChange={e => setPrazo(e.target.value)}
+                onBlur={() => salvarPrazo(prazo)}
+                style={campoEstilo}
+              />
+            </label>
+          </div>
+          {cartao.prazo && <div><PrazoPill prazo={cartao.prazo} /></div>}
 
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 800, color: CINZA, marginBottom: 8 }}>
@@ -315,9 +400,11 @@ export default function KanbanPage() {
   const navigate = useNavigate();
   const [quadros, setQuadros] = useState([]);
   const [quadroAtivoId, setQuadroAtivoId] = useState(null);
+  const [colunas, setColunas] = useState([]);
   const [cartoes, setCartoes] = useState([]);
   const [membrosDisponiveis, setMembrosDisponiveis] = useState([]);
   const [colunaComForm, setColunaComForm] = useState(null);
+  const [colunaEditando, setColunaEditando] = useState(null);
   const [cartaoAbertoId, setCartaoAbertoId] = useState(null);
   const [toast, setToast] = useState("");
   const [carregando, setCarregando] = useState(true);
@@ -339,21 +426,28 @@ export default function KanbanPage() {
     api.listarCartoesKanban(quadroAtivoId).then(({ cartoes }) => setCartoes(cartoes));
   };
 
+  const carregarColunas = () => {
+    if (!quadroAtivoId) return;
+    api.listarColunasKanban(quadroAtivoId).then(({ colunas }) => setColunas(colunas));
+  };
+
   useEffect(() => {
     if (!quadroAtivoId) return;
     setCarregando(true);
     Promise.all([
       api.listarCartoesKanban(quadroAtivoId),
       api.listarMembrosQuadroKanban(quadroAtivoId),
-    ]).then(([c, m]) => {
+      api.listarColunasKanban(quadroAtivoId),
+    ]).then(([c, m, col]) => {
       setCartoes(c.cartoes);
       setMembrosDisponiveis(m.membros);
+      setColunas(col.colunas);
     }).finally(() => setCarregando(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quadroAtivoId]);
 
-  const criarCartao = async (coluna, titulo) => {
-    await api.criarCartaoKanban(quadroAtivoId, { titulo, coluna });
+  const criarCartao = async (coluna, titulo, prazo) => {
+    await api.criarCartaoKanban(quadroAtivoId, { titulo, coluna, prazo: prazo || null });
     setColunaComForm(null);
     carregarCartoes();
   };
@@ -365,6 +459,13 @@ export default function KanbanPage() {
     } catch {
       carregarCartoes();
     }
+  };
+
+  const salvarColuna = async (colunaKey, nome, cor) => {
+    await api.atualizarColunaKanban(quadroAtivoId, colunaKey, { nome, cor });
+    setColunaEditando(null);
+    carregarColunas();
+    mostrar("✓ Coluna atualizada");
   };
 
   return (
@@ -406,28 +507,51 @@ export default function KanbanPage() {
 
         {!carregando && (
           <div style={{ display: "flex", gap: 14, overflowX: "auto", paddingBottom: 10 }}>
-            {COLUNAS.map(coluna => {
-              const cartoesDaColuna = cartoes.filter(c => c.coluna === coluna.id);
+            {colunas.map(coluna => {
+              const cartoesDaColuna = cartoes.filter(c => c.coluna === coluna.coluna);
               return (
                 <div
-                  key={coluna.id}
+                  key={coluna.coluna}
                   onDragOver={e => e.preventDefault()}
                   onDrop={e => {
                     const id = Number(e.dataTransfer.getData("text/plain"));
-                    if (id) moverCartao(id, coluna.id);
+                    if (id) moverCartao(id, coluna.coluna);
                   }}
                   style={{
                     background: LAVANDA_2, borderRadius: 18, padding: 12,
                     minWidth: 260, width: 260, flexShrink: 0, display: "grid", gap: 10, alignContent: "start",
                   }}
                 >
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <span style={{ fontSize: 13, fontWeight: 800, color: TINTA }}>{coluna.label}</span>
-                    <span style={{
-                      fontSize: 11, fontWeight: 800, color: CINZA, background: "#fff",
-                      borderRadius: 999, padding: "2px 8px",
-                    }}>{cartoesDaColuna.length}</span>
-                  </div>
+                  {colunaEditando === coluna.coluna ? (
+                    <EditarColuna
+                      coluna={coluna}
+                      aoSalvar={(nome, cor) => salvarColuna(coluna.coluna, nome, cor)}
+                      aoCancelar={() => setColunaEditando(null)}
+                    />
+                  ) : (
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 7, minWidth: 0 }}>
+                        <BolinhaCor cor={coluna.cor} />
+                        <span style={{
+                          fontSize: 13, fontWeight: 800, color: TINTA, overflow: "hidden",
+                          textOverflow: "ellipsis", whiteSpace: "nowrap",
+                        }}>{coluna.nome}</span>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
+                        <span style={{
+                          fontSize: 11, fontWeight: 800, color: CINZA, background: "#fff",
+                          borderRadius: 999, padding: "2px 8px",
+                        }}>{cartoesDaColuna.length}</span>
+                        <button
+                          onClick={() => setColunaEditando(coluna.coluna)} aria-label="Editar coluna" className="em-btn"
+                          style={{
+                            border: "none", background: "transparent", cursor: "pointer", color: CINZA,
+                            padding: 4, display: "flex",
+                          }}
+                        ><IconeLapis tamanho={13} /></button>
+                      </div>
+                    </div>
+                  )}
 
                   <div style={{ display: "grid", gap: 8 }}>
                     {cartoesDaColuna.map(cartao => (
@@ -435,13 +559,13 @@ export default function KanbanPage() {
                     ))}
                   </div>
 
-                  {colunaComForm === coluna.id ? (
+                  {colunaComForm === coluna.coluna ? (
                     <NovoCartaoForm
-                      aoCriar={titulo => criarCartao(coluna.id, titulo)}
+                      aoCriar={(titulo, prazo) => criarCartao(coluna.coluna, titulo, prazo)}
                       aoCancelar={() => setColunaComForm(null)}
                     />
                   ) : (
-                    <button onClick={() => setColunaComForm(coluna.id)} className="em-btn" style={{
+                    <button onClick={() => setColunaComForm(coluna.coluna)} className="em-btn" style={{
                       display: "flex", alignItems: "center", gap: 6, border: "none", background: "transparent",
                       cursor: "pointer", fontFamily: "inherit", fontWeight: 700, fontSize: 13, color: CINZA, padding: 4,
                     }}>
@@ -471,6 +595,7 @@ export default function KanbanPage() {
         <DetalheCartao
           cartaoId={cartaoAbertoId}
           membrosDisponiveis={membrosDisponiveis}
+          colunas={colunas}
           aoFechar={() => setCartaoAbertoId(null)}
           aoMudou={() => { carregarCartoes(); mostrar("✓ Cartão atualizado"); }}
         />

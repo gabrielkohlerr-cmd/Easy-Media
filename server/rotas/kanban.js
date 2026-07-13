@@ -5,10 +5,26 @@ import { uploadAnexoCartao } from "../uploads.js";
 
 export const rotaKanban = Router();
 
-const COLUNAS_VALIDAS = [
-  "solicitacoes", "urgencia", "revisao_textual", "revisao_artes",
-  "pit_stop", "aprovacao_cliente", "entregue",
+const COLUNAS_PADRAO = [
+  { coluna: "solicitacoes", nome: "Solicitações", cor: "#867E72" },
+  { coluna: "urgencia", nome: "Urgência", cor: "#F43F5E" },
+  { coluna: "revisao_textual", nome: "Revisão Textual", cor: "#3B82F6" },
+  { coluna: "revisao_artes", nome: "Revisão das artes", cor: "#8B5CF6" },
+  { coluna: "pit_stop", nome: "Pit Stop", cor: "#F59E0B" },
+  { coluna: "aprovacao_cliente", nome: "Aprovação do cliente", cor: "#06B6D4" },
+  { coluna: "entregue", nome: "Entregue/Concluído", cor: "#10B981" },
 ];
+const COLUNAS_VALIDAS = COLUNAS_PADRAO.map(c => c.coluna);
+
+function obterColunasDoQuadro(quadroId) {
+  const overrides = db.prepare("SELECT coluna, nome, cor FROM colunas_kanban WHERE quadro_id = ?").all(quadroId);
+  const porChave = Object.fromEntries(overrides.map(o => [o.coluna, o]));
+  return COLUNAS_PADRAO.map(padrao => ({
+    coluna: padrao.coluna,
+    nome: porChave[padrao.coluna]?.nome || padrao.nome,
+    cor: porChave[padrao.coluna]?.cor || padrao.cor,
+  }));
+}
 
 /* agência dona do squad do usuário: a própria conta se for agência,
    ou a agência à qual o social media pertence. Freelancer solo -> null (sem quadro de squad) */
@@ -70,6 +86,7 @@ function serializarCartao(cartao) {
     coluna: cartao.coluna,
     titulo: cartao.titulo,
     descricao: cartao.descricao,
+    prazo: cartao.prazo,
     criadoEm: cartao.criado_em,
     membros,
     totalComentarios,
@@ -93,6 +110,32 @@ rotaKanban.get("/quadros/:id/membros", autenticar, (req, res) => {
   res.json({ membros: membrosDoSquad(quadro.agencia_id) });
 });
 
+rotaKanban.get("/quadros/:id/colunas", autenticar, (req, res) => {
+  const quadro = quadroAcessivel(req.usuario, req.params.id);
+  if (!quadro) return res.status(404).json({ erro: "Quadro não encontrado." });
+  res.json({ colunas: obterColunasDoQuadro(quadro.id) });
+});
+
+/* renomear/recolorir uma coluna só afeta o quadro em questão (pessoal ou de
+   squad) — quem não tem acesso ao quadro nem enxerga essa rota, então a troca
+   nunca vaza pra outro quadro */
+rotaKanban.patch("/quadros/:id/colunas/:coluna", autenticar, (req, res) => {
+  const quadro = quadroAcessivel(req.usuario, req.params.id);
+  if (!quadro) return res.status(404).json({ erro: "Quadro não encontrado." });
+  if (!COLUNAS_VALIDAS.includes(req.params.coluna)) return res.status(400).json({ erro: "Coluna inválida." });
+
+  const { nome, cor } = req.body || {};
+  if (!nome?.trim()) return res.status(400).json({ erro: "Informe um nome pra coluna." });
+  if (!/^#[0-9a-f]{6}$/i.test(cor || "")) return res.status(400).json({ erro: "Escolha uma cor válida." });
+
+  db.prepare(`
+    INSERT INTO colunas_kanban (quadro_id, coluna, nome, cor) VALUES (?, ?, ?, ?)
+    ON CONFLICT(quadro_id, coluna) DO UPDATE SET nome = excluded.nome, cor = excluded.cor
+  `).run(quadro.id, req.params.coluna, nome.trim(), cor.toLowerCase());
+
+  res.json({ colunas: obterColunasDoQuadro(quadro.id) });
+});
+
 rotaKanban.get("/quadros/:id/cartoes", autenticar, (req, res) => {
   const quadro = quadroAcessivel(req.usuario, req.params.id);
   if (!quadro) return res.status(404).json({ erro: "Quadro não encontrado." });
@@ -104,12 +147,12 @@ rotaKanban.post("/quadros/:id/cartoes", autenticar, (req, res) => {
   const quadro = quadroAcessivel(req.usuario, req.params.id);
   if (!quadro) return res.status(404).json({ erro: "Quadro não encontrado." });
 
-  const { titulo, coluna } = req.body || {};
+  const { titulo, coluna, prazo } = req.body || {};
   if (!titulo?.trim()) return res.status(400).json({ erro: "Informe um título pro cartão." });
   const colunaFinal = COLUNAS_VALIDAS.includes(coluna) ? coluna : "solicitacoes";
 
-  const resultado = db.prepare("INSERT INTO cartoes_kanban (quadro_id, coluna, titulo, autor_id) VALUES (?, ?, ?, ?)")
-    .run(quadro.id, colunaFinal, titulo.trim(), req.usuario.id);
+  const resultado = db.prepare("INSERT INTO cartoes_kanban (quadro_id, coluna, titulo, autor_id, prazo) VALUES (?, ?, ?, ?, ?)")
+    .run(quadro.id, colunaFinal, titulo.trim(), req.usuario.id, prazo?.trim() || null);
   const cartao = db.prepare("SELECT * FROM cartoes_kanban WHERE id = ?").get(resultado.lastInsertRowid);
   res.status(201).json({ cartao: serializarCartao(cartao) });
 });
@@ -147,7 +190,7 @@ rotaKanban.patch("/cartoes/:id", autenticar, (req, res) => {
   const achado = cartaoAcessivel(req.usuario, req.params.id);
   if (!achado) return res.status(404).json({ erro: "Cartão não encontrado." });
 
-  const { titulo, descricao, coluna } = req.body || {};
+  const { titulo, descricao, coluna, prazo } = req.body || {};
   const campos = [];
   const valores = [];
   if (titulo !== undefined) {
@@ -159,6 +202,7 @@ rotaKanban.patch("/cartoes/:id", autenticar, (req, res) => {
     if (!COLUNAS_VALIDAS.includes(coluna)) return res.status(400).json({ erro: "Coluna inválida." });
     campos.push("coluna = ?"); valores.push(coluna);
   }
+  if (prazo !== undefined) { campos.push("prazo = ?"); valores.push(prazo?.trim() || null); }
   if (campos.length) {
     valores.push(achado.cartao.id);
     db.prepare(`UPDATE cartoes_kanban SET ${campos.join(", ")} WHERE id = ?`).run(...valores);

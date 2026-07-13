@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ROXO, ROXO_ESCURO, ROXO_CLARO, LAVANDA, LAVANDA_2, TINTA, CINZA, VERDE, AMBAR } from "./theme.js";
+import { ROXO, ROXO_ESCURO, ROXO_CLARO, LAVANDA, LAVANDA_2, TINTA, CINZA, VERDE, AMBAR, ROSA } from "./theme.js";
 import { Botao, Cartao, Pill, Marca } from "./components.jsx";
 import {
   IconeKanban, IconeCalendario, IconeAgenda, IconeRelogio, IconeGrafico, IconeIA,
@@ -8,6 +8,7 @@ import {
 import { useAuth } from "./AuthContext.jsx";
 import { api } from "./api.js";
 import { tendenciaDoDia } from "./tendencias.js";
+import { statusPrazo, rotuloPrazo } from "./prazos.js";
 
 const DIAS_SEMANA = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
@@ -48,7 +49,8 @@ export default function InicioPage() {
   const [clientes, setClientes] = useState([]);
   const [posts, setPosts] = useState([]);
   const [reunioes, setReunioes] = useState([]);
-  const [resumoKanban, setResumoKanban] = useState({ total: 0, atencao: 0 });
+  const [totalCartoes, setTotalCartoes] = useState(0);
+  const [cartoesAtencao, setCartoesAtencao] = useState([]);
   const [carregando, setCarregando] = useState(true);
 
   const inicioSemana = useMemo(() => inicioDaSemana(new Date()), []);
@@ -76,12 +78,25 @@ export default function InicioPage() {
       setPosts(p.posts);
       setReunioes(r.reunioes);
 
-      const cartoesPorQuadro = await Promise.all(k.quadros.map(q => api.listarCartoesKanban(q.id)));
-      const todosCartoes = cartoesPorQuadro.flatMap(res => res.cartoes);
-      setResumoKanban({
-        total: todosCartoes.length,
-        atencao: todosCartoes.filter(ct => ct.coluna === "urgencia" || ct.coluna === "pit_stop").length,
-      });
+      const porQuadro = await Promise.all(k.quadros.map(async q => {
+        const [{ cartoes }, { colunas }] = await Promise.all([
+          api.listarCartoesKanban(q.id), api.listarColunasKanban(q.id),
+        ]);
+        const colunaPorChave = Object.fromEntries(colunas.map(col => [col.coluna, col]));
+        return cartoes.map(ct => ({ ...ct, quadroNome: q.nome, colunaInfo: colunaPorChave[ct.coluna] }));
+      }));
+      const todosCartoes = porQuadro.flat();
+      setTotalCartoes(todosCartoes.length);
+
+      const emAtencao = todosCartoes
+        .filter(ct => ct.coluna === "urgencia" || statusPrazo(ct.prazo)?.estado === "atrasado" || statusPrazo(ct.prazo)?.estado === "proximo")
+        .sort((a, b) => {
+          const da = a.prazo ? new Date(a.prazo) - new Date() : Infinity;
+          const db_ = b.prazo ? new Date(b.prazo) - new Date() : Infinity;
+          return da - db_;
+        })
+        .slice(0, 6);
+      setCartoesAtencao(emAtencao);
     }).finally(() => setCarregando(false));
   }, [inicioSemana]);
 
@@ -134,24 +149,6 @@ export default function InicioPage() {
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
-          {/* kanban */}
-          <Cartao style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-              <IconeKanban tamanho={18} style={{ color: ROXO }} />
-              <h3 style={{ margin: 0, fontSize: 15, fontWeight: 800, color: TINTA }}>Kanban</h3>
-            </div>
-            <div style={{ fontSize: 30, fontWeight: 800, color: TINTA }}>{resumoKanban.total}</div>
-            <div style={{ fontSize: 12, fontWeight: 700, color: CINZA, marginBottom: 14 }}>cartões no total</div>
-            {resumoKanban.atencao > 0 && (
-              <div style={{ marginBottom: 14 }}>
-                <Pill cor={AMBAR} bg="#FEF3C7">{resumoKanban.atencao} precisando de atenção</Pill>
-              </div>
-            )}
-            <div style={{ marginTop: "auto" }}>
-              <Botao pequeno onClick={() => navigate("/kanban")}>Abrir Kanban</Botao>
-            </div>
-          </Cartao>
-
           {/* calendario semanal (mini) */}
           <Cartao style={{ display: "flex", flexDirection: "column", cursor: "pointer" }} onClick={() => navigate("/calendario")}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
@@ -218,6 +215,58 @@ export default function InicioPage() {
             </div>
           </Cartao>
         </div>
+
+        <Cartao>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14, flexWrap: "wrap", gap: 8 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <IconeKanban tamanho={18} style={{ color: ROXO }} />
+              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: TINTA }}>Kanban</h3>
+            </div>
+            <span style={{ fontSize: 12, fontWeight: 700, color: CINZA }}>{totalCartoes} cartões no total</span>
+          </div>
+          {cartoesAtencao.length === 0 ? (
+            <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: CINZA }}>
+              Nada urgente ou perto do prazo agora. Bom trabalho!
+            </p>
+          ) : (
+            <div style={{ display: "grid", gap: 8, marginBottom: 14 }}>
+              {cartoesAtencao.map(ct => {
+                const prazoInfo = statusPrazo(ct.prazo);
+                const corPrazo = prazoInfo?.estado === "atrasado" ? ROSA : prazoInfo?.estado === "proximo" ? AMBAR : CINZA;
+                return (
+                  <div key={ct.id} onClick={() => navigate("/kanban")} style={{
+                    display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10,
+                    background: LAVANDA, borderRadius: 14, padding: "10px 14px", cursor: "pointer",
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+                      <span style={{
+                        width: 9, height: 9, borderRadius: "50%",
+                        background: ct.colunaInfo?.cor || CINZA, flexShrink: 0,
+                      }} />
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{
+                          fontSize: 13, fontWeight: 800, color: TINTA, overflow: "hidden",
+                          textOverflow: "ellipsis", whiteSpace: "nowrap",
+                        }}>{ct.titulo}</div>
+                        <div style={{ fontSize: 11, fontWeight: 700, color: CINZA }}>
+                          {ct.quadroNome} · {ct.colunaInfo?.nome}
+                        </div>
+                      </div>
+                    </div>
+                    {ct.prazo && (
+                      <span style={{ fontSize: 11, fontWeight: 800, color: corPrazo, whiteSpace: "nowrap" }}>
+                        {rotuloPrazo(ct.prazo)}
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          <div>
+            <Botao pequeno onClick={() => navigate("/kanban")}>Abrir Kanban</Botao>
+          </div>
+        </Cartao>
 
         <Cartao>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>

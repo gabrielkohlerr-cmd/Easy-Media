@@ -76,6 +76,9 @@ export const api = {
 
   listarQuadrosKanban: () => requisitar("/kanban/quadros"),
   listarMembrosQuadroKanban: quadroId => requisitar(`/kanban/quadros/${quadroId}/membros`),
+  listarColunasKanban: quadroId => requisitar(`/kanban/quadros/${quadroId}/colunas`),
+  atualizarColunaKanban: (quadroId, coluna, dados) =>
+    requisitar(`/kanban/quadros/${quadroId}/colunas/${coluna}`, { method: "PATCH", body: JSON.stringify(dados) }),
   listarCartoesKanban: quadroId => requisitar(`/kanban/quadros/${quadroId}/cartoes`),
   criarCartaoKanban: (quadroId, dados) =>
     requisitar(`/kanban/quadros/${quadroId}/cartoes`, { method: "POST", body: JSON.stringify(dados) }),

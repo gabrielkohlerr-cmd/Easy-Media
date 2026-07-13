@@ -118,6 +118,17 @@ db.exec(`
     autor_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
     criado_em TEXT NOT NULL DEFAULT (datetime('now'))
   );
+
+  CREATE TABLE IF NOT EXISTS colunas_kanban (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    quadro_id INTEGER NOT NULL REFERENCES quadros_kanban(id) ON DELETE CASCADE,
+    coluna TEXT NOT NULL CHECK(coluna IN (
+      'solicitacoes','urgencia','revisao_textual','revisao_artes','pit_stop','aprovacao_cliente','entregue'
+    )),
+    nome TEXT,
+    cor TEXT,
+    UNIQUE(quadro_id, coluna)
+  );
 `);
 
 function adicionarColunaSeNaoExistir(tabela, coluna, definicao) {
@@ -143,3 +154,5 @@ adicionarColunaSeNaoExistir("posts", "instagram_media_id", "TEXT");
 adicionarColunaSeNaoExistir("posts", "instagram_permalink", "TEXT");
 adicionarColunaSeNaoExistir("posts", "instagram_publicado_em", "TEXT");
 adicionarColunaSeNaoExistir("posts", "instagram_erro", "TEXT");
+
+adicionarColunaSeNaoExistir("cartoes_kanban", "prazo", "TEXT");
