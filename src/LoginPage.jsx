@@ -422,36 +422,30 @@ export default function PaginaLogin() {
       </header>
 
       {/* hero com vídeo */}
-      <section style={{ position: "relative", overflow: "hidden" }}>
+      <section style={{ position: "relative", overflow: "hidden", minHeight: 560, display: "flex", alignItems: "center" }}>
         <VideoHero />
         <div style={{
-          position: "relative", zIndex: 1, maxWidth: 720, margin: "0 auto",
-          padding: "96px 20px 72px", textAlign: "center",
+          position: "relative", zIndex: 1, width: "100%", maxWidth: 1080, margin: "0 auto",
+          padding: "40px 20px",
         }}>
-          <Pill cor="#fff" bg="rgba(255,255,255,.12)">O sistema operacional para social medias e agências</Pill>
-          <div style={{
-            marginTop: 24, fontSize: "clamp(42px, 8vw, 78px)", fontWeight: 700,
-            letterSpacing: "-2.5px", color: "#fff", lineHeight: 1,
-          }}>
-            Make it EZ.
-          </div>
-          <p style={{
-            margin: "16px auto 0", maxWidth: 480, fontSize: 15, fontWeight: 700, letterSpacing: "1.5px",
-            textTransform: "uppercase", color: ROXO_CLARO,
-          }}>
-            Toda a sua operação. Um só lugar.
-          </p>
-          <p style={{
-            margin: "18px auto 0", maxWidth: 460, fontSize: 16, fontWeight: 500,
-            color: "rgba(255,255,255,.78)", lineHeight: 1.6,
-          }}>
-            Clientes, conteúdos, aprovações e publicações, organizados num só lugar.
-          </p>
-          <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 30, flexWrap: "wrap" }}>
-            <Botao grande variante="claro" onClick={() => scrollPara("cadastro")}>
-              Elimine o caos da sua agência
-            </Botao>
-            <Botao grande variante="fantasmaClaro" onClick={() => scrollPara("areas")}>Ver como funciona</Botao>
+          <div style={{ maxWidth: 440, textAlign: "left" }}>
+            <div style={{
+              fontSize: "clamp(42px, 8vw, 78px)", fontWeight: 700,
+              letterSpacing: "-2.5px", color: "#fff", lineHeight: 1,
+            }}>
+              Make it EZ.
+            </div>
+            <p style={{
+              margin: "16px 0 0", fontSize: 15, fontWeight: 700, letterSpacing: "1.5px",
+              textTransform: "uppercase", color: ROXO_CLARO,
+            }}>
+              Toda a sua operação. Um só lugar.
+            </p>
+            <div style={{ marginTop: 30 }}>
+              <Botao grande variante="claro" onClick={() => scrollPara("cadastro")}>
+                Elimine o caos da sua agência
+              </Botao>
+            </div>
           </div>
         </div>
       </section>
