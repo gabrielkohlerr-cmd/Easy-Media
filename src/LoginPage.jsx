@@ -21,7 +21,7 @@ const PERSONAS = [
     id: "social_media",
     Icone: IconeAlvo,
     titulo: "Sou Social Media",
-    texto: "Você gerencia clientes diferentes e precisa controlar conteúdos, prazos, aprovações, reuniões e resultados sem depender de dez ferramentas ao mesmo tempo.",
+    texto: "Controle clientes, prazos e aprovações num só lugar.",
     cta: "Quero ser Social Media",
     rotuloNegocio: "Nome do seu negócio (opcional)",
   },
@@ -30,77 +30,70 @@ const PERSONAS = [
     agencia: true,
     Icone: IconePredio,
     titulo: "Sou Agência",
-    texto: "Da pequena agência que quer estruturar processos à operação em crescimento que precisa ganhar escala sem aumentar o retrabalho — organize equipe e clientes num só lugar.",
+    texto: "Organize equipe, clientes e processos pra crescer sem bagunça.",
     cta: "Cadastrar minha agência",
     rotuloNegocio: "Nome da agência",
   },
 ];
 
 const JORNADA = [
-  "Planejamento", "Produção", "Revisão", "Envio ao cliente",
-  "Aprovação", "Agendamento", "Publicação", "Análise", "Otimização",
+  "Planejamento", "Produção", "Aprovação", "Publicação", "Resultados",
 ];
 
 const ANTES = [
-  "Perda de informações",
-  "Falta de clareza sobre o status de cada conteúdo",
-  "Aprovações e ajustes dispersos entre conversas",
-  "Dificuldade pra controlar prazos",
-  "Retrabalho operacional",
-  "Cobranças constantes aos clientes",
-  "Esquecimento de reuniões, captações e entregas",
-  "Excesso de ferramentas e assinaturas",
+  "Informações perdidas entre conversas",
+  "Retrabalho e prazos perdidos",
+  "Aprovação bagunçada no WhatsApp",
+  "Ferramentas demais, controle de menos",
 ];
 
 const DEPOIS = [
-  "Clientes, conteúdos, tarefas e compromissos num único ambiente",
-  "A equipe entende o que precisa ser feito e quem é responsável",
-  "O cliente sabe exatamente o que precisa aprovar",
-  "Compromissos, reuniões e captações ficam organizados",
-  "Conteúdo aprovado segue direto pra publicação",
-  "Os resultados alimentam os próximos planejamentos",
+  "Tudo num único ambiente",
+  "Cada um sabe o que fazer",
+  "Cliente aprova numa página só",
+  "Aprovou, publicou — automático",
 ];
 
 const AREAS = [
   {
     Icone: IconePasta,
     titulo: "Gestão de conteúdos",
-    texto: "Organize as publicações de cada cliente reunindo texto, arquivos, formatos, datas, horários e responsáveis num só lugar.",
+    texto: "Textos, arquivos e datas num só lugar.",
   },
   {
     Icone: IconeAprovacao,
     titulo: "Aprovação de publicações",
-    texto: "O cliente aprova, reprova ou pede ajustes numa página só dele — tudo registrado na publicação, sem se perder em conversa.",
+    texto: "O cliente aprova numa página só dele.",
   },
   {
     Icone: IconeEnvio,
     titulo: "Agendamento e publicação",
-    texto: "Depois de aprovado, o conteúdo é publicado no perfil do cliente por integração direta com a API da Meta.",
+    texto: "Aprovado, publica direto no Instagram.",
   },
   {
     Icone: IconeCalendario,
     titulo: "Calendário editorial",
-    texto: "Cliente e equipe visualizam as postagens num calendário organizado, com clareza do planejamento do mês.",
+    texto: "Todas as postagens do mês, organizadas.",
   },
   {
     Icone: IconeGrafico,
     titulo: "Área de resultados",
-    texto: "Uma página acessível pra o cliente acompanhar o desempenho das publicações e campanhas.",
+    texto: "Desempenho acessível pro cliente.",
   },
   {
     Icone: IconeIA,
     titulo: "Inteligência artificial",
-    texto: "IA que interpreta os dados de cada cliente e sugere formatos, temas, horários e oportunidades de otimização — uma ferramenta a favor do social media, não uma substituição dele.",
+    texto: "Sugestões de formato e horário, a seu favor.",
   },
   {
     Icone: IconeGoogleAgenda,
     titulo: "Integração com Google Agenda",
-    texto: "Reuniões, captações, apresentações e entregas organizadas dentro da rotina de cada cliente.",
+    texto: "Reuniões e entregas na rotina do cliente.",
   },
   {
     Icone: IconeKanban,
-    titulo: "Gestão de processos em Kanban",
-    texto: "Acompanhe o andamento de cada atividade — o que está parado, em andamento, e quem é o responsável.",
+    titulo: "Gestão em Kanban",
+    texto: "Veja o que está parado, e quem é responsável.",
   },
 ];
 
@@ -323,9 +316,8 @@ function CartaoLeadCliente({ aoEnviar }) {
         </div>
       </div>
       <p style={{ marginTop: 0, fontSize: 14, color: CINZA, fontWeight: 600, lineHeight: 1.5 }}>
-        O acesso do cliente é feito por um link único, gerado pela sua agência ou social media
-        dentro da EZ Media — não é preciso criar senha. Se ainda não recebeu esse link, deixe
-        seu contato abaixo que a gente te ajuda a apresentar a ferramenta pra quem cuida da sua marca.
+        Seu acesso é por um link único, enviado pela sua agência ou social media — sem senha.
+        Ainda não recebeu? Deixe seu contato abaixo.
       </p>
       {enviado ? (
         <div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 700, color: ROXO }}>
@@ -431,11 +423,10 @@ export default function PaginaLogin() {
             Toda a sua operação. Um só lugar.
           </p>
           <p style={{
-            margin: "18px auto 0", maxWidth: 560, fontSize: 16, fontWeight: 500,
+            margin: "18px auto 0", maxWidth: 460, fontSize: 16, fontWeight: 500,
             color: "rgba(255,255,255,.78)", lineHeight: 1.6,
           }}>
-            Enquanto o resto da agência corre atrás do caos, quem usa a EZ Media está em paz —
-            clientes, conteúdos, aprovações, calendários e publicações organizados num único lugar.
+            Clientes, conteúdos, aprovações e publicações — organizados num só lugar.
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 30, flexWrap: "wrap" }}>
             <Botao grande variante="claro" onClick={() => scrollPara("cadastro")}>
@@ -465,8 +456,7 @@ export default function PaginaLogin() {
       <section style={{ background: ROXO_ESCURO, padding: "36px 20px" }}>
         <div style={{ maxWidth: 1080, margin: "0 auto" }}>
           <p style={{ textAlign: "center", color: "rgba(255,255,255,.65)", fontWeight: 600, margin: "0 0 16px", fontSize: 14 }}>
-            A EZ Media não é mais uma ferramenta isolada — ela conecta a jornada inteira do
-            profissional, do primeiro briefing ao resultado final.
+            Do briefing ao resultado, numa jornada só.
           </p>
           <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 8 }}>
             {JORNADA.map((etapa, i) => (
@@ -482,13 +472,9 @@ export default function PaginaLogin() {
       {/* antes / depois — faixa preta */}
       <section style={{ background: ROXO_ESCURO, padding: "8px 20px 56px" }}>
         <div style={{ maxWidth: 1080, margin: "0 auto" }}>
-          <h2 style={{ textAlign: "center", fontSize: 26, fontWeight: 700, color: "#fff", margin: 0 }}>
-            De uma operação fragmentada pra um sistema
+          <h2 style={{ textAlign: "center", fontSize: 26, fontWeight: 700, color: "#fff", margin: "0 0 28px" }}>
+            De operação fragmentada pra um sistema
           </h2>
-          <p style={{ textAlign: "center", color: "rgba(255,255,255,.65)", fontWeight: 500, margin: "8px 0 28px" }}>
-            WhatsApp, planilhas, apresentações, Google Agenda, Trello — cada etapa num lugar
-            diferente. A EZ Media reúne tudo isso numa única experiência.
-          </p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 16 }}>
             <Cartao style={{ background: LAVANDA, border: "none" }}>
               <div style={{ fontSize: 12, fontWeight: 700, color: CINZA, marginBottom: 10, letterSpacing: "1px" }}>
@@ -550,8 +536,7 @@ export default function PaginaLogin() {
               <IconePrancheta tamanho={30} style={{ color: ROXO_CLARO }} />
               <h3 style={{ margin: "12px 0 6px", fontSize: 18, fontWeight: 700, color: "#fff" }}>Sou Cliente</h3>
               <p style={{ margin: 0, fontSize: 14, color: "rgba(255,255,255,.68)", fontWeight: 500, lineHeight: 1.5, flex: 1 }}>
-                Aprove conteúdos, acompanhe calendários e compromissos, e entenda os resultados
-                da sua marca de um jeito simples — sem precisar entender de social media.
+                Aprove conteúdos e acompanhe resultados, sem complicação.
               </p>
               <div style={{ marginTop: 18 }}>
                 <Botao variante="claro" onClick={() => setPersonaAtiva("cliente")}>Acompanhar meus posts</Botao>
@@ -618,17 +603,13 @@ export default function PaginaLogin() {
         <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center" }}>
           <p style={{
             margin: 0, fontSize: 18, fontWeight: 500, color: "rgba(255,255,255,.7)",
-            lineHeight: 1.8, fontStyle: "italic",
+            lineHeight: 1.7, fontStyle: "italic",
           }}>
-            O marketing evoluiu. As ferramentas evoluíram. Mas a rotina de muitos social medias
-            e agências continua dividida entre mensagens, apresentações, planilhas e plataformas
-            que não se comunicam. No final, o profissional passa mais tempo controlando a
-            operação do que pensando em estratégia.
+            Menos ferramenta espalhada, mais estratégia.
           </p>
           <p style={{
-            margin: "20px 0 0", fontSize: 18, fontWeight: 700, color: "#fff", lineHeight: 1.6,
+            margin: "16px 0 0", fontSize: 18, fontWeight: 700, color: "#fff", lineHeight: 1.6,
           }}>
-            A EZ Media nasceu pra mudar essa realidade.<br />
             Uma plataforma. Toda a operação.
           </p>
           <div style={{
