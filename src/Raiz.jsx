@@ -10,6 +10,7 @@ import ClientesPage from './ClientesPage.jsx'
 import CalendarioPage from './CalendarioPage.jsx'
 import AgendaPage from './AgendaPage.jsx'
 import KanbanPage from './KanbanPage.jsx'
+import InicioPage from './InicioPage.jsx'
 
 function Painel() {
   const { usuario, sair } = useAuth()
@@ -26,6 +27,7 @@ function Painel() {
       aoAbrirCalendario={() => navigate('/calendario')}
       aoAbrirAgenda={() => navigate('/agenda')}
       aoAbrirKanban={() => navigate('/kanban')}
+      aoAbrirInicio={usuario?.tipo === 'social_media' ? () => navigate('/inicio') : undefined}
     />
   )
 }
@@ -72,6 +74,13 @@ function RotaKanban() {
   return <KanbanPage />
 }
 
+function RotaInicio() {
+  const { usuario, carregando } = useAuth()
+  if (carregando) return null
+  if (!usuario || usuario.tipo !== 'social_media') return <Navigate to="/" replace />
+  return <InicioPage />
+}
+
 function Rotas() {
   const { carregando } = useAuth()
   if (carregando) return null
@@ -86,6 +95,7 @@ function Rotas() {
       <Route path="/calendario" element={<RotaCalendario />} />
       <Route path="/agenda" element={<RotaAgenda />} />
       <Route path="/kanban" element={<RotaKanban />} />
+      <Route path="/inicio" element={<RotaInicio />} />
       <Route path="/convite/:token" element={<ConvitePage />} />
       <Route path="/cliente/:token" element={<ClientePortal />} />
     </Routes>

@@ -59,7 +59,7 @@ export default function ConvitePage() {
           </div>
           <h1 style={{ fontSize: 18, fontWeight: 800, color: TINTA }}>Você entrou no squad de {agenciaNome}!</h1>
           <p style={{ color: CINZA, fontWeight: 600 }}>Agora você já pode acessar o painel de conteúdo.</p>
-          <Botao onClick={() => navigate("/painel")}>Ir para o painel</Botao>
+          <Botao onClick={() => navigate("/inicio")}>Ir para o início</Botao>
         </Cartao>
       </Tela>
     );

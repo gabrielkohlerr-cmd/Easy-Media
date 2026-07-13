@@ -392,7 +392,7 @@ export default function PaginaLogin() {
   const aoEntrarOuCadastrar = usuario => {
     setLoginAberto(false);
     setPersonaAtiva(null);
-    navigate(usuario.tipo === "agencia" ? "/agencia" : "/painel");
+    navigate(usuario.tipo === "agencia" ? "/agencia" : "/inicio");
   };
 
   return (

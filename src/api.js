@@ -43,7 +43,7 @@ export const api = {
   removerMembro: id => requisitar(`/squad/membros/${id}`, { method: "DELETE" }),
 
   listarClientes: () => requisitar("/clientes"),
-  criarCliente: nome => requisitar("/clientes", { method: "POST", body: JSON.stringify({ nome }) }),
+  criarCliente: dados => requisitar("/clientes", { method: "POST", body: JSON.stringify(dados) }),
   removerCliente: id => requisitar(`/clientes/${id}`, { method: "DELETE" }),
   rotacionarLinkCliente: id => requisitar(`/clientes/${id}/rotacionar-link`, { method: "POST" }),
   acessoCliente: token => requisitar(`/clientes/acesso/${token}`),

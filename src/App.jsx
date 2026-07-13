@@ -9,7 +9,7 @@ import {
 import { Pill, Botao, Cartao, Toast, Marca } from "./components.jsx";
 import {
   IconeGrafico, IconeComentario, IconeAlvo, IconeImagem, IconeLapis, IconeIA,
-  IconeCaixaEntrada, IconeCheck, IconeRaio, IconeCalendario, IconeAgenda, IconeKanban,
+  IconeCaixaEntrada, IconeCheck, IconeRaio, IconeCalendario, IconeAgenda, IconeKanban, IconeCasa,
 } from "./icones.jsx";
 import { api } from "./api.js";
 import NovoPostForm from "./NovoPostForm.jsx";
@@ -488,7 +488,7 @@ function carregarPosts() {
   return POSTS_INICIAIS;
 }
 
-export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia, aoAbrirPerfil, aoAbrirClientes, aoAbrirCalendario, aoAbrirAgenda, aoAbrirKanban }) {
+export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia, aoAbrirPerfil, aoAbrirClientes, aoAbrirCalendario, aoAbrirAgenda, aoAbrirKanban, aoAbrirInicio }) {
   const podeVerVisaoCliente = !usuario || usuario.tipo === "agencia";
   const [visao, setVisao] = useState("sm");
   const [posts, setPosts] = useState(carregarPosts);
@@ -607,6 +607,13 @@ export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia
 
             {usuario ? (
               <>
+                {aoAbrirInicio && (
+                  <Botao pequeno variante="fantasma" onClick={aoAbrirInicio}>
+                    <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <IconeCasa tamanho={14} /> Início
+                    </span>
+                  </Botao>
+                )}
                 {usuario.tipo === "agencia" && aoAbrirAgencia && (
                   <Botao pequeno onClick={aoAbrirAgencia}>Squad e clientes</Botao>
                 )}

@@ -13,6 +13,16 @@ function Svg({ tamanho = 20, className, style, children }) {
   );
 }
 
+export function IconeCasa(props) {
+  return (
+    <Svg {...props}>
+      <path d="M4 11.5 12 4l8 7.5" />
+      <path d="M6 9.8V20h12V9.8" />
+      <path d="M10 20v-6h4v6" />
+    </Svg>
+  );
+}
+
 export function IconeCalendario(props) {
   return (
     <Svg {...props}>

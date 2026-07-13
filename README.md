@@ -45,6 +45,17 @@ anexos e links. Todo usuário tem um quadro pessoal; quem é de uma agência
 (a própria agência e os social medias do squad) também divide um quadro
 compartilhado, visível a todo mundo do squad.
 
+Quem entra como Social Media cai primeiro numa tela de **Início**: um
+resumo com atalho pro Kanban, uma prévia da semana do calendário e da
+agenda, insights por cliente e sugestões de conteúdo ("tendências do
+dia") organizadas por segmento — tudo com base no **segmento** e
+**nicho** do cliente, por isso os dois viraram campos obrigatórios ao
+cadastrar um cliente novo. As sugestões de tendência rodam num banco de
+conteúdo por segmento que muda diariamente (não vêm de uma API de
+tendências ao vivo, que não temos integrada), e os números de
+alcance/engajamento por cliente na tela de Início também são
+demonstração, como os do restante dos relatórios.
+
 ## Estrutura
 
 - `src/` — frontend (Vite + React + react-router).

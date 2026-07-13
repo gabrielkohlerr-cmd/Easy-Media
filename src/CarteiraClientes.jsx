@@ -4,6 +4,12 @@ import { Botao, Cartao, Pill } from "./components.jsx";
 import { IconeCamera } from "./icones.jsx";
 import { useAuth } from "./AuthContext.jsx";
 import { api } from "./api.js";
+import { SEGMENTOS } from "./segmentos.js";
+
+const campoEstilo = {
+  borderRadius: 14, border: `2px solid ${LAVANDA_2}`, padding: "10px 14px",
+  fontFamily: "inherit", fontWeight: 700, fontSize: 14, color: TINTA, outline: "none",
+};
 
 async function copiar(texto) {
   try {
@@ -21,6 +27,8 @@ export default function CarteiraClientes({ mostrar }) {
   const [clientes, setClientes] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [nomeNovo, setNomeNovo] = useState("");
+  const [segmentoNovo, setSegmentoNovo] = useState("");
+  const [nichoNovo, setNichoNovo] = useState("");
   const [criando, setCriando] = useState(false);
 
   const recarregar = () => {
@@ -31,11 +39,13 @@ export default function CarteiraClientes({ mostrar }) {
 
   const adicionar = async e => {
     e.preventDefault();
-    if (!nomeNovo.trim()) return;
+    if (!nomeNovo.trim() || !segmentoNovo || !nichoNovo.trim()) return;
     setCriando(true);
     try {
-      const { cliente } = await api.criarCliente(nomeNovo.trim());
-      setNomeNovo("");
+      const { cliente } = await api.criarCliente({
+        nome: nomeNovo.trim(), segmento: segmentoNovo, nicho: nichoNovo.trim(),
+      });
+      setNomeNovo(""); setSegmentoNovo(""); setNichoNovo("");
       mostrar("✓ Cliente adicionado à carteira");
       recarregar();
       return cliente;
@@ -88,19 +98,32 @@ export default function CarteiraClientes({ mostrar }) {
       </h3>
       <p style={{ margin: "0 0 14px", fontSize: 13, color: CINZA, fontWeight: 600 }}>
         Cada cliente tem um link único e sem senha para acompanhar e aprovar os próprios posts.
-        Conecte o Instagram do cliente pra publicar e responder comentários direto por aqui.
+        Conecte o Instagram do cliente pra publicar e responder comentários direto por aqui. Segmento
+        e nicho alimentam os insights e tendências da tela de Início.
       </p>
 
       {podeGerenciar && (
-        <form onSubmit={adicionar} style={{ display: "flex", gap: 8, marginBottom: 14, flexWrap: "wrap" }}>
-          <input
-            value={nomeNovo} onChange={e => setNomeNovo(e.target.value)} placeholder="Nome do novo cliente"
-            style={{
-              flex: 1, minWidth: 200, borderRadius: 14, border: `2px solid ${LAVANDA_2}`, padding: "10px 14px",
-              fontFamily: "inherit", fontWeight: 700, fontSize: 14, color: TINTA, outline: "none",
-            }}
-          />
-          <Botao pequeno type="submit">{criando ? "Adicionando…" : "Adicionar cliente"}</Botao>
+        <form onSubmit={adicionar} style={{ display: "grid", gap: 8, marginBottom: 14 }}>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <input
+              value={nomeNovo} onChange={e => setNomeNovo(e.target.value)} placeholder="Nome do novo cliente"
+              style={{ ...campoEstilo, flex: 2, minWidth: 200 }}
+            />
+            <select
+              value={segmentoNovo} onChange={e => setSegmentoNovo(e.target.value)}
+              style={{ ...campoEstilo, flex: 1, minWidth: 200, color: segmentoNovo ? TINTA : CINZA }}
+            >
+              <option value="">Segmento *</option>
+              {SEGMENTOS.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+            <input
+              value={nichoNovo} onChange={e => setNichoNovo(e.target.value)} placeholder="Nicho * (ex: sushi delivery)"
+              style={{ ...campoEstilo, flex: 1, minWidth: 200 }}
+            />
+          </div>
+          <div>
+            <Botao pequeno type="submit">{criando ? "Adicionando…" : "Adicionar cliente"}</Botao>
+          </div>
         </form>
       )}
 
@@ -111,7 +134,14 @@ export default function CarteiraClientes({ mostrar }) {
           {clientes.map(c => (
             <div key={c.id} style={{ background: LAVANDA, borderRadius: 14, padding: "10px 14px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                <div style={{ fontWeight: 800, color: TINTA, fontSize: 14 }}>{c.nome}</div>
+                <div>
+                  <div style={{ fontWeight: 800, color: TINTA, fontSize: 14 }}>{c.nome}</div>
+                  {c.segmento && (
+                    <div style={{ fontSize: 11, fontWeight: 700, color: CINZA, marginTop: 2 }}>
+                      {c.segmento}{c.nicho ? ` · ${c.nicho}` : ""}
+                    </div>
+                  )}
+                </div>
                 {c.token_acesso ? (
                   <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                     <Botao pequeno variante="fantasma" onClick={() => copiarLink(c)}>Copiar link do cliente</Botao>
