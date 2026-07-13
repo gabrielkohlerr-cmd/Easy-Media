@@ -97,6 +97,25 @@ const AREAS = [
   },
 ];
 
+const DEPOIMENTOS = [
+  {
+    nome: "Henrique Lyra", cargo: "Social Media Freelancer", topico: "Centralização das tarefas",
+    texto: "Cuido de vários clientes sozinho — antes era planilha pra cada um, hoje é tudo num só lugar. Enxergo minha semana inteira de novo.",
+  },
+  {
+    nome: "Eduarda Dijck", cargo: "Atendimento Publicitário na Agência UM", topico: "Comunicação com cliente",
+    texto: "Antes, aprovação era e-mail sem fim. Hoje o cliente vê e aprova direto na plataforma — sem ruído na comunicação.",
+  },
+  {
+    nome: "Guilherme Rego", cargo: "Marketing na BG Promoções", topico: "Organização da equipe",
+    texto: "Nosso time cresceu e ficou difícil saber quem fazia o quê. A EZ Media deixou claro o responsável por cada entrega.",
+  },
+  {
+    nome: "Manuela Godoy", cargo: "Analista de Marketing Jr na Viva do Brasil", topico: "Automação nas postagens",
+    texto: "Eu aprovo o post e pronto — ele vai pro Instagram sozinho, no horário certo. Não preciso mais cobrar ninguém.",
+  },
+];
+
 const NUMEROS = [
   ["+300", "agências e freelancers"],
   ["12 mil", "posts aprovados"],
@@ -582,19 +601,25 @@ export default function PaginaLogin() {
       {/* depoimento — faixa branca */}
       <section style={{ background: "#fff", padding: "48px 20px" }}>
         <div style={{ maxWidth: 1080, margin: "0 auto" }}>
-          <Cartao style={{ textAlign: "center", padding: 32, maxWidth: 640, margin: "0 auto" }}>
-            <p style={{
-              margin: "0 auto", maxWidth: 560, fontSize: 17, fontWeight: 600,
-              color: TINTA, lineHeight: 1.6, fontStyle: "italic",
-            }}>
-              “Depois que comecei a usar a EZ Media com os clientes, parei de perder
-              tempo cobrando aprovação no Whats — e ainda fechei dois contratos novos
-              mostrando o relatório automático.”
-            </p>
-            <div style={{ marginTop: 14, fontSize: 13, fontWeight: 700, color: CINZA }}>
-              Marina Duarte · Social Media freelancer
-            </div>
-          </Cartao>
+          <h2 style={{ textAlign: "center", fontSize: 26, fontWeight: 700, color: TINTA, margin: "0 0 28px" }}>
+            Quem usa, recomenda
+          </h2>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(440px, 1fr))", gap: 16 }}>
+            {DEPOIMENTOS.map(d => (
+              <Cartao key={d.nome} style={{ display: "flex", flexDirection: "column" }}>
+                <Pill cor={ROXO} bg={LAVANDA_2}>{d.topico}</Pill>
+                <p style={{
+                  margin: "14px 0 0", fontSize: 14, fontWeight: 600,
+                  color: TINTA, lineHeight: 1.55, fontStyle: "italic", flex: 1,
+                }}>
+                  “{d.texto}”
+                </p>
+                <div style={{ marginTop: 14, fontSize: 13, fontWeight: 700, color: CINZA }}>
+                  {d.nome} · {d.cargo}
+                </div>
+              </Cartao>
+            ))}
+          </div>
         </div>
       </section>
 
