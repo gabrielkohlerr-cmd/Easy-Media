@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Legend,
@@ -410,10 +410,30 @@ function VisaoCliente({ posts, aoAprovar, aoReprovar }) {
 
 /* ---------- app ---------- */
 
+const CHAVE_ARMAZENAMENTO = "easymedia-posts";
+
+function carregarPosts() {
+  try {
+    const salvo = localStorage.getItem(CHAVE_ARMAZENAMENTO);
+    if (salvo) return JSON.parse(salvo);
+  } catch {
+    // localStorage indisponível ou dado corrompido: usa os dados iniciais
+  }
+  return POSTS_INICIAIS;
+}
+
 export default function EasyMedia() {
   const [visao, setVisao] = useState("sm");
-  const [posts, setPosts] = useState(POSTS_INICIAIS);
+  const [posts, setPosts] = useState(carregarPosts);
   const [toast, setToast] = useState("");
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(CHAVE_ARMAZENAMENTO, JSON.stringify(posts));
+    } catch {
+      // localStorage indisponível: segue apenas em memória
+    }
+  }, [posts]);
 
   const mostrar = msg => {
     setToast(msg);
@@ -428,6 +448,11 @@ export default function EasyMedia() {
   const reprovar = (id, feedback) => {
     setPosts(ps => ps.map(p => (p.id === id ? { ...p, status: "alteracao", feedback } : p)));
     mostrar("Alteração enviada ao social media");
+  };
+
+  const reiniciar = () => {
+    setPosts(POSTS_INICIAIS);
+    mostrar("Dados de demonstração reiniciados");
   };
 
   return (
@@ -459,18 +484,25 @@ export default function EasyMedia() {
               easy<span style={{ color: ROXO }}>media</span>
             </span>
           </div>
-          <div style={{ display: "flex", gap: 6, background: LAVANDA, borderRadius: 999, padding: 4 }}>
-            {[
-              { id: "sm", rotulo: "Visão Social Media" },
-              { id: "cliente", rotulo: "Visão Cliente" },
-            ].map(v => (
-              <button key={v.id} onClick={() => setVisao(v.id)} className="em-btn" style={{
-                border: "none", cursor: "pointer", fontFamily: "inherit",
-                fontWeight: 800, fontSize: 13, padding: "10px 18px", borderRadius: 999,
-                background: visao === v.id ? ROXO : "transparent",
-                color: visao === v.id ? "#fff" : CINZA,
-              }}>{v.rotulo}</button>
-            ))}
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <div style={{ display: "flex", gap: 6, background: LAVANDA, borderRadius: 999, padding: 4 }}>
+              {[
+                { id: "sm", rotulo: "Visão Social Media" },
+                { id: "cliente", rotulo: "Visão Cliente" },
+              ].map(v => (
+                <button key={v.id} onClick={() => setVisao(v.id)} className="em-btn" style={{
+                  border: "none", cursor: "pointer", fontFamily: "inherit",
+                  fontWeight: 800, fontSize: 13, padding: "10px 18px", borderRadius: 999,
+                  background: visao === v.id ? ROXO : "transparent",
+                  color: visao === v.id ? "#fff" : CINZA,
+                }}>{v.rotulo}</button>
+              ))}
+            </div>
+            <button onClick={reiniciar} className="em-btn" title="Restaura os dados de demonstração originais" style={{
+              border: "none", background: "transparent", cursor: "pointer",
+              fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: CINZA,
+              textDecoration: "underline", padding: 0,
+            }}>Reiniciar demo</button>
           </div>
         </div>
       </header>
