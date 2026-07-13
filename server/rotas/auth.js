@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { db } from "../db.js";
 import { hashSenha, conferirSenha, gerarToken, usuarioPublico, autenticar } from "../auth.js";
+import { uploadFotoPerfil } from "../uploads.js";
 
 export const rotaAuth = Router();
 
@@ -60,4 +61,23 @@ rotaAuth.get("/me", autenticar, (req, res) => {
     usuario.agencia = agencia || null;
   }
   res.json({ usuario });
+});
+
+rotaAuth.patch("/perfil", autenticar, uploadFotoPerfil.single("foto"), (req, res) => {
+  const { nome, nomeNegocio, bio } = req.body || {};
+  const campos = [];
+  const valores = [];
+
+  if (nome?.trim()) { campos.push("nome = ?"); valores.push(nome.trim()); }
+  if (nomeNegocio !== undefined) { campos.push("nome_negocio = ?"); valores.push(nomeNegocio.trim() || null); }
+  if (bio !== undefined) { campos.push("bio = ?"); valores.push(bio.trim() || null); }
+  if (req.file) { campos.push("foto_perfil_url = ?"); valores.push(`/uploads/perfis/${req.file.filename}`); }
+
+  if (campos.length) {
+    valores.push(req.usuario.id);
+    db.prepare(`UPDATE usuarios SET ${campos.join(", ")} WHERE id = ?`).run(...valores);
+  }
+
+  const usuario = db.prepare("SELECT * FROM usuarios WHERE id = ?").get(req.usuario.id);
+  res.json({ usuario: usuarioPublico(usuario) });
 });

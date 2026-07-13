@@ -11,7 +11,7 @@ export function Pill({ children, cor, bg }) {
   );
 }
 
-export function Botao({ children, onClick, variante = "primario", pequeno, grande, type = "button" }) {
+export function Botao({ children, onClick, variante = "primario", pequeno, grande, type = "button", disabled }) {
   const estilos = {
     primario: { background: ROXO, color: "#fff", border: "none" },
     fantasma: { background: "transparent", color: ROXO, border: `2px solid ${LAVANDA_2}` },
@@ -19,11 +19,12 @@ export function Botao({ children, onClick, variante = "primario", pequeno, grand
     sucesso: { background: VERDE, color: "#fff", border: "none" },
   }[variante];
   return (
-    <button type={type} onClick={onClick} className="em-btn" style={{
+    <button type={type} onClick={onClick} disabled={disabled} className="em-btn" style={{
       ...estilos, fontFamily: "inherit", fontWeight: 800,
       fontSize: pequeno ? 13 : grande ? 17 : 15,
       padding: pequeno ? "8px 16px" : grande ? "16px 30px" : "12px 22px",
-      borderRadius: 999, cursor: "pointer",
+      borderRadius: 999, cursor: disabled ? "not-allowed" : "pointer",
+      opacity: disabled ? 0.55 : 1,
     }}>{children}</button>
   );
 }

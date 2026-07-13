@@ -5,6 +5,8 @@ import PaginaLogin from './LoginPage.jsx'
 import AgenciaPage from './AgenciaPage.jsx'
 import ConvitePage from './ConvitePage.jsx'
 import ClientePortal from './ClientePortal.jsx'
+import PerfilPage from './PerfilPage.jsx'
+import ClientesPage from './ClientesPage.jsx'
 
 function Painel() {
   const { usuario, sair } = useAuth()
@@ -16,6 +18,8 @@ function Painel() {
       aoSair={() => navigate('/')}
       aoSairConta={() => { sair(); navigate('/') }}
       aoAbrirAgencia={() => navigate('/agencia')}
+      aoAbrirPerfil={() => navigate('/perfil')}
+      aoAbrirClientes={() => navigate('/clientes')}
     />
   )
 }
@@ -27,6 +31,20 @@ function RotaAgencia() {
   return <AgenciaPage />
 }
 
+function RotaClientes() {
+  const { usuario, carregando } = useAuth()
+  if (carregando) return null
+  if (!usuario || usuario.tipo !== 'social_media') return <Navigate to="/" replace />
+  return <ClientesPage />
+}
+
+function RotaPerfil() {
+  const { usuario, carregando } = useAuth()
+  if (carregando) return null
+  if (!usuario) return <Navigate to="/" replace />
+  return <PerfilPage />
+}
+
 function Rotas() {
   const { carregando } = useAuth()
   if (carregando) return null
@@ -36,6 +54,8 @@ function Rotas() {
       <Route path="/" element={<PaginaLogin />} />
       <Route path="/painel" element={<Painel />} />
       <Route path="/agencia" element={<RotaAgencia />} />
+      <Route path="/clientes" element={<RotaClientes />} />
+      <Route path="/perfil" element={<RotaPerfil />} />
       <Route path="/convite/:token" element={<ConvitePage />} />
       <Route path="/cliente/:token" element={<ClientePortal />} />
     </Routes>

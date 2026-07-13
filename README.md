@@ -8,21 +8,24 @@ usuário, fluxo de aprovação de cliente e relatórios de desempenho.
 - **Agência** — cria conta, convida social medias pro squad (link único de
   convite) e gerencia a carteira de clientes, gerando um link de acesso sem
   senha pra cada cliente.
-- **Social Media** — cria conta sozinho (freelancer) ou entra no squad de uma
-  agência através de um link de convite; acessa a fila de conteúdo e
-  relatórios dos clientes.
+- **Social Media** — cria conta sozinho (freelancer, com sua própria carteira
+  de clientes) ou entra no squad de uma agência através de um link de
+  convite; envia posts (upload de imagem/vídeo) pra cada cliente aprovar.
 - **Cliente** — acessa direto pelo link único enviado pela agência/social
-  media (sem cadastro nem senha) e aprova ou pede alteração nos posts.
+  media (sem cadastro nem senha), vê as imagens/vídeos enviados e aprova ou
+  pede alteração.
 
-A fila de conteúdo e os relatórios (gráficos de alcance/engajamento) ainda
-usam dados de demonstração fixos — o cadastro de usuários, squads e carteira
-de clientes já são reais e persistidos em banco.
+Cada usuário também pode personalizar o próprio perfil (foto, nome, bio) em
+"Meu perfil". Os relatórios (gráficos de alcance/engajamento) ainda usam
+dados de demonstração fixos — o resto (contas, squads, carteira de clientes
+e os posts com mídia) é real e persistido em banco/disco.
 
 ## Estrutura
 
 - `src/` — frontend (Vite + React + react-router).
 - `server/` — API (Express) com banco SQLite (`node:sqlite`), autenticação
-  por e-mail/senha (JWT) e as rotas de squad/convites/clientes.
+  por e-mail/senha (JWT), upload de arquivos (`multer`, salvos em `uploads/`)
+  e as rotas de squad/convites/clientes/posts/perfil.
 
 ## Desenvolvimento
 

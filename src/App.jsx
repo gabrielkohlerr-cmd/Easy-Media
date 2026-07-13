@@ -7,6 +7,8 @@ import {
   ROXO, ROXO_ESCURO, ROXO_CLARO, LAVANDA, LAVANDA_2, TINTA, CINZA, VERDE, AMBAR, ROSA,
 } from "./theme.js";
 import { Pill, Botao, Cartao, Toast } from "./components.jsx";
+import { api } from "./api.js";
+import NovoPostForm from "./NovoPostForm.jsx";
 
 /* ============ EASY MEDIA — protótipo funcional ============
    Roxo + branco · minimalista · tipografia bold arredondada
@@ -19,6 +21,8 @@ const STATUS = {
   publicado: { label: "Publicado", cor: ROXO, bg: LAVANDA_2 },
   alteracao: { label: "Alteração solicitada", cor: ROSA, bg: "#FFE4E6" },
 };
+
+const TIPO_LABEL = { reels: "Reels", carrossel: "Carrossel", estatico: "Estático" };
 
 export const POSTS_INICIAIS = [
   {
@@ -112,14 +116,36 @@ function Stat({ rotulo, valor, detalhe, destaque }) {
 }
 
 function PreviaPost({ post, grande }) {
+  const altura = grande ? 200 : 120;
+  const midia = post.midias?.[0];
+
+  if (midia) {
+    return (
+      <div style={{ position: "relative", borderRadius: 20, overflow: "hidden", height: altura, background: TINTA }}>
+        {midia.tipo === "video" ? (
+          <video src={midia.url} controls={grande} muted playsInline
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+        ) : (
+          <img src={midia.url} alt={post.titulo} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+        )}
+        {post.midias.length > 1 && (
+          <span style={{
+            position: "absolute", top: 8, right: 8, background: "rgba(0,0,0,.55)",
+            color: "#fff", fontSize: 11, fontWeight: 800, padding: "2px 8px", borderRadius: 999,
+          }}>1/{post.midias.length}</span>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div style={{
-      background: post.grad, borderRadius: 20,
-      height: grande ? 200 : 120, display: "flex",
+      background: post.grad || "linear-gradient(135deg,#7C3AED,#C4B5FD)", borderRadius: 20,
+      height: altura, display: "flex",
       alignItems: "center", justifyContent: "center",
       fontSize: grande ? 56 : 36,
     }}>
-      <span role="img" aria-label={post.tipo}>{post.emoji}</span>
+      <span role="img" aria-label={post.tipo}>{post.emoji || "🖼️"}</span>
     </div>
   );
 }
@@ -181,7 +207,7 @@ function Relatorio() {
 
 /* ---------- visão do social media ---------- */
 
-function VisaoSocialMedia({ posts }) {
+function VisaoSocialMedia({ posts, clientes, podeCriarPost, mostrarFormulario, aoAbrirFormulario, aoFecharFormulario, aoPostCriado }) {
   const aguardando = posts.filter(p => p.status === "aguardando").length;
   const agendados = posts.filter(p => p.status === "agendado").length;
   const alteracoes = posts.filter(p => p.status === "alteracao");
@@ -212,8 +238,24 @@ function VisaoSocialMedia({ posts }) {
         </Cartao>
       )}
 
+      {podeCriarPost && mostrarFormulario && (
+        <NovoPostForm clientes={clientes} aoCriado={aoPostCriado} aoCancelar={aoFecharFormulario} />
+      )}
+
       <Cartao>
-        <h3 style={{ margin: "0 0 14px", fontSize: 18, fontWeight: 800, color: TINTA }}>Fila de conteúdo</h3>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14, flexWrap: "wrap", gap: 10 }}>
+          <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: TINTA }}>Fila de conteúdo</h3>
+          {podeCriarPost && !mostrarFormulario && (
+            <Botao pequeno onClick={aoAbrirFormulario} disabled={!clientes?.length}>
+              + Novo post
+            </Botao>
+          )}
+        </div>
+        {podeCriarPost && !clientes?.length && (
+          <p style={{ margin: "0 0 10px", fontSize: 13, color: CINZA, fontWeight: 600 }}>
+            Adicione um cliente na carteira antes de enviar o primeiro post.
+          </p>
+        )}
         <div style={{ display: "grid", gap: 10 }}>
           {posts.map(p => {
             const s = STATUS[p.status];
@@ -224,7 +266,7 @@ function VisaoSocialMedia({ posts }) {
               }}>
                 <div style={{ width: 64, flexShrink: 0 }}><PreviaPost post={p} /></div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 12, fontWeight: 800, color: ROXO }}>{p.cliente} · {p.tipo}</div>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: ROXO }}>{p.cliente} · {TIPO_LABEL[p.tipo] || p.tipo}</div>
                   <div style={{ fontWeight: 800, color: TINTA, fontSize: 15 }}>{p.titulo}</div>
                   <div style={{ fontSize: 12, fontWeight: 700, color: CINZA }}>📅 {p.data} às {p.hora}</div>
                 </div>
@@ -260,8 +302,9 @@ function VisaoSocialMedia({ posts }) {
 export function VisaoCliente({ posts, aoAprovar, aoReprovar, nomeCliente = "Nakai Sushi" }) {
   const [feedbackAberto, setFeedbackAberto] = useState(null);
   const [texto, setTexto] = useState("");
-  const pendentes = posts.filter(p => p.cliente === nomeCliente && p.status === "aguardando");
-  const publicado = posts.find(p => p.cliente === nomeCliente && p.status === "publicado" && p.metricas);
+  const doCliente = posts.filter(p => p.cliente === nomeCliente);
+  const pendentes = doCliente.filter(p => p.status === "aguardando");
+  const publicado = doCliente.find(p => p.status === "publicado" && p.metricas);
 
   return (
     <div style={{ display: "grid", gap: 20 }}>
@@ -275,16 +318,22 @@ export function VisaoCliente({ posts, aoAprovar, aoReprovar, nomeCliente = "Naka
 
       {pendentes.length === 0 && (
         <Cartao style={{ textAlign: "center", padding: 40 }}>
-          <div style={{ fontSize: 40 }}>🎉</div>
-          <div style={{ fontWeight: 800, color: TINTA, fontSize: 18 }}>Tudo aprovado!</div>
-          <div style={{ color: CINZA, fontWeight: 600, fontSize: 14 }}>Seus próximos posts já estão agendados.</div>
+          <div style={{ fontSize: 40 }}>{doCliente.length === 0 ? "📭" : "🎉"}</div>
+          <div style={{ fontWeight: 800, color: TINTA, fontSize: 18 }}>
+            {doCliente.length === 0 ? "Nenhum post enviado ainda" : "Tudo aprovado!"}
+          </div>
+          <div style={{ color: CINZA, fontWeight: 600, fontSize: 14 }}>
+            {doCliente.length === 0
+              ? "Assim que seu social media enviar um post, ele aparece aqui."
+              : "Seus próximos posts já estão agendados."}
+          </div>
         </Cartao>
       )}
 
       {pendentes.map(p => (
         <Cartao key={p.id}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-            <Pill cor={ROXO} bg={LAVANDA_2}>{p.tipo}</Pill>
+            <Pill cor={ROXO} bg={LAVANDA_2}>{TIPO_LABEL[p.tipo] || p.tipo}</Pill>
             <span style={{ fontSize: 13, fontWeight: 800, color: CINZA }}>📅 {p.data} às {p.hora}</span>
           </div>
           <PreviaPost post={p} grande />
@@ -369,30 +418,48 @@ function carregarPosts() {
   return POSTS_INICIAIS;
 }
 
-export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia }) {
+export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia, aoAbrirPerfil, aoAbrirClientes }) {
   const [visao, setVisao] = useState("sm");
   const [posts, setPosts] = useState(carregarPosts);
+  const [clientesReais, setClientesReais] = useState([]);
+  const [postsReais, setPostsReais] = useState([]);
+  const [clienteVisualizado, setClienteVisualizado] = useState("");
+  const [mostrarNovoPost, setMostrarNovoPost] = useState(false);
   const [toast, setToast] = useState("");
 
   useEffect(() => {
+    if (usuario) return;
     try {
       localStorage.setItem(CHAVE_ARMAZENAMENTO, JSON.stringify(posts));
     } catch {
       // localStorage indisponível: segue apenas em memória
     }
-  }, [posts]);
+  }, [posts, usuario]);
+
+  const recarregarReal = () => {
+    Promise.all([api.listarClientes(), api.listarPosts()]).then(([c, p]) => {
+      setClientesReais(c.clientes);
+      setPostsReais(p.posts);
+      setClienteVisualizado(atual => atual || c.clientes[0]?.nome || "");
+    });
+  };
+
+  useEffect(() => {
+    if (usuario) recarregarReal();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [usuario]);
 
   const mostrar = msg => {
     setToast(msg);
     setTimeout(() => setToast(""), 2600);
   };
 
-  const aprovar = id => {
+  const aprovarDemo = id => {
     setPosts(ps => ps.map(p => (p.id === id ? { ...p, status: "agendado" } : p)));
     mostrar("✓ Post aprovado e agendado no Instagram");
   };
 
-  const reprovar = (id, feedback) => {
+  const reprovarDemo = (id, feedback) => {
     setPosts(ps => ps.map(p => (p.id === id ? { ...p, status: "alteracao", feedback } : p)));
     mostrar("Alteração enviada ao social media");
   };
@@ -401,6 +468,22 @@ export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia
     setPosts(POSTS_INICIAIS);
     mostrar("Dados de demonstração reiniciados");
   };
+
+  const aprovarReal = async id => {
+    await api.atualizarStatusPost(id, "agendado", null);
+    mostrar("✓ Post aprovado e agendado no Instagram");
+    recarregarReal();
+  };
+
+  const reprovarReal = async (id, feedback) => {
+    await api.atualizarStatusPost(id, "alteracao", feedback);
+    mostrar("Alteração enviada ao social media");
+    recarregarReal();
+  };
+
+  const listaPosts = usuario ? postsReais : posts;
+  const aoAprovar = usuario ? aprovarReal : aprovarDemo;
+  const aoReprovar = usuario ? reprovarReal : reprovarDemo;
 
   return (
     <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA }}>
@@ -436,18 +519,49 @@ export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia
                 }}>{v.rotulo}</button>
               ))}
             </div>
-            <button onClick={reiniciar} className="em-btn" title="Restaura os dados de demonstração originais" style={{
-              border: "none", background: "transparent", cursor: "pointer",
-              fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: CINZA,
-              textDecoration: "underline", padding: 0,
-            }}>Reiniciar demo</button>
+            {usuario && visao === "cliente" && clientesReais.length > 1 && (
+              <select
+                value={clienteVisualizado} onChange={e => setClienteVisualizado(e.target.value)}
+                style={{
+                  borderRadius: 999, border: `2px solid ${LAVANDA_2}`, padding: "6px 12px",
+                  fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: TINTA, outline: "none",
+                }}
+              >
+                {clientesReais.map(c => <option key={c.id} value={c.nome}>{c.nome}</option>)}
+              </select>
+            )}
+
+            {!usuario && (
+              <button onClick={reiniciar} className="em-btn" title="Restaura os dados de demonstração originais" style={{
+                border: "none", background: "transparent", cursor: "pointer",
+                fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: CINZA,
+                textDecoration: "underline", padding: 0,
+              }}>Reiniciar demo</button>
+            )}
 
             {usuario ? (
               <>
                 {usuario.tipo === "agencia" && aoAbrirAgencia && (
                   <Botao pequeno onClick={aoAbrirAgencia}>Squad e clientes</Botao>
                 )}
-                <span style={{ fontSize: 12, fontWeight: 700, color: CINZA }}>Olá, {usuario.nome}</span>
+                {usuario.tipo === "social_media" && aoAbrirClientes && (
+                  <Botao pequeno onClick={aoAbrirClientes}>Clientes</Botao>
+                )}
+                <button onClick={aoAbrirPerfil} className="em-btn" style={{
+                  display: "flex", alignItems: "center", gap: 8, border: "none", background: "transparent",
+                  cursor: "pointer", fontFamily: "inherit", padding: 0,
+                }}>
+                  <span style={{
+                    width: 26, height: 26, borderRadius: "50%", overflow: "hidden", background: LAVANDA_2,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 12, fontWeight: 800, color: ROXO, flexShrink: 0,
+                  }}>
+                    {usuario.foto_perfil_url
+                      ? <img src={usuario.foto_perfil_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      : usuario.nome?.[0]?.toUpperCase()}
+                  </span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: CINZA }}>Olá, {usuario.nome}</span>
+                </button>
                 <button onClick={aoSairConta} className="em-btn" style={{
                   border: "none", background: "transparent", cursor: "pointer",
                   fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: CINZA,
@@ -469,8 +583,29 @@ export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia
 
       <main style={{ maxWidth: 960, margin: "0 auto", padding: "24px 20px 60px" }}>
         {visao === "sm"
-          ? <VisaoSocialMedia posts={posts} />
-          : <VisaoCliente posts={posts} aoAprovar={aprovar} aoReprovar={reprovar} />}
+          ? (
+            <VisaoSocialMedia
+              posts={listaPosts}
+              clientes={clientesReais}
+              podeCriarPost={!!usuario}
+              mostrarFormulario={mostrarNovoPost}
+              aoAbrirFormulario={() => setMostrarNovoPost(true)}
+              aoFecharFormulario={() => setMostrarNovoPost(false)}
+              aoPostCriado={() => {
+                setMostrarNovoPost(false);
+                mostrar("✓ Post enviado pro cliente aprovar");
+                recarregarReal();
+              }}
+            />
+          )
+          : (
+            <VisaoCliente
+              posts={listaPosts}
+              aoAprovar={aoAprovar}
+              aoReprovar={aoReprovar}
+              nomeCliente={usuario ? clienteVisualizado : undefined}
+            />
+          )}
       </main>
 
       <Toast msg={toast} />

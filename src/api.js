@@ -14,10 +14,11 @@ export function limparToken() {
 
 async function requisitar(caminho, opcoes = {}) {
   const token = obterToken();
+  const ehFormData = opcoes.body instanceof FormData;
   const resposta = await fetch(`/api${caminho}`, {
     ...opcoes,
     headers: {
-      "Content-Type": "application/json",
+      ...(ehFormData ? {} : { "Content-Type": "application/json" }),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...opcoes.headers,
     },
@@ -46,4 +47,17 @@ export const api = {
   removerCliente: id => requisitar(`/clientes/${id}`, { method: "DELETE" }),
   rotacionarLinkCliente: id => requisitar(`/clientes/${id}/rotacionar-link`, { method: "POST" }),
   acessoCliente: token => requisitar(`/clientes/acesso/${token}`),
+
+  listarPosts: () => requisitar("/posts"),
+  criarPost: (clienteId, formData) => requisitar(`/posts/clientes/${clienteId}`, { method: "POST", body: formData }),
+  atualizarStatusPost: (id, status, feedback) =>
+    requisitar(`/posts/${id}`, { method: "PATCH", body: JSON.stringify({ status, feedback }) }),
+  removerPost: id => requisitar(`/posts/${id}`, { method: "DELETE" }),
+
+  listarPostsClientePublico: token => requisitar(`/posts/acesso/${token}`),
+  aprovarPostCliente: (token, postId) => requisitar(`/posts/acesso/${token}/${postId}/aprovar`, { method: "POST" }),
+  reprovarPostCliente: (token, postId, feedback) =>
+    requisitar(`/posts/acesso/${token}/${postId}/reprovar`, { method: "POST", body: JSON.stringify({ feedback }) }),
+
+  atualizarPerfil: formData => requisitar("/auth/perfil", { method: "PATCH", body: formData }),
 };

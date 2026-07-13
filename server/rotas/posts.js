@@ -1,0 +1,138 @@
+import { Router } from "express";
+import { db } from "../db.js";
+import { autenticar } from "../auth.js";
+import { uploadMidiasPost } from "../uploads.js";
+
+export const rotaPosts = Router();
+
+const TIPOS_VALIDOS = ["reels", "carrossel", "estatico"];
+const STATUS_VALIDOS = ["aguardando", "agendado", "publicado", "alteracao"];
+
+function donoDaCarteira(usuario) {
+  return usuario.tipo === "social_media" && usuario.agencia_id ? usuario.agencia_id : usuario.id;
+}
+
+function clienteAcessivel(usuario, clienteId) {
+  const cliente = db.prepare("SELECT * FROM clientes WHERE id = ?").get(clienteId);
+  if (!cliente) return null;
+  return cliente.dono_id === donoDaCarteira(usuario) ? cliente : null;
+}
+
+function carregarMidias(postId) {
+  return db.prepare("SELECT id, url, tipo, ordem FROM posts_midias WHERE post_id = ? ORDER BY ordem").all(postId);
+}
+
+function serializarPost(post, clienteNome) {
+  return {
+    id: post.id,
+    clienteId: post.cliente_id,
+    cliente: clienteNome,
+    tipo: post.tipo,
+    titulo: post.titulo,
+    legenda: post.legenda,
+    data: post.data_agendada,
+    hora: post.hora_agendada,
+    status: post.status,
+    feedback: post.feedback,
+    midias: carregarMidias(post.id),
+  };
+}
+
+/* lista todos os posts dos clientes acessíveis ao usuário autenticado */
+rotaPosts.get("/", autenticar, (req, res) => {
+  const donoId = donoDaCarteira(req.usuario);
+  const linhas = db.prepare(`
+    SELECT p.*, c.nome AS cliente_nome
+    FROM posts p JOIN clientes c ON c.id = p.cliente_id
+    WHERE c.dono_id = ?
+    ORDER BY p.criado_em DESC
+  `).all(donoId);
+  res.json({ posts: linhas.map(p => serializarPost(p, p.cliente_nome)) });
+});
+
+rotaPosts.post("/clientes/:clienteId", autenticar, uploadMidiasPost.array("midias", 10), (req, res) => {
+  const cliente = clienteAcessivel(req.usuario, req.params.clienteId);
+  if (!cliente) return res.status(404).json({ erro: "Cliente não encontrado." });
+
+  const { tipo, titulo, legenda, data, hora } = req.body || {};
+  if (!TIPOS_VALIDOS.includes(tipo)) return res.status(400).json({ erro: "Tipo de post inválido." });
+  if (!titulo?.trim()) return res.status(400).json({ erro: "Informe um título para o post." });
+  if (!req.files?.length) return res.status(400).json({ erro: "Envie ao menos uma imagem ou vídeo." });
+  if (tipo !== "carrossel" && req.files.length > 1) {
+    return res.status(400).json({ erro: "Apenas o formato Carrossel aceita mais de um arquivo." });
+  }
+
+  const resultado = db.prepare(`
+    INSERT INTO posts (cliente_id, autor_id, tipo, titulo, legenda, data_agendada, hora_agendada)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).run(cliente.id, req.usuario.id, tipo, titulo.trim(), legenda?.trim() || null, data || null, hora || null);
+
+  const inserirMidia = db.prepare("INSERT INTO posts_midias (post_id, url, tipo, ordem) VALUES (?, ?, ?, ?)");
+  req.files.forEach((arquivo, indice) => {
+    const tipoMidia = arquivo.mimetype.startsWith("video/") ? "video" : "imagem";
+    inserirMidia.run(resultado.lastInsertRowid, `/uploads/posts/${arquivo.filename}`, tipoMidia, indice);
+  });
+
+  const post = db.prepare("SELECT * FROM posts WHERE id = ?").get(resultado.lastInsertRowid);
+  res.status(201).json({ post: serializarPost(post, cliente.nome) });
+});
+
+rotaPosts.patch("/:id", autenticar, (req, res) => {
+  const post = db.prepare("SELECT * FROM posts WHERE id = ?").get(req.params.id);
+  if (!post || !clienteAcessivel(req.usuario, post.cliente_id)) {
+    return res.status(404).json({ erro: "Post não encontrado." });
+  }
+
+  const { status, feedback } = req.body || {};
+  if (!STATUS_VALIDOS.includes(status)) return res.status(400).json({ erro: "Status inválido." });
+
+  db.prepare("UPDATE posts SET status = ?, feedback = ? WHERE id = ?").run(status, feedback?.trim() || null, post.id);
+
+  const atualizado = db.prepare("SELECT * FROM posts WHERE id = ?").get(post.id);
+  const cliente = db.prepare("SELECT nome FROM clientes WHERE id = ?").get(post.cliente_id);
+  res.json({ post: serializarPost(atualizado, cliente.nome) });
+});
+
+rotaPosts.delete("/:id", autenticar, (req, res) => {
+  const post = db.prepare("SELECT * FROM posts WHERE id = ?").get(req.params.id);
+  if (!post || !clienteAcessivel(req.usuario, post.cliente_id)) {
+    return res.status(404).json({ erro: "Post não encontrado." });
+  }
+  db.prepare("DELETE FROM posts WHERE id = ?").run(post.id);
+  res.json({ ok: true });
+});
+
+/* pública: posts do cliente via link de acesso (sem senha) */
+rotaPosts.get("/acesso/:token", (req, res) => {
+  const cliente = db.prepare("SELECT * FROM clientes WHERE token_acesso = ?").get(req.params.token);
+  if (!cliente) return res.status(404).json({ erro: "Link inválido." });
+
+  const linhas = db.prepare("SELECT * FROM posts WHERE cliente_id = ? ORDER BY criado_em DESC").all(cliente.id);
+  res.json({ posts: linhas.map(p => serializarPost(p, cliente.nome)) });
+});
+
+function postDoClientePorToken(token, postId) {
+  const cliente = db.prepare("SELECT * FROM clientes WHERE token_acesso = ?").get(token);
+  if (!cliente) return null;
+  const post = db.prepare("SELECT * FROM posts WHERE id = ? AND cliente_id = ?").get(postId, cliente.id);
+  return post ? { post, cliente } : null;
+}
+
+rotaPosts.post("/acesso/:token/:postId/aprovar", (req, res) => {
+  const achado = postDoClientePorToken(req.params.token, req.params.postId);
+  if (!achado) return res.status(404).json({ erro: "Post não encontrado." });
+
+  db.prepare("UPDATE posts SET status = 'agendado', feedback = NULL WHERE id = ?").run(achado.post.id);
+  res.json({ ok: true });
+});
+
+rotaPosts.post("/acesso/:token/:postId/reprovar", (req, res) => {
+  const achado = postDoClientePorToken(req.params.token, req.params.postId);
+  if (!achado) return res.status(404).json({ erro: "Post não encontrado." });
+
+  const { feedback } = req.body || {};
+  if (!feedback?.trim()) return res.status(400).json({ erro: "Descreva a alteração desejada." });
+
+  db.prepare("UPDATE posts SET status = 'alteracao', feedback = ? WHERE id = ?").run(feedback.trim(), achado.post.id);
+  res.json({ ok: true });
+});

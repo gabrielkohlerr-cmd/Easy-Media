@@ -2,17 +2,22 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { LAVANDA, LAVANDA_2, TINTA, CINZA, ROXO } from "./theme.js";
 import { Cartao, Toast } from "./components.jsx";
-import { VisaoCliente, POSTS_INICIAIS } from "./App.jsx";
+import { VisaoCliente } from "./App.jsx";
 import { api } from "./api.js";
 
 export default function ClientePortal() {
   const { token } = useParams();
   const [cliente, setCliente] = useState(undefined);
-  const [posts, setPosts] = useState(POSTS_INICIAIS);
+  const [posts, setPosts] = useState([]);
   const [toast, setToast] = useState("");
 
+  const carregarPosts = () => {
+    api.listarPostsClientePublico(token).then(({ posts }) => setPosts(posts)).catch(() => {});
+  };
+
   useEffect(() => {
-    api.acessoCliente(token).then(({ cliente }) => setCliente(cliente)).catch(() => setCliente(null));
+    api.acessoCliente(token).then(({ cliente }) => { setCliente(cliente); carregarPosts(); }).catch(() => setCliente(null));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   const mostrar = msg => {
@@ -20,14 +25,16 @@ export default function ClientePortal() {
     setTimeout(() => setToast(""), 2600);
   };
 
-  const aprovar = id => {
-    setPosts(ps => ps.map(p => (p.id === id ? { ...p, status: "agendado" } : p)));
+  const aprovar = async id => {
+    await api.aprovarPostCliente(token, id);
     mostrar("✓ Post aprovado e agendado no Instagram");
+    carregarPosts();
   };
 
-  const reprovar = (id, feedback) => {
-    setPosts(ps => ps.map(p => (p.id === id ? { ...p, status: "alteracao", feedback } : p)));
+  const reprovar = async (id, feedback) => {
+    await api.reprovarPostCliente(token, id, feedback);
     mostrar("Alteração enviada ao social media");
+    carregarPosts();
   };
 
   if (cliente === undefined) return null;

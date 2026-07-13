@@ -35,4 +35,36 @@ db.exec(`
     aceito_por INTEGER REFERENCES usuarios(id) ON DELETE SET NULL,
     criado_em TEXT NOT NULL DEFAULT (datetime('now'))
   );
+
+  CREATE TABLE IF NOT EXISTS posts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    cliente_id INTEGER NOT NULL REFERENCES clientes(id) ON DELETE CASCADE,
+    autor_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    tipo TEXT NOT NULL CHECK(tipo IN ('reels','carrossel','estatico')),
+    titulo TEXT NOT NULL,
+    legenda TEXT,
+    data_agendada TEXT,
+    hora_agendada TEXT,
+    status TEXT NOT NULL DEFAULT 'aguardando' CHECK(status IN ('aguardando','agendado','publicado','alteracao')),
+    feedback TEXT,
+    criado_em TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS posts_midias (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    url TEXT NOT NULL,
+    tipo TEXT NOT NULL CHECK(tipo IN ('imagem','video')),
+    ordem INTEGER NOT NULL DEFAULT 0
+  );
 `);
+
+function adicionarColunaSeNaoExistir(tabela, coluna, definicao) {
+  const colunas = db.prepare(`PRAGMA table_info(${tabela})`).all();
+  if (!colunas.some(c => c.name === coluna)) {
+    db.exec(`ALTER TABLE ${tabela} ADD COLUMN ${coluna} ${definicao}`);
+  }
+}
+
+adicionarColunaSeNaoExistir("usuarios", "foto_perfil_url", "TEXT");
+adicionarColunaSeNaoExistir("usuarios", "bio", "TEXT");
