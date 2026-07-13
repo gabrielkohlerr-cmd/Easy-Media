@@ -74,6 +74,50 @@ db.exec(`
     reuniao_id INTEGER NOT NULL REFERENCES reunioes(id) ON DELETE CASCADE,
     email TEXT NOT NULL
   );
+
+  CREATE TABLE IF NOT EXISTS quadros_kanban (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    tipo TEXT NOT NULL CHECK(tipo IN ('pessoal','squad')),
+    dono_id INTEGER REFERENCES usuarios(id) ON DELETE CASCADE,
+    agencia_id INTEGER REFERENCES usuarios(id) ON DELETE CASCADE,
+    criado_em TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS cartoes_kanban (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    quadro_id INTEGER NOT NULL REFERENCES quadros_kanban(id) ON DELETE CASCADE,
+    coluna TEXT NOT NULL DEFAULT 'solicitacoes' CHECK(coluna IN (
+      'solicitacoes','urgencia','revisao_textual','revisao_artes','pit_stop','aprovacao_cliente','entregue'
+    )),
+    titulo TEXT NOT NULL,
+    descricao TEXT,
+    autor_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    criado_em TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS cartoes_kanban_membros (
+    cartao_id INTEGER NOT NULL REFERENCES cartoes_kanban(id) ON DELETE CASCADE,
+    usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    PRIMARY KEY (cartao_id, usuario_id)
+  );
+
+  CREATE TABLE IF NOT EXISTS cartoes_kanban_comentarios (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    cartao_id INTEGER NOT NULL REFERENCES cartoes_kanban(id) ON DELETE CASCADE,
+    autor_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    texto TEXT NOT NULL,
+    criado_em TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS cartoes_kanban_anexos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    cartao_id INTEGER NOT NULL REFERENCES cartoes_kanban(id) ON DELETE CASCADE,
+    tipo TEXT NOT NULL CHECK(tipo IN ('arquivo','link')),
+    url TEXT NOT NULL,
+    nome TEXT,
+    autor_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    criado_em TEXT NOT NULL DEFAULT (datetime('now'))
+  );
 `);
 
 function adicionarColunaSeNaoExistir(tabela, coluna, definicao) {

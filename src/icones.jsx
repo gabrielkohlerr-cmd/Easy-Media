@@ -245,3 +245,29 @@ export function IconeRaio(props) {
     </Svg>
   );
 }
+
+export function IconeAnexo(props) {
+  return (
+    <Svg {...props}>
+      <path d="M7.5 12.9 15.2 5.2a3 3 0 1 1 4.2 4.3l-9 9a5 5 0 1 1-7.1-7.1L11.9 3" />
+    </Svg>
+  );
+}
+
+export function IconeLink(props) {
+  return (
+    <Svg {...props}>
+      <path d="M9.5 14.5 14.5 9.5" />
+      <path d="M11 6.5 13 4.5a3.5 3.5 0 0 1 5 5l-2 2" />
+      <path d="M13 17.5 11 19.5a3.5 3.5 0 0 1-5-5l2-2" />
+    </Svg>
+  );
+}
+
+export function IconeMais(props) {
+  return (
+    <Svg {...props}>
+      <path d="M12 5v14M5 12h14" />
+    </Svg>
+  );
+}

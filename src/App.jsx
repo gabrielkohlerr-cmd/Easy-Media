@@ -9,7 +9,7 @@ import {
 import { Pill, Botao, Cartao, Toast, Marca } from "./components.jsx";
 import {
   IconeGrafico, IconeComentario, IconeAlvo, IconeImagem, IconeLapis, IconeIA,
-  IconeCaixaEntrada, IconeCheck, IconeRaio, IconeCalendario, IconeAgenda,
+  IconeCaixaEntrada, IconeCheck, IconeRaio, IconeCalendario, IconeAgenda, IconeKanban,
 } from "./icones.jsx";
 import { api } from "./api.js";
 import NovoPostForm from "./NovoPostForm.jsx";
@@ -488,7 +488,7 @@ function carregarPosts() {
   return POSTS_INICIAIS;
 }
 
-export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia, aoAbrirPerfil, aoAbrirClientes, aoAbrirCalendario, aoAbrirAgenda }) {
+export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia, aoAbrirPerfil, aoAbrirClientes, aoAbrirCalendario, aoAbrirAgenda, aoAbrirKanban }) {
   const podeVerVisaoCliente = !usuario || usuario.tipo === "agencia";
   const [visao, setVisao] = useState("sm");
   const [posts, setPosts] = useState(carregarPosts);
@@ -624,6 +624,13 @@ export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia
                   <Botao pequeno variante="fantasma" onClick={aoAbrirAgenda}>
                     <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
                       <IconeAgenda tamanho={14} /> Agenda
+                    </span>
+                  </Botao>
+                )}
+                {aoAbrirKanban && (
+                  <Botao pequeno variante="fantasma" onClick={aoAbrirKanban}>
+                    <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <IconeKanban tamanho={14} /> Kanban
                     </span>
                   </Botao>
                 )}

@@ -73,4 +73,22 @@ export const api = {
     requisitar(`/instagram/posts/${postId}/comentarios/${comentarioId}/responder`, {
       method: "POST", body: JSON.stringify({ mensagem }),
     }),
+
+  listarQuadrosKanban: () => requisitar("/kanban/quadros"),
+  listarMembrosQuadroKanban: quadroId => requisitar(`/kanban/quadros/${quadroId}/membros`),
+  listarCartoesKanban: quadroId => requisitar(`/kanban/quadros/${quadroId}/cartoes`),
+  criarCartaoKanban: (quadroId, dados) =>
+    requisitar(`/kanban/quadros/${quadroId}/cartoes`, { method: "POST", body: JSON.stringify(dados) }),
+  obterCartaoKanban: id => requisitar(`/kanban/cartoes/${id}`),
+  atualizarCartaoKanban: (id, dados) => requisitar(`/kanban/cartoes/${id}`, { method: "PATCH", body: JSON.stringify(dados) }),
+  removerCartaoKanban: id => requisitar(`/kanban/cartoes/${id}`, { method: "DELETE" }),
+  adicionarMembroCartao: (id, usuarioId) =>
+    requisitar(`/kanban/cartoes/${id}/membros`, { method: "POST", body: JSON.stringify({ usuarioId }) }),
+  removerMembroCartao: (id, usuarioId) => requisitar(`/kanban/cartoes/${id}/membros/${usuarioId}`, { method: "DELETE" }),
+  comentarCartao: (id, texto) =>
+    requisitar(`/kanban/cartoes/${id}/comentarios`, { method: "POST", body: JSON.stringify({ texto }) }),
+  anexarArquivoCartao: (id, formData) => requisitar(`/kanban/cartoes/${id}/arquivos`, { method: "POST", body: formData }),
+  anexarLinkCartao: (id, url, nome) =>
+    requisitar(`/kanban/cartoes/${id}/links`, { method: "POST", body: JSON.stringify({ url, nome }) }),
+  removerAnexoCartao: (id, anexoId) => requisitar(`/kanban/cartoes/${id}/anexos/${anexoId}`, { method: "DELETE" }),
 };

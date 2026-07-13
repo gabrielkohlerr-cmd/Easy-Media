@@ -37,6 +37,14 @@ Duas ferramentas de calendário, para não confundir:
   precisar de credenciais de API — o próprio Google envia o convite aos
   e-mails informados quando a reunião é salva).
 
+Além disso, tem um **Kanban** (aba própria) pra organizar o processo de
+produção com cartões arrastáveis entre 7 colunas fixas — Solicitações,
+Urgência, Revisão Textual, Revisão das artes, Pit Stop, Aprovação do
+cliente e Entregue/Concluído. Cada cartão aceita membros, comentários,
+anexos e links. Todo usuário tem um quadro pessoal; quem é de uma agência
+(a própria agência e os social medias do squad) também divide um quadro
+compartilhado, visível a todo mundo do squad.
+
 ## Estrutura
 
 - `src/` — frontend (Vite + React + react-router).
