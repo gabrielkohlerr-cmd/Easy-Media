@@ -54,14 +54,14 @@ export const POSTS_INICIAIS = [
   {
     id: 4, cliente: "Nakai Sushi", tipo: "Reels", emoji: "🔥",
     titulo: "Prato novo: hot filadélfia trufado",
-    legenda: "Chegou o hot filadélfia trufado — crocante por fora, cremoso por dentro. 🔥",
+    legenda: "Chegou o hot filadélfia trufado, crocante por fora e cremoso por dentro. 🔥",
     data: "11/07", hora: "19:00", status: "publicado", feedback: "",
     grad: "linear-gradient(135deg,#5B21B6,#C4B5FD)",
     metricas: { alcance: 18400, curtidas: 1240, comentarios: 96, salvos: 210 },
   },
   {
     id: 5, cliente: "CarolLe", tipo: "Carrossel", emoji: "👗",
-    titulo: "Lookbook inverno — parte 2",
+    titulo: "Lookbook inverno, parte 2",
     legenda: "O inverno chegou com tudo na CarolLe. Deslize e escolha o seu favorito. 🧥",
     data: "16/07", hora: "11:00", status: "agendado", feedback: "",
     grad: "linear-gradient(135deg,#7C3AED,#DDD6FE)",

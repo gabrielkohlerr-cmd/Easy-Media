@@ -56,7 +56,7 @@ async function tentarPublicarNoInstagram(post, cliente, baseUrl) {
 
   if (midias.some(m => m.tipo === "video")) {
     db.prepare("UPDATE posts SET instagram_erro = ? WHERE id = ?")
-      .run("Publicação automática de vídeo ainda não é suportada — publique manualmente pelo Instagram.", post.id);
+      .run("Publicação automática de vídeo ainda não é suportada. Publique manualmente pelo Instagram.", post.id);
     return;
   }
 

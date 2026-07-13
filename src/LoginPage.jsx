@@ -51,7 +51,7 @@ const DEPOIS = [
   "Tudo num único ambiente",
   "Cada um sabe o que fazer",
   "Cliente aprova numa página só",
-  "Aprovou, publicou — automático",
+  "Aprovou, publicação automática",
 ];
 
 const AREAS = [
@@ -100,11 +100,11 @@ const AREAS = [
 const DEPOIMENTOS = [
   {
     nome: "Henrique Lyra", cargo: "Social Media Freelancer", topico: "Centralização das tarefas",
-    texto: "Cuido de vários clientes sozinho — antes era planilha pra cada um, hoje é tudo num só lugar. Enxergo minha semana inteira de novo.",
+    texto: "Cuido de vários clientes sozinho. Antes era planilha pra cada um, hoje é tudo num só lugar. Enxergo minha semana inteira de novo.",
   },
   {
     nome: "Eduarda Dijck", cargo: "Atendimento Publicitário na Agência UM", topico: "Comunicação com cliente",
-    texto: "Antes, aprovação era e-mail sem fim. Hoje o cliente vê e aprova direto na plataforma — sem ruído na comunicação.",
+    texto: "Antes, aprovação era e-mail sem fim. Hoje o cliente vê e aprova direto na plataforma, sem ruído na comunicação.",
   },
   {
     nome: "Guilherme Rego", cargo: "Marketing na BG Promoções", topico: "Organização da equipe",
@@ -112,7 +112,7 @@ const DEPOIMENTOS = [
   },
   {
     nome: "Manuela Godoy", cargo: "Analista de Marketing Jr na Viva do Brasil", topico: "Automação nas postagens",
-    texto: "Eu aprovo o post e pronto — ele vai pro Instagram sozinho, no horário certo. Não preciso mais cobrar ninguém.",
+    texto: "Eu aprovo o post e pronto. Ele vai pro Instagram sozinho, no horário certo. Não preciso mais cobrar ninguém.",
   },
 ];
 
@@ -335,7 +335,7 @@ function CartaoLeadCliente({ aoEnviar }) {
         </div>
       </div>
       <p style={{ marginTop: 0, fontSize: 14, color: CINZA, fontWeight: 600, lineHeight: 1.5 }}>
-        Seu acesso é por um link único, enviado pela sua agência ou social media — sem senha.
+        Seu acesso é por um link único, enviado pela sua agência ou social media, sem senha.
         Ainda não recebeu? Deixe seu contato abaixo.
       </p>
       {enviado ? (
@@ -445,7 +445,7 @@ export default function PaginaLogin() {
             margin: "18px auto 0", maxWidth: 460, fontSize: 16, fontWeight: 500,
             color: "rgba(255,255,255,.78)", lineHeight: 1.6,
           }}>
-            Clientes, conteúdos, aprovações e publicações — organizados num só lugar.
+            Clientes, conteúdos, aprovações e publicações, organizados num só lugar.
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 30, flexWrap: "wrap" }}>
             <Botao grande variante="claro" onClick={() => scrollPara("cadastro")}>
@@ -530,7 +530,7 @@ export default function PaginaLogin() {
             Como você vai usar a EZ Media?
           </h2>
           <p style={{ textAlign: "center", color: CINZA, fontWeight: 500, margin: "8px 0 28px" }}>
-            Escolha seu perfil e comece agora — o cadastro leva menos de 1 minuto.
+            Escolha seu perfil e comece agora. O cadastro leva menos de 1 minuto.
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
             {PERSONAS.map(p => (
@@ -582,7 +582,7 @@ export default function PaginaLogin() {
             Um sistema operacional pra gestão de social media
           </h2>
           <p style={{ margin: "0 0 20px", fontSize: 14, fontWeight: 500, color: "rgba(255,255,255,.62)", textAlign: "center" }}>
-            Não é uma funcionalidade isolada — é toda a operação conectada num só ambiente.
+            Não é uma funcionalidade isolada. É toda a operação conectada num só ambiente.
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14 }}>
             {AREAS.map(a => (
