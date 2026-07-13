@@ -1,7 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap');
+
 * {
   box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
 }
 
 body {
   margin: 0;
+  font-family: 'Nunito', system-ui, sans-serif;
+}
+
+.em-btn {
+  transition: transform .12s ease, opacity .12s ease;
+}
+.em-btn:hover {
+  transform: translateY(-1px);
+  opacity: .92;
+}
+.em-btn:focus-visible {
+  outline: 3px solid #8B5CF6;
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .em-btn { transition: none; }
 }

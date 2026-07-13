@@ -3,22 +3,15 @@ import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Legend,
 } from "recharts";
+import {
+  ROXO, ROXO_ESCURO, ROXO_CLARO, LAVANDA, LAVANDA_2, TINTA, CINZA, VERDE, AMBAR, ROSA,
+} from "./theme.js";
+import { Pill, Botao, Cartao, Toast } from "./components.jsx";
 
 /* ============ EASY MEDIA — protótipo funcional ============
    Roxo + branco · minimalista · tipografia bold arredondada
    Duas visões: Social Media (gestão) e Cliente (aprovação)
 =============================================================== */
-
-const ROXO = "#6D28D9";
-const ROXO_ESCURO = "#4C1D95";
-const ROXO_CLARO = "#8B5CF6";
-const LAVANDA = "#F5F3FF";
-const LAVANDA_2 = "#EDE9FE";
-const TINTA = "#221448";
-const CINZA = "#7A7290";
-const VERDE = "#10B981";
-const AMBAR = "#F59E0B";
-const ROSA = "#F43F5E";
 
 const STATUS = {
   aguardando: { label: "Aguardando aprovação", cor: AMBAR, bg: "#FEF3C7" },
@@ -106,41 +99,7 @@ const INSIGHTS = [
   },
 ];
 
-/* ---------- componentes base ---------- */
-
-function Pill({ children, cor, bg }) {
-  return (
-    <span style={{
-      fontSize: 12, fontWeight: 800, color: cor, background: bg,
-      padding: "4px 12px", borderRadius: 999, whiteSpace: "nowrap",
-    }}>{children}</span>
-  );
-}
-
-function Botao({ children, onClick, variante = "primario", pequeno }) {
-  const estilos = {
-    primario: { background: ROXO, color: "#fff", border: "none" },
-    fantasma: { background: "transparent", color: ROXO, border: `2px solid ${LAVANDA_2}` },
-    perigo: { background: "#FFF1F2", color: ROSA, border: "none" },
-    sucesso: { background: VERDE, color: "#fff", border: "none" },
-  }[variante];
-  return (
-    <button onClick={onClick} className="em-btn" style={{
-      ...estilos, fontFamily: "inherit", fontWeight: 800,
-      fontSize: pequeno ? 13 : 15, padding: pequeno ? "8px 16px" : "12px 22px",
-      borderRadius: 999, cursor: "pointer",
-    }}>{children}</button>
-  );
-}
-
-function Cartao({ children, style }) {
-  return (
-    <div style={{
-      background: "#fff", borderRadius: 24, padding: 20,
-      border: `1px solid ${LAVANDA_2}`, ...style,
-    }}>{children}</div>
-  );
-}
+/* ---------- componentes específicos do painel ---------- */
 
 function Stat({ rotulo, valor, detalhe, destaque }) {
   return (
@@ -162,18 +121,6 @@ function PreviaPost({ post, grande }) {
     }}>
       <span role="img" aria-label={post.tipo}>{post.emoji}</span>
     </div>
-  );
-}
-
-function Toast({ msg }) {
-  if (!msg) return null;
-  return (
-    <div style={{
-      position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)",
-      background: TINTA, color: "#fff", fontWeight: 800, fontSize: 14,
-      padding: "12px 24px", borderRadius: 999, zIndex: 50,
-      boxShadow: "0 8px 24px rgba(34,20,72,.25)",
-    }}>{msg}</div>
   );
 }
 
@@ -422,7 +369,7 @@ function carregarPosts() {
   return POSTS_INICIAIS;
 }
 
-export default function EasyMedia() {
+export default function EasyMedia({ aoSair }) {
   const [visao, setVisao] = useState("sm");
   const [posts, setPosts] = useState(carregarPosts);
   const [toast, setToast] = useState("");
@@ -456,16 +403,7 @@ export default function EasyMedia() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: LAVANDA, fontFamily: "'Nunito', system-ui, sans-serif", color: TINTA }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap');
-        * { -webkit-font-smoothing: antialiased; }
-        .em-btn { transition: transform .12s ease, opacity .12s ease; }
-        .em-btn:hover { transform: translateY(-1px); opacity: .92; }
-        .em-btn:focus-visible { outline: 3px solid ${ROXO_CLARO}; outline-offset: 2px; }
-        @media (prefers-reduced-motion: reduce) { .em-btn { transition: none; } }
-      `}</style>
-
+    <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA }}>
       <header style={{
         position: "sticky", top: 0, zIndex: 20, background: "rgba(255,255,255,.92)",
         backdropFilter: "blur(8px)", borderBottom: `1px solid ${LAVANDA_2}`,
@@ -503,6 +441,13 @@ export default function EasyMedia() {
               fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: CINZA,
               textDecoration: "underline", padding: 0,
             }}>Reiniciar demo</button>
+            {aoSair && (
+              <button onClick={aoSair} className="em-btn" style={{
+                border: "none", background: "transparent", cursor: "pointer",
+                fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: CINZA,
+                textDecoration: "underline", padding: 0,
+              }}>← Voltar ao site</button>
+            )}
           </div>
         </div>
       </header>

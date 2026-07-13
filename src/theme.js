@@ -1,0 +1,10 @@
+export const ROXO = "#6D28D9";
+export const ROXO_ESCURO = "#4C1D95";
+export const ROXO_CLARO = "#8B5CF6";
+export const LAVANDA = "#F5F3FF";
+export const LAVANDA_2 = "#EDE9FE";
+export const TINTA = "#221448";
+export const CINZA = "#7A7290";
+export const VERDE = "#10B981";
+export const AMBAR = "#F59E0B";
+export const ROSA = "#F43F5E";
