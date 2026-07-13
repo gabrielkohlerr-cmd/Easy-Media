@@ -88,7 +88,7 @@ deploys, é preciso um plano pago com "Persistent Disk".
 ## Conectar o Instagram de um cliente
 
 Cada cliente da carteira pode ter o próprio Instagram conectado (botão
-"📸 Conectar Instagram" na tela de clientes), autorizando a EZ Media a
+"Conectar Instagram" na tela de clientes), autorizando a EZ Media a
 publicar posts e responder comentários em nome daquela conta. Isso usa a
 API oficial do Instagram (via Meta) e **exige credenciais reais** — sem
 elas, o botão mostra um aviso e nada quebra, mas a conexão não funciona.
@@ -121,3 +121,19 @@ Limitações da integração atual:
   (fica registrado o motivo no post, pra publicar manualmente).
 - Os tokens de acesso são de longa duração (~60 dias) mas não há rotina
   automática de renovação ainda — reconectar manualmente quando expirar.
+
+## Vídeo do hero da página inicial
+
+O hero da home (`src/LoginPage.jsx`) está preparado pra tocar em loop, sem
+áudio, um vídeo de fundo (ex: um escritório de agência em pleno caos, com
+um corte pro momento em que a EZ Media aparece na tela de quem está calmo
+no meio da confusão). Basta colocar o arquivo em:
+
+```
+public/video/escritorio-caos.mp4
+```
+
+Sem o arquivo, o hero cai graciosamente pra um fundo em gradiente — o
+layout não quebra, só fica sem o vídeo. Formatos recomendados: MP4 (H.264),
+1920×1080 ou 1280×720, até ~15-20s em loop, sem trilha sonora (o `<video>`
+já é forçado a `muted`).

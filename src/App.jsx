@@ -7,6 +7,10 @@ import {
   ROXO, ROXO_ESCURO, ROXO_CLARO, LAVANDA, LAVANDA_2, TINTA, CINZA, VERDE, AMBAR, ROSA,
 } from "./theme.js";
 import { Pill, Botao, Cartao, Toast, Marca } from "./components.jsx";
+import {
+  IconeGrafico, IconeComentario, IconeAlvo, IconeImagem, IconeLapis, IconeIA,
+  IconeCaixaEntrada, IconeCheck, IconeRaio, IconeCalendario, IconeAgenda,
+} from "./icones.jsx";
 import { api } from "./api.js";
 import NovoPostForm from "./NovoPostForm.jsx";
 import RevisarPostForm from "./RevisarPostForm.jsx";
@@ -91,15 +95,15 @@ const POR_FORMATO = [
 
 const INSIGHTS = [
   {
-    icone: "📈", titulo: "Reels às 19h lideram",
+    Icone: IconeGrafico, titulo: "Reels às 19h lideram",
     texto: "Os Reels publicados às 19h para a Nakai tiveram 42% mais alcance que a média. Mantenha esse horário nas próximas campanhas.",
   },
   {
-    icone: "💬", titulo: "Legendas com pergunta engajam mais",
+    Icone: IconeComentario, titulo: "Legendas com pergunta engajam mais",
     texto: "Posts que terminam com pergunta geraram 2,1x mais comentários neste mês. Teste CTAs de conversa no próximo carrossel.",
   },
   {
-    icone: "🎯", titulo: "Carrossel educativo salva mais",
+    Icone: IconeAlvo, titulo: "Carrossel educativo salva mais",
     texto: "Conteúdo de curiosidades teve 3x mais salvamentos. Vale transformar em série quinzenal para a Nakai.",
   },
 ];
@@ -139,14 +143,25 @@ export function PreviaPost({ post, grande }) {
     );
   }
 
+  if (post.emoji) {
+    return (
+      <div style={{
+        background: post.grad || "linear-gradient(135deg,#7C3AED,#C4B5FD)", borderRadius: 20,
+        height: altura, display: "flex",
+        alignItems: "center", justifyContent: "center",
+        fontSize: grande ? 56 : 36,
+      }}>
+        <span role="img" aria-label={post.tipo}>{post.emoji}</span>
+      </div>
+    );
+  }
+
   return (
     <div style={{
-      background: post.grad || "linear-gradient(135deg,#7C3AED,#C4B5FD)", borderRadius: 20,
-      height: altura, display: "flex",
-      alignItems: "center", justifyContent: "center",
-      fontSize: grande ? 56 : 36,
+      background: LAVANDA_2, borderRadius: 20, height: altura,
+      display: "flex", alignItems: "center", justifyContent: "center",
     }}>
-      <span role="img" aria-label={post.tipo}>{post.emoji || "🖼️"}</span>
+      <IconeImagem tamanho={grande ? 44 : 28} style={{ color: CINZA }} />
     </div>
   );
 }
@@ -252,8 +267,8 @@ function VisaoSocialMedia({ posts, clientes, podeCriarPost, mostrarFormulario, a
 
       {alteracoes.length > 0 && (
         <Cartao style={{ background: "#FFF1F2", border: "1px solid #FECDD3" }}>
-          <h3 style={{ margin: "0 0 10px", fontSize: 16, fontWeight: 800, color: ROSA }}>
-            ✏️ Alterações solicitadas pelo cliente
+          <h3 style={{ margin: "0 0 10px", display: "flex", alignItems: "center", gap: 8, fontSize: 16, fontWeight: 800, color: ROSA }}>
+            <IconeLapis tamanho={17} /> Alterações solicitadas pelo cliente
           </h3>
           {alteracoes.map(p => (
             <div key={p.id} style={{ display: "grid", gap: 10, background: "#fff", borderRadius: 18, padding: 12, marginBottom: 8 }}>
@@ -264,7 +279,11 @@ function VisaoSocialMedia({ posts, clientes, podeCriarPost, mostrarFormulario, a
                   <div style={{ fontSize: 13, color: CINZA, fontWeight: 600 }}>“{p.feedback}”</div>
                 </div>
                 {podeCriarPost && revisandoId !== p.id && (
-                  <Botao pequeno onClick={() => setRevisandoId(p.id)}>✏️ Revisar</Botao>
+                  <Botao pequeno onClick={() => setRevisandoId(p.id)}>
+                    <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <IconeLapis tamanho={14} /> Revisar
+                    </span>
+                  </Botao>
                 )}
               </div>
               {revisandoId === p.id && (
@@ -309,7 +328,9 @@ function VisaoSocialMedia({ posts, clientes, podeCriarPost, mostrarFormulario, a
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 12, fontWeight: 800, color: ROXO }}>{p.cliente} · {TIPO_LABEL[p.tipo] || p.tipo}</div>
                   <div style={{ fontWeight: 800, color: TINTA, fontSize: 15 }}>{p.titulo}</div>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: CINZA }}>📅 {p.data} às {p.hora}</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 700, color: CINZA }}>
+                    <IconeCalendario tamanho={13} /> {p.data} às {p.hora}
+                  </div>
                 </div>
                 <Pill cor={s.cor} bg={s.bg}>{s.label}</Pill>
               </div>
@@ -319,14 +340,18 @@ function VisaoSocialMedia({ posts, clientes, podeCriarPost, mostrarFormulario, a
       </Cartao>
 
       <Cartao style={{ background: `linear-gradient(135deg, ${ROXO_ESCURO}, ${ROXO})` }}>
-        <h3 style={{ margin: "0 0 4px", fontSize: 18, fontWeight: 800, color: "#fff" }}>💡 Insights para as próximas campanhas</h3>
+        <h3 style={{ margin: "0 0 4px", display: "flex", alignItems: "center", gap: 8, fontSize: 18, fontWeight: 800, color: "#fff" }}>
+          <IconeIA tamanho={19} /> Insights para as próximas campanhas
+        </h3>
         <p style={{ margin: "0 0 14px", fontSize: 13, fontWeight: 600, color: "#DDD6FE" }}>
           Gerados a partir do desempenho real dos posts conectados ao Instagram.
         </p>
         <div style={{ display: "grid", gap: 10 }}>
           {INSIGHTS.map((i, idx) => (
             <div key={idx} style={{ background: "rgba(255,255,255,.12)", borderRadius: 18, padding: 14 }}>
-              <div style={{ fontWeight: 800, color: "#fff", fontSize: 14 }}>{i.icone} {i.titulo}</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 7, fontWeight: 800, color: "#fff", fontSize: 14 }}>
+                <i.Icone tamanho={16} /> {i.titulo}
+              </div>
               <div style={{ fontSize: 13, color: "#EDE9FE", fontWeight: 600, marginTop: 2 }}>{i.texto}</div>
             </div>
           ))}
@@ -359,7 +384,9 @@ export function VisaoCliente({ posts, aoAprovar, aoReprovar, nomeCliente = "Naka
 
       {pendentes.length === 0 && (
         <Cartao style={{ textAlign: "center", padding: 40 }}>
-          <div style={{ fontSize: 40 }}>{doCliente.length === 0 ? "📭" : "🎉"}</div>
+          <div style={{ display: "flex", justifyContent: "center", color: CINZA, marginBottom: 6 }}>
+            {doCliente.length === 0 ? <IconeCaixaEntrada tamanho={40} /> : <IconeCheck tamanho={40} />}
+          </div>
           <div style={{ fontWeight: 800, color: TINTA, fontSize: 18 }}>
             {doCliente.length === 0 ? "Nenhum post enviado ainda" : "Tudo aprovado!"}
           </div>
@@ -375,7 +402,9 @@ export function VisaoCliente({ posts, aoAprovar, aoReprovar, nomeCliente = "Naka
         <Cartao key={p.id}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
             <Pill cor={ROXO} bg={LAVANDA_2}>{TIPO_LABEL[p.tipo] || p.tipo}</Pill>
-            <span style={{ fontSize: 13, fontWeight: 800, color: CINZA }}>📅 {p.data} às {p.hora}</span>
+            <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 13, fontWeight: 800, color: CINZA }}>
+              <IconeCalendario tamanho={14} /> {p.data} às {p.hora}
+            </span>
           </div>
           <PreviaPost post={p} grande />
           <h3 style={{ margin: "14px 0 4px", fontSize: 17, fontWeight: 800, color: TINTA }}>{p.titulo}</h3>
@@ -414,8 +443,8 @@ export function VisaoCliente({ posts, aoAprovar, aoReprovar, nomeCliente = "Naka
 
       {publicado && (
         <Cartao>
-          <h3 style={{ margin: "0 0 12px", fontSize: 18, fontWeight: 800, color: TINTA }}>
-            ⚡ Desempenho em tempo real
+          <h3 style={{ margin: "0 0 12px", display: "flex", alignItems: "center", gap: 8, fontSize: 18, fontWeight: 800, color: TINTA }}>
+            <IconeRaio tamanho={18} /> Desempenho em tempo real
           </h3>
           <div style={{ display: "flex", gap: 12, alignItems: "center", background: LAVANDA, borderRadius: 18, padding: 12, marginBottom: 14 }}>
             <div style={{ width: 56, flexShrink: 0 }}><PreviaPost post={publicado} /></div>
@@ -585,10 +614,18 @@ export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia
                   <Botao pequeno onClick={aoAbrirClientes}>Clientes</Botao>
                 )}
                 {aoAbrirCalendario && (
-                  <Botao pequeno variante="fantasma" onClick={aoAbrirCalendario}>📅 Calendário</Botao>
+                  <Botao pequeno variante="fantasma" onClick={aoAbrirCalendario}>
+                    <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <IconeCalendario tamanho={14} /> Calendário
+                    </span>
+                  </Botao>
                 )}
                 {aoAbrirAgenda && (
-                  <Botao pequeno variante="fantasma" onClick={aoAbrirAgenda}>🗓️ Agenda</Botao>
+                  <Botao pequeno variante="fantasma" onClick={aoAbrirAgenda}>
+                    <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <IconeAgenda tamanho={14} /> Agenda
+                    </span>
+                  </Botao>
                 )}
                 <button onClick={aoAbrirPerfil} className="em-btn" style={{
                   display: "flex", alignItems: "center", gap: 8, border: "none", background: "transparent",

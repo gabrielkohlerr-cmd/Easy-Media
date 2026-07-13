@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ROXO, LAVANDA, LAVANDA_2, TINTA, CINZA, ROSA } from "./theme.js";
 import { Cartao, Botao } from "./components.jsx";
+import { IconeAlerta, IconeCheck, IconeAperto } from "./icones.jsx";
 import { useAuth } from "./AuthContext.jsx";
 import { api } from "./api.js";
 
@@ -34,7 +35,9 @@ export default function ConvitePage() {
     return (
       <Tela>
         <Cartao style={{ textAlign: "center", padding: 32 }}>
-          <div style={{ fontSize: 32 }}>⚠️</div>
+          <div style={{ display: "flex", justifyContent: "center", color: CINZA, marginBottom: 6 }}>
+            <IconeAlerta tamanho={32} />
+          </div>
           <h1 style={{ fontSize: 18, fontWeight: 800, color: TINTA }}>Convite indisponível</h1>
           <p style={{ color: CINZA, fontWeight: 600 }}>
             Esse link de convite já foi usado, revogado ou não existe.
@@ -51,7 +54,9 @@ export default function ConvitePage() {
     return (
       <Tela>
         <Cartao style={{ textAlign: "center", padding: 32 }}>
-          <div style={{ fontSize: 32 }}>🎉</div>
+          <div style={{ display: "flex", justifyContent: "center", color: ROXO, marginBottom: 6 }}>
+            <IconeCheck tamanho={32} />
+          </div>
           <h1 style={{ fontSize: 18, fontWeight: 800, color: TINTA }}>Você entrou no squad de {agenciaNome}!</h1>
           <p style={{ color: CINZA, fontWeight: 600 }}>Agora você já pode acessar o painel de conteúdo.</p>
           <Botao onClick={() => navigate("/painel")}>Ir para o painel</Botao>
@@ -89,7 +94,9 @@ export default function ConvitePage() {
     return (
       <Tela>
         <Cartao style={{ textAlign: "center", padding: 32 }}>
-          <div style={{ fontSize: 32 }}>🤝</div>
+          <div style={{ display: "flex", justifyContent: "center", color: ROXO, marginBottom: 6 }}>
+            <IconeAperto tamanho={32} />
+          </div>
           <h1 style={{ fontSize: 18, fontWeight: 800, color: TINTA }}>
             Você foi convidado por {agenciaNome}
           </h1>
@@ -126,7 +133,9 @@ export default function ConvitePage() {
     <Tela>
       <Cartao style={{ padding: 32 }}>
         <div style={{ textAlign: "center", marginBottom: 20 }}>
-          <div style={{ fontSize: 32 }}>🤝</div>
+          <div style={{ display: "flex", justifyContent: "center", color: ROXO, marginBottom: 6 }}>
+            <IconeAperto tamanho={32} />
+          </div>
           <h1 style={{ fontSize: 18, fontWeight: 800, color: TINTA, margin: "8px 0 4px" }}>
             Você foi convidado por {agenciaNome}
           </h1>

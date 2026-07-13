@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ROXO, ROXO_ESCURO, LAVANDA, LAVANDA_2, TINTA, CINZA, ROSA } from "./theme.js";
 import { Botao, Cartao, Toast, Marca } from "./components.jsx";
+import { IconeRelogio, IconePin, IconeGoogleAgenda } from "./icones.jsx";
 import { api } from "./api.js";
 
 const DIAS_SEMANA = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
@@ -159,11 +160,14 @@ function ModalDetalheReuniao({ reuniao, aoFechar, aoExcluir }) {
               cursor: "pointer", fontWeight: 800, color: CINZA, fontSize: 15, flexShrink: 0,
             }}>×</button>
           </div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: CINZA, marginBottom: 4 }}>
-            🕐 {inicio.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })} · {horario}
+          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 14, fontWeight: 700, color: CINZA, marginBottom: 4 }}>
+            <IconeRelogio tamanho={15} />
+            {inicio.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })} · {horario}
           </div>
           {reuniao.local && (
-            <div style={{ fontSize: 14, fontWeight: 700, color: CINZA, marginBottom: 4 }}>📍 {reuniao.local}</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 14, fontWeight: 700, color: CINZA, marginBottom: 4 }}>
+              <IconePin tamanho={15} /> {reuniao.local}
+            </div>
           )}
           {reuniao.descricao && (
             <p style={{ fontSize: 14, color: TINTA, fontWeight: 600, lineHeight: 1.5, margin: "10px 0" }}>{reuniao.descricao}</p>
@@ -183,7 +187,11 @@ function ModalDetalheReuniao({ reuniao, aoFechar, aoExcluir }) {
           )}
           <div style={{ display: "flex", gap: 10, marginTop: 20, flexWrap: "wrap" }}>
             <a href={linkGoogleAgenda(reuniao)} target="_blank" rel="noreferrer" style={{ textDecoration: "none" }}>
-              <Botao type="button">📅 Adicionar ao Google Agenda</Botao>
+              <Botao type="button">
+                <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <IconeGoogleAgenda tamanho={15} /> Adicionar ao Google Agenda
+                </span>
+              </Botao>
             </a>
             <Botao variante="perigo" onClick={() => aoExcluir(reuniao.id)}>Excluir</Botao>
           </div>

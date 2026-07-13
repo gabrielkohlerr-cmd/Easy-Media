@@ -8,16 +8,16 @@ export function Marca({ tamanho = 40, claro = false }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
       <div style={{
-        width: tamanho, height: tamanho, borderRadius: tamanho * 0.28, background: ROXO_ESCURO,
+        width: tamanho, height: tamanho, borderRadius: tamanho * 0.22, background: ROXO_ESCURO,
         display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
       }}>
-        <svg width={tamanho * 0.58} height={tamanho * 0.58} viewBox="0 0 100 100">
-          <g stroke={LAVANDA_2} strokeWidth="13" strokeLinecap="round" fill="none">
-            <path d="M20 30 Q52 30 60 50" />
-            <path d="M20 50 L54 50" />
-            <path d="M20 70 Q52 70 60 50" />
+        <svg width={tamanho * 0.62} height={tamanho * 0.62} viewBox="0 0 100 100">
+          <g stroke={LAVANDA_2} strokeWidth="15" strokeLinecap="round" fill="none">
+            <path d="M16 26 Q46 26 56 50" />
+            <path d="M16 50 L50 50" />
+            <path d="M16 74 Q46 74 56 50" />
           </g>
-          <path d="M56 27 L92 50 L56 73 Z" fill={LAVANDA_2} />
+          <path d="M52 20 L92 50 L52 80 Z" fill={LAVANDA_2} />
         </svg>
       </div>
       <span style={{
@@ -59,7 +59,9 @@ export function Pill({ children, cor, bg }) {
 export function Botao({ children, onClick, variante = "primario", pequeno, grande, type = "button", disabled }) {
   const estilos = {
     primario: { background: ROXO, color: "#fff", border: "none" },
+    claro: { background: LAVANDA_2, color: TINTA, border: "none" },
     fantasma: { background: "transparent", color: ROXO, border: `2px solid ${LAVANDA_2}` },
+    fantasmaClaro: { background: "transparent", color: "#fff", border: "2px solid rgba(255,255,255,.4)" },
     perigo: { background: "#FFF1F2", color: ROSA, border: "none" },
     sucesso: { background: VERDE, color: "#fff", border: "none" },
   }[variante];

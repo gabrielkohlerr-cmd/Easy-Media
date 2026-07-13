@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ROXO, LAVANDA, LAVANDA_2, TINTA, CINZA } from "./theme.js";
 import { Botao, Cartao, Pill } from "./components.jsx";
+import { IconeCamera } from "./icones.jsx";
 import { useAuth } from "./AuthContext.jsx";
 import { api } from "./api.js";
 
@@ -126,11 +127,19 @@ export default function CarteiraClientes({ mostrar }) {
                 <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                   {c.instagram_conectado ? (
                     <>
-                      <Pill cor={ROXO} bg="#fff">📸 @{c.instagram_username}</Pill>
+                      <Pill cor={ROXO} bg="#fff">
+                        <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                          <IconeCamera tamanho={13} /> @{c.instagram_username}
+                        </span>
+                      </Pill>
                       <Botao pequeno variante="fantasma" onClick={() => desconectarInstagram(c)}>Desconectar Instagram</Botao>
                     </>
                   ) : (
-                    <Botao pequeno variante="fantasma" onClick={() => conectarInstagram(c)}>📸 Conectar Instagram</Botao>
+                    <Botao pequeno variante="fantasma" onClick={() => conectarInstagram(c)}>
+                      <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <IconeCamera tamanho={14} /> Conectar Instagram
+                      </span>
+                    </Botao>
                   )}
                 </div>
               )}

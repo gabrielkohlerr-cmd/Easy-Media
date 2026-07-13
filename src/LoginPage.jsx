@@ -4,6 +4,10 @@ import {
   ROXO, ROXO_ESCURO, ROXO_CLARO, LAVANDA, LAVANDA_2, TINTA, CINZA, ROSA,
 } from "./theme.js";
 import { Pill, Botao, Cartao, Toast, Marca, BotaoWhatsApp } from "./components.jsx";
+import {
+  IconeAlvo, IconePredio, IconePrancheta, IconePasta, IconeAprovacao, IconeEnvio,
+  IconeCalendario, IconeGrafico, IconeIA, IconeGoogleAgenda, IconeKanban, IconeCheck, IconeX,
+} from "./icones.jsx";
 import { useAuth } from "./AuthContext.jsx";
 
 /* ============ EZ MEDIA — página de login / captação ============
@@ -15,7 +19,7 @@ import { useAuth } from "./AuthContext.jsx";
 const PERSONAS = [
   {
     id: "social_media",
-    emoji: "🎯",
+    Icone: IconeAlvo,
     titulo: "Sou Social Media",
     texto: "Você gerencia clientes diferentes e precisa controlar conteúdos, prazos, aprovações, reuniões e resultados sem depender de dez ferramentas ao mesmo tempo.",
     cta: "Quero ser Social Media",
@@ -24,7 +28,7 @@ const PERSONAS = [
   {
     id: "agencia",
     agencia: true,
-    emoji: "🏢",
+    Icone: IconePredio,
     titulo: "Sou Agência",
     texto: "Da pequena agência que quer estruturar processos à operação em crescimento que precisa ganhar escala sem aumentar o retrabalho — organize equipe e clientes num só lugar.",
     cta: "Cadastrar minha agência",
@@ -59,42 +63,42 @@ const DEPOIS = [
 
 const AREAS = [
   {
-    icone: "🗂️",
+    Icone: IconePasta,
     titulo: "Gestão de conteúdos",
     texto: "Organize as publicações de cada cliente reunindo texto, arquivos, formatos, datas, horários e responsáveis num só lugar.",
   },
   {
-    icone: "✅",
+    Icone: IconeAprovacao,
     titulo: "Aprovação de publicações",
     texto: "O cliente aprova, reprova ou pede ajustes numa página só dele — tudo registrado na publicação, sem se perder em conversa.",
   },
   {
-    icone: "📤",
+    Icone: IconeEnvio,
     titulo: "Agendamento e publicação",
     texto: "Depois de aprovado, o conteúdo é publicado no perfil do cliente por integração direta com a API da Meta.",
   },
   {
-    icone: "📅",
+    Icone: IconeCalendario,
     titulo: "Calendário editorial",
     texto: "Cliente e equipe visualizam as postagens num calendário organizado, com clareza do planejamento do mês.",
   },
   {
-    icone: "📊",
+    Icone: IconeGrafico,
     titulo: "Área de resultados",
     texto: "Uma página acessível pra o cliente acompanhar o desempenho das publicações e campanhas.",
   },
   {
-    icone: "🧠",
+    Icone: IconeIA,
     titulo: "Inteligência artificial",
     texto: "IA que interpreta os dados de cada cliente e sugere formatos, temas, horários e oportunidades de otimização — uma ferramenta a favor do social media, não uma substituição dele.",
   },
   {
-    icone: "🗓️",
+    Icone: IconeGoogleAgenda,
     titulo: "Integração com Google Agenda",
     texto: "Reuniões, captações, apresentações e entregas organizadas dentro da rotina de cada cliente.",
   },
   {
-    icone: "📋",
+    Icone: IconeKanban,
     titulo: "Gestão de processos em Kanban",
     texto: "Acompanhe o andamento de cada atividade — o que está parado, em andamento, e quem é o responsável.",
   },
@@ -109,6 +113,38 @@ const NUMEROS = [
 
 function scrollPara(id) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/* ---------- vídeo de fundo do hero ----------
+   Toca em loop, sem áudio, um vídeo do escritório caótico com o momento em
+   que a câmera revela a EZ Media na tela do publicitário calmo. Enquanto o
+   arquivo de vídeo não é enviado (public/video/escritorio-caos.mp4), cai
+   graciosamente pra um fundo em gradiente — sem quebrar o layout. */
+function VideoHero() {
+  const [falhou, setFalhou] = useState(false);
+  return (
+    <div style={{ position: "absolute", inset: 0, overflow: "hidden", background: ROXO_ESCURO }}>
+      {!falhou && (
+        <video
+          autoPlay muted loop playsInline
+          onError={() => setFalhou(true)}
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+        >
+          <source src="/video/escritorio-caos.mp4" type="video/mp4" />
+        </video>
+      )}
+      {falhou && (
+        <div style={{
+          position: "absolute", inset: 0,
+          background: `radial-gradient(circle at 28% 22%, ${ROXO} 0%, ${ROXO_ESCURO} 55%, #000 100%)`,
+        }} />
+      )}
+      <div style={{
+        position: "absolute", inset: 0,
+        background: "linear-gradient(180deg, rgba(0,0,0,.28) 0%, rgba(0,0,0,.58) 55%, rgba(0,0,0,.9) 100%)",
+      }} />
+    </div>
+  );
 }
 
 /* ---------- modal de login ---------- */
@@ -211,7 +247,7 @@ function FormularioCadastro({ persona, aoCadastrar }) {
   return (
     <Cartao style={{ marginTop: 16, border: `2px solid ${ROXO}` }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-        <span style={{ fontSize: 28 }}>{persona.emoji}</span>
+        <persona.Icone tamanho={28} style={{ color: ROXO }} />
         <div>
           <div style={{ fontSize: 12, fontWeight: 700, color: ROXO }}>CADASTRO</div>
           <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: TINTA }}>{persona.titulo}</h3>
@@ -280,7 +316,7 @@ function CartaoLeadCliente({ aoEnviar }) {
   return (
     <Cartao style={{ marginTop: 16, border: `2px solid ${ROXO}` }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-        <span style={{ fontSize: 28 }}>🧾</span>
+        <IconePrancheta tamanho={28} style={{ color: ROXO }} />
         <div>
           <div style={{ fontSize: 12, fontWeight: 700, color: ROXO }}>SOU CLIENTE</div>
           <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: TINTA }}>Acompanhar meus posts</h3>
@@ -292,7 +328,9 @@ function CartaoLeadCliente({ aoEnviar }) {
         seu contato abaixo que a gente te ajuda a apresentar a ferramenta pra quem cuida da sua marca.
       </p>
       {enviado ? (
-        <div style={{ fontWeight: 700, color: ROXO }}>✓ Recebemos seu contato, obrigado!</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 700, color: ROXO }}>
+          <IconeCheck tamanho={18} /> Recebemos seu contato, obrigado!
+        </div>
       ) : (
         <form
           onSubmit={e => { e.preventDefault(); if (!nome.trim() || !contato.trim()) return; setEnviado(true); aoEnviar(); }}
@@ -347,130 +385,142 @@ export default function PaginaLogin() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA }}>
+    <div style={{ minHeight: "100vh", background: ROXO_ESCURO }}>
       <header style={{
-        position: "sticky", top: 0, zIndex: 20, background: "rgba(248,244,236,.92)",
-        backdropFilter: "blur(8px)", borderBottom: `1px solid ${LAVANDA_2}`,
+        position: "sticky", top: 0, zIndex: 20, background: "rgba(0,0,0,.88)",
+        backdropFilter: "blur(8px)", borderBottom: "1px solid rgba(255,255,255,.1)",
       }}>
         <div style={{
           maxWidth: 1080, margin: "0 auto", padding: "14px 20px",
           display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap",
         }}>
-          <Marca />
+          <Marca claro />
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             <button onClick={() => navigate("/painel")} className="em-btn" style={{
               border: "none", background: "transparent", cursor: "pointer",
-              fontFamily: "inherit", fontWeight: 600, fontSize: 13, color: CINZA,
+              fontFamily: "inherit", fontWeight: 600, fontSize: 13, color: "rgba(255,255,255,.7)",
               textDecoration: "underline", padding: 0,
             }}>Ver demonstração</button>
             <button onClick={() => setLoginAberto(true)} className="em-btn" style={{
               border: "none", background: "transparent", cursor: "pointer",
-              fontFamily: "inherit", fontWeight: 700, fontSize: 14, color: ROXO, padding: 0,
+              fontFamily: "inherit", fontWeight: 700, fontSize: 14, color: "#fff", padding: 0,
             }}>Já tenho conta · Entrar</button>
-            <Botao pequeno onClick={() => scrollPara("cadastro")}>Criar conta grátis</Botao>
+            <Botao pequeno variante="claro" onClick={() => scrollPara("cadastro")}>Criar conta grátis</Botao>
           </div>
         </div>
       </header>
 
-      <main style={{ maxWidth: 1080, margin: "0 auto", padding: "0 20px 80px" }}>
-        {/* hero */}
-        <section style={{ padding: "56px 0 40px", textAlign: "center" }}>
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: 18 }}>
-            <Pill cor={ROXO} bg={LAVANDA_2}>O sistema operacional para social medias e agências</Pill>
-          </div>
-          <h1 style={{
-            margin: "0 auto", maxWidth: 720, fontSize: 44, lineHeight: 1.12,
-            fontWeight: 700, letterSpacing: "-1.5px", color: TINTA,
-          }}>
-            Toda a sua operação.<br />Um só lugar.
-          </h1>
-          <p style={{
-            margin: "20px auto 0", maxWidth: 580, fontSize: 17, fontWeight: 500,
-            color: CINZA, lineHeight: 1.6,
-          }}>
-            A EZ Media centraliza clientes, conteúdos, aprovações, calendários, tarefas,
-            compromissos, publicações e resultados — pra você trocar tempo controlando
-            ferramentas por tempo de estratégia.
-          </p>
+      {/* hero com vídeo */}
+      <section style={{ position: "relative", overflow: "hidden" }}>
+        <VideoHero />
+        <div style={{
+          position: "relative", zIndex: 1, maxWidth: 720, margin: "0 auto",
+          padding: "96px 20px 72px", textAlign: "center",
+        }}>
+          <Pill cor="#fff" bg="rgba(255,255,255,.12)">O sistema operacional para social medias e agências</Pill>
           <div style={{
-            marginTop: 18, fontSize: 13, fontWeight: 700, letterSpacing: "2px",
-            textTransform: "uppercase", color: ROXO_CLARO,
+            marginTop: 24, fontSize: "clamp(42px, 8vw, 78px)", fontWeight: 700,
+            letterSpacing: "-2.5px", color: "#fff", lineHeight: 1,
           }}>
             Make it EZ.
           </div>
-          <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 24, flexWrap: "wrap" }}>
-            <Botao grande onClick={() => scrollPara("cadastro")}>Criar conta grátis</Botao>
-            <Botao grande variante="fantasma" onClick={() => scrollPara("areas")}>Ver como funciona</Botao>
-          </div>
-
-          <div style={{
-            display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
-            gap: 12, marginTop: 48,
+          <p style={{
+            margin: "16px auto 0", maxWidth: 480, fontSize: 15, fontWeight: 700, letterSpacing: "1.5px",
+            textTransform: "uppercase", color: ROXO_CLARO,
           }}>
-            {NUMEROS.map(([valor, rotulo]) => (
-              <Cartao key={rotulo} style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 26, fontWeight: 700, color: ROXO }}>{valor}</div>
-                <div style={{ fontSize: 12, fontWeight: 600, color: CINZA, marginTop: 2 }}>{rotulo}</div>
-              </Cartao>
-            ))}
+            Toda a sua operação. Um só lugar.
+          </p>
+          <p style={{
+            margin: "18px auto 0", maxWidth: 560, fontSize: 16, fontWeight: 500,
+            color: "rgba(255,255,255,.78)", lineHeight: 1.6,
+          }}>
+            Enquanto o resto da agência corre atrás do caos, quem usa a EZ Media está em paz —
+            clientes, conteúdos, aprovações, calendários e publicações organizados num único lugar.
+          </p>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 30, flexWrap: "wrap" }}>
+            <Botao grande variante="claro" onClick={() => scrollPara("cadastro")}>
+              Elimine o caos da sua agência
+            </Botao>
+            <Botao grande variante="fantasmaClaro" onClick={() => scrollPara("areas")}>Ver como funciona</Botao>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* jornada */}
-        <section style={{ padding: "8px 0 32px" }}>
-          <p style={{ textAlign: "center", color: CINZA, fontWeight: 600, margin: "0 0 16px", fontSize: 14 }}>
+      {/* estatísticas — faixa bege */}
+      <section style={{ background: LAVANDA }}>
+        <div style={{
+          maxWidth: 1080, margin: "0 auto", padding: "32px 20px",
+          display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12,
+        }}>
+          {NUMEROS.map(([valor, rotulo]) => (
+            <div key={rotulo} style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 26, fontWeight: 700, color: TINTA }}>{valor}</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: CINZA, marginTop: 2 }}>{rotulo}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* jornada — faixa preta */}
+      <section style={{ background: ROXO_ESCURO, padding: "36px 20px" }}>
+        <div style={{ maxWidth: 1080, margin: "0 auto" }}>
+          <p style={{ textAlign: "center", color: "rgba(255,255,255,.65)", fontWeight: 600, margin: "0 0 16px", fontSize: 14 }}>
             A EZ Media não é mais uma ferramenta isolada — ela conecta a jornada inteira do
             profissional, do primeiro briefing ao resultado final.
           </p>
           <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 8 }}>
             {JORNADA.map((etapa, i) => (
               <React.Fragment key={etapa}>
-                <Pill cor={TINTA} bg="#fff">{etapa}</Pill>
-                {i < JORNADA.length - 1 && <span style={{ color: CINZA, fontWeight: 700 }}>→</span>}
+                <Pill cor="#fff" bg="rgba(255,255,255,.1)">{etapa}</Pill>
+                {i < JORNADA.length - 1 && <span style={{ color: "rgba(255,255,255,.4)", fontWeight: 700 }}>→</span>}
               </React.Fragment>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* antes / depois */}
-        <section style={{ padding: "24px 0" }}>
-          <h2 style={{ textAlign: "center", fontSize: 26, fontWeight: 700, color: TINTA, margin: 0 }}>
+      {/* antes / depois — faixa preta */}
+      <section style={{ background: ROXO_ESCURO, padding: "8px 20px 56px" }}>
+        <div style={{ maxWidth: 1080, margin: "0 auto" }}>
+          <h2 style={{ textAlign: "center", fontSize: 26, fontWeight: 700, color: "#fff", margin: 0 }}>
             De uma operação fragmentada pra um sistema
           </h2>
-          <p style={{ textAlign: "center", color: CINZA, fontWeight: 500, margin: "8px 0 28px" }}>
+          <p style={{ textAlign: "center", color: "rgba(255,255,255,.65)", fontWeight: 500, margin: "8px 0 28px" }}>
             WhatsApp, planilhas, apresentações, Google Agenda, Trello — cada etapa num lugar
             diferente. A EZ Media reúne tudo isso numa única experiência.
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 16 }}>
-            <Cartao>
+            <Cartao style={{ background: LAVANDA, border: "none" }}>
               <div style={{ fontSize: 12, fontWeight: 700, color: CINZA, marginBottom: 10, letterSpacing: "1px" }}>
                 ANTES DA EZ MEDIA
               </div>
               <div style={{ display: "grid", gap: 10 }}>
                 {ANTES.map(item => (
                   <div key={item} style={{ display: "flex", gap: 8, fontSize: 14, color: TINTA, fontWeight: 500 }}>
-                    <span style={{ color: ROSA }}>✕</span> {item}
+                    <IconeX tamanho={16} style={{ color: ROSA, marginTop: 2 }} /> {item}
                   </div>
                 ))}
               </div>
             </Cartao>
-            <Cartao style={{ background: ROXO_ESCURO, border: "none" }}>
+            <Cartao style={{ background: "#000", border: "1px solid rgba(255,255,255,.1)" }}>
               <div style={{ fontSize: 12, fontWeight: 700, color: ROXO_CLARO, marginBottom: 10, letterSpacing: "1px" }}>
                 DEPOIS DA EZ MEDIA
               </div>
               <div style={{ display: "grid", gap: 10 }}>
                 {DEPOIS.map(item => (
                   <div key={item} style={{ display: "flex", gap: 8, fontSize: 14, color: "#fff", fontWeight: 500 }}>
-                    <span style={{ color: "#6EE7B7" }}>✓</span> {item}
+                    <IconeCheck tamanho={16} style={{ color: ROXO_CLARO, marginTop: 2 }} /> {item}
                   </div>
                 ))}
               </div>
             </Cartao>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* personas / CTA principal */}
-        <section id="cadastro" style={{ padding: "40px 0" }}>
+      {/* personas / cadastro — faixa bege */}
+      <section id="cadastro" style={{ background: LAVANDA, padding: "48px 20px" }}>
+        <div style={{ maxWidth: 1080, margin: "0 auto" }}>
           <h2 style={{ textAlign: "center", fontSize: 26, fontWeight: 700, color: TINTA, margin: 0 }}>
             Como você vai usar a EZ Media?
           </h2>
@@ -480,31 +530,31 @@ export default function PaginaLogin() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
             {PERSONAS.map(p => (
               <Cartao key={p.id} style={{
-                display: "flex", flexDirection: "column",
-                border: personaAtiva === p.id ? `2px solid ${ROXO}` : `1px solid ${LAVANDA_2}`,
+                display: "flex", flexDirection: "column", background: ROXO_ESCURO,
+                border: personaAtiva === p.id ? `2px solid ${ROXO_CLARO}` : "1px solid rgba(255,255,255,.12)",
               }}>
-                <span style={{ fontSize: 34 }}>{p.emoji}</span>
-                <h3 style={{ margin: "12px 0 6px", fontSize: 18, fontWeight: 700, color: TINTA }}>{p.titulo}</h3>
-                <p style={{ margin: 0, fontSize: 14, color: CINZA, fontWeight: 500, lineHeight: 1.5, flex: 1 }}>
+                <p.Icone tamanho={30} style={{ color: ROXO_CLARO }} />
+                <h3 style={{ margin: "12px 0 6px", fontSize: 18, fontWeight: 700, color: "#fff" }}>{p.titulo}</h3>
+                <p style={{ margin: 0, fontSize: 14, color: "rgba(255,255,255,.68)", fontWeight: 500, lineHeight: 1.5, flex: 1 }}>
                   {p.texto}
                 </p>
                 <div style={{ marginTop: 18 }}>
-                  <Botao onClick={() => setPersonaAtiva(p.id)}>{p.cta}</Botao>
+                  <Botao variante="claro" onClick={() => setPersonaAtiva(p.id)}>{p.cta}</Botao>
                 </div>
               </Cartao>
             ))}
             <Cartao style={{
-              display: "flex", flexDirection: "column",
-              border: personaAtiva === "cliente" ? `2px solid ${ROXO}` : `1px solid ${LAVANDA_2}`,
+              display: "flex", flexDirection: "column", background: ROXO_ESCURO,
+              border: personaAtiva === "cliente" ? `2px solid ${ROXO_CLARO}` : "1px solid rgba(255,255,255,.12)",
             }}>
-              <span style={{ fontSize: 34 }}>🧾</span>
-              <h3 style={{ margin: "12px 0 6px", fontSize: 18, fontWeight: 700, color: TINTA }}>Sou Cliente</h3>
-              <p style={{ margin: 0, fontSize: 14, color: CINZA, fontWeight: 500, lineHeight: 1.5, flex: 1 }}>
+              <IconePrancheta tamanho={30} style={{ color: ROXO_CLARO }} />
+              <h3 style={{ margin: "12px 0 6px", fontSize: 18, fontWeight: 700, color: "#fff" }}>Sou Cliente</h3>
+              <p style={{ margin: 0, fontSize: 14, color: "rgba(255,255,255,.68)", fontWeight: 500, lineHeight: 1.5, flex: 1 }}>
                 Aprove conteúdos, acompanhe calendários e compromissos, e entenda os resultados
                 da sua marca de um jeito simples — sem precisar entender de social media.
               </p>
               <div style={{ marginTop: 18 }}>
-                <Botao onClick={() => setPersonaAtiva("cliente")}>Acompanhar meus posts</Botao>
+                <Botao variante="claro" onClick={() => setPersonaAtiva("cliente")}>Acompanhar meus posts</Botao>
               </div>
             </Cartao>
           </div>
@@ -518,37 +568,38 @@ export default function PaginaLogin() {
               aoCadastrar={aoEntrarOuCadastrar}
             />
           )}
-        </section>
+        </div>
+      </section>
 
-        {/* áreas da plataforma */}
-        <section id="areas" style={{ padding: "16px 0 40px" }}>
-          <Cartao style={{ background: ROXO_ESCURO, border: "none" }}>
-            <h2 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 700, color: "#fff", textAlign: "center" }}>
-              Um sistema operacional pra gestão de social media
-            </h2>
-            <p style={{ margin: "0 0 20px", fontSize: 14, fontWeight: 500, color: LAVANDA_2, textAlign: "center" }}>
-              Não é uma funcionalidade isolada — é toda a operação conectada num só ambiente.
-            </p>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14 }}>
-              {AREAS.map(a => (
-                <div key={a.titulo} style={{ background: "rgba(255,255,255,.08)", borderRadius: 18, padding: 16 }}>
-                  <div style={{ fontSize: 24 }}>{a.icone}</div>
-                  <div style={{ fontWeight: 700, color: "#fff", fontSize: 15, marginTop: 8 }}>{a.titulo}</div>
-                  <div style={{ fontSize: 13, color: LAVANDA_2, fontWeight: 500, marginTop: 4, lineHeight: 1.5 }}>
-                    {a.texto}
-                  </div>
+      {/* áreas da plataforma — faixa preta */}
+      <section id="areas" style={{ background: ROXO_ESCURO, padding: "48px 20px" }}>
+        <div style={{ maxWidth: 1080, margin: "0 auto" }}>
+          <h2 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 700, color: "#fff", textAlign: "center" }}>
+            Um sistema operacional pra gestão de social media
+          </h2>
+          <p style={{ margin: "0 0 20px", fontSize: 14, fontWeight: 500, color: "rgba(255,255,255,.62)", textAlign: "center" }}>
+            Não é uma funcionalidade isolada — é toda a operação conectada num só ambiente.
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14 }}>
+            {AREAS.map(a => (
+              <div key={a.titulo} style={{ background: "rgba(255,255,255,.06)", borderRadius: 18, padding: 16 }}>
+                <a.Icone tamanho={26} style={{ color: ROXO_CLARO }} />
+                <div style={{ fontWeight: 700, color: "#fff", fontSize: 15, marginTop: 10 }}>{a.titulo}</div>
+                <div style={{ fontSize: 13, color: "rgba(255,255,255,.62)", fontWeight: 500, marginTop: 4, lineHeight: 1.5 }}>
+                  {a.texto}
                 </div>
-              ))}
-            </div>
-          </Cartao>
-        </section>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-        {/* depoimento */}
-        <section style={{ padding: "0 0 40px" }}>
-          <Cartao style={{ textAlign: "center", padding: 32 }}>
-            <div style={{ fontSize: 30 }}>💬</div>
+      {/* depoimento — faixa branca */}
+      <section style={{ background: "#fff", padding: "48px 20px" }}>
+        <div style={{ maxWidth: 1080, margin: "0 auto" }}>
+          <Cartao style={{ textAlign: "center", padding: 32, maxWidth: 640, margin: "0 auto" }}>
             <p style={{
-              margin: "12px auto 0", maxWidth: 560, fontSize: 17, fontWeight: 600,
+              margin: "0 auto", maxWidth: 560, fontSize: 17, fontWeight: 600,
               color: TINTA, lineHeight: 1.6, fontStyle: "italic",
             }}>
               “Depois que comecei a usar a EZ Media com os clientes, parei de perder
@@ -559,53 +610,52 @@ export default function PaginaLogin() {
               Marina Duarte · Social Media freelancer
             </div>
           </Cartao>
-        </section>
+        </div>
+      </section>
 
-        {/* manifesto */}
-        <section style={{ padding: "0 0 40px" }}>
-          <Cartao style={{ background: ROXO_ESCURO, border: "none", padding: 40, textAlign: "center" }}>
-            <p style={{
-              margin: "0 auto", maxWidth: 640, fontSize: 18, fontWeight: 500, color: LAVANDA_2,
-              lineHeight: 1.8, fontStyle: "italic",
-            }}>
-              O marketing evoluiu. As ferramentas evoluíram. Mas a rotina de muitos social medias
-              e agências continua dividida entre mensagens, apresentações, planilhas e plataformas
-              que não se comunicam. No final, o profissional passa mais tempo controlando a
-              operação do que pensando em estratégia.
-            </p>
-            <p style={{
-              margin: "20px auto 0", maxWidth: 640, fontSize: 18, fontWeight: 700, color: "#fff",
-              lineHeight: 1.6,
-            }}>
-              A EZ Media nasceu pra mudar essa realidade.<br />
-              Uma plataforma. Toda a operação.
-            </p>
-            <div style={{
-              marginTop: 20, fontSize: 14, fontWeight: 700, letterSpacing: "2px",
-              textTransform: "uppercase", color: ROXO_CLARO,
-            }}>
-              Make it EZ.
-            </div>
-          </Cartao>
-        </section>
-
-        {/* CTA final */}
-        <section style={{ textAlign: "center", padding: "8px 0 24px" }}>
-          <h2 style={{ fontSize: 24, fontWeight: 700, color: TINTA, margin: 0 }}>
-            Pronto pra simplificar sua operação?
-          </h2>
-          <p style={{ margin: "10px 0 22px", color: CINZA, fontWeight: 500 }}>
-            Crie sua conta grátis e organize sua primeira fila de conteúdo hoje mesmo.
+      {/* manifesto — faixa preta */}
+      <section style={{ background: ROXO_ESCURO, padding: "56px 20px" }}>
+        <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center" }}>
+          <p style={{
+            margin: 0, fontSize: 18, fontWeight: 500, color: "rgba(255,255,255,.7)",
+            lineHeight: 1.8, fontStyle: "italic",
+          }}>
+            O marketing evoluiu. As ferramentas evoluíram. Mas a rotina de muitos social medias
+            e agências continua dividida entre mensagens, apresentações, planilhas e plataformas
+            que não se comunicam. No final, o profissional passa mais tempo controlando a
+            operação do que pensando em estratégia.
           </p>
-          <Botao grande onClick={() => scrollPara("cadastro")}>Criar conta grátis</Botao>
-        </section>
-      </main>
+          <p style={{
+            margin: "20px 0 0", fontSize: 18, fontWeight: 700, color: "#fff", lineHeight: 1.6,
+          }}>
+            A EZ Media nasceu pra mudar essa realidade.<br />
+            Uma plataforma. Toda a operação.
+          </p>
+          <div style={{
+            marginTop: 20, fontSize: 14, fontWeight: 700, letterSpacing: "2px",
+            textTransform: "uppercase", color: ROXO_CLARO,
+          }}>
+            Make it EZ.
+          </div>
+        </div>
+      </section>
 
-      <footer style={{ borderTop: `1px solid ${LAVANDA_2}`, padding: "20px", textAlign: "center" }}>
-        <span style={{ fontSize: 13, fontWeight: 600, color: CINZA }}>
+      {/* CTA final — faixa preta */}
+      <section style={{ background: ROXO_ESCURO, textAlign: "center", padding: "48px 20px 64px" }}>
+        <h2 style={{ fontSize: 24, fontWeight: 700, color: "#fff", margin: 0 }}>
+          Pronto pra simplificar sua operação?
+        </h2>
+        <p style={{ margin: "10px 0 22px", color: "rgba(255,255,255,.65)", fontWeight: 500 }}>
+          Crie sua conta grátis e organize sua primeira fila de conteúdo hoje mesmo.
+        </p>
+        <Botao grande variante="claro" onClick={() => scrollPara("cadastro")}>Criar conta grátis</Botao>
+      </section>
+
+      <footer style={{ background: "#000", borderTop: "1px solid rgba(255,255,255,.1)", padding: "20px", textAlign: "center" }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,.55)" }}>
           EZ Media © 2026 · Make it EZ · <button onClick={() => setLoginAberto(true)} className="em-btn" style={{
             border: "none", background: "transparent", cursor: "pointer",
-            fontFamily: "inherit", fontWeight: 700, fontSize: 13, color: ROXO, padding: 0,
+            fontFamily: "inherit", fontWeight: 700, fontSize: 13, color: ROXO_CLARO, padding: 0,
           }}>Já tenho conta</button>
         </span>
       </footer>

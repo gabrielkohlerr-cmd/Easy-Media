@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { LAVANDA, LAVANDA_2, TINTA, CINZA } from "./theme.js";
 import { Cartao, Toast, Marca } from "./components.jsx";
+import { IconeAlerta } from "./icones.jsx";
 import { VisaoCliente } from "./App.jsx";
 import { api } from "./api.js";
 
@@ -46,7 +47,9 @@ export default function ClientePortal() {
         display: "flex", alignItems: "center", justifyContent: "center", padding: 20,
       }}>
         <Cartao style={{ textAlign: "center", padding: 32, maxWidth: 420 }}>
-          <div style={{ fontSize: 32 }}>⚠️</div>
+          <div style={{ display: "flex", justifyContent: "center", color: CINZA, marginBottom: 6 }}>
+            <IconeAlerta tamanho={32} />
+          </div>
           <h1 style={{ fontSize: 18, fontWeight: 800, color: TINTA }}>Link inválido</h1>
           <p style={{ color: CINZA, fontWeight: 600 }}>
             Esse link de acesso não existe mais. Peça um novo link pra sua agência ou social media.

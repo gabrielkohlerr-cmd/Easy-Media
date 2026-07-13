@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ROXO, ROXO_ESCURO, LAVANDA, LAVANDA_2, TINTA, CINZA } from "./theme.js";
 import { Botao, Cartao, Pill, Marca } from "./components.jsx";
+import { IconeCalendario, IconePasta } from "./icones.jsx";
 import { PreviaPost, STATUS, TIPO_LABEL } from "./App.jsx";
 import { api } from "./api.js";
 
@@ -119,8 +120,8 @@ function ModalPost({ post, aoFechar }) {
             </p>
           )}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ fontSize: 13, fontWeight: 700, color: CINZA }}>
-              📅 {post.data?.split("-").reverse().join("/") || "sem data"} {post.hora && `às ${post.hora}`}
+            <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 13, fontWeight: 700, color: CINZA }}>
+              <IconeCalendario tamanho={14} /> {post.data?.split("-").reverse().join("/") || "sem data"} {post.hora && `às ${post.hora}`}
             </span>
             <Pill cor={s.cor} bg={s.bg}>{s.label}</Pill>
           </div>
@@ -218,7 +219,9 @@ export default function CalendarioPage() {
 
         {!carregando && clientes.length === 0 && (
           <Cartao style={{ textAlign: "center", padding: 40 }}>
-            <div style={{ fontSize: 32 }}>🗂️</div>
+            <div style={{ display: "flex", justifyContent: "center", color: CINZA, marginBottom: 6 }}>
+              <IconePasta tamanho={32} />
+            </div>
             <div style={{ fontWeight: 800, color: TINTA, fontSize: 16 }}>Nenhum cliente na carteira ainda</div>
             <div style={{ color: CINZA, fontWeight: 600, fontSize: 14 }}>
               Adicione um cliente pra começar a agendar posts no calendário.
