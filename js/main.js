@@ -128,6 +128,23 @@ document.getElementById("price-filter").addEventListener("change", (e) => {
 
 document.getElementById("year").textContent = new Date().getFullYear();
 
+function wireHeroVideoSound() {
+  const video = document.getElementById("hero-video");
+  const btn = document.getElementById("hero-video-sound");
+  if (!video || !btn) return;
+
+  btn.addEventListener("click", () => {
+    video.muted = !video.muted;
+    const unmuted = !video.muted;
+    btn.setAttribute("aria-pressed", String(unmuted));
+    btn.setAttribute("aria-label", unmuted ? "Silenciar vídeo" : "Ativar som do vídeo");
+    btn.querySelector(".icon-muted").style.display = unmuted ? "none" : "block";
+    btn.querySelector(".icon-unmuted").style.display = unmuted ? "block" : "none";
+    if (unmuted) video.play().catch(() => {});
+  });
+}
+
 wireGenericWhatsappLinks();
+wireHeroVideoSound();
 renderCategoryFilters();
 renderGrid();
