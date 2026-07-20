@@ -274,7 +274,7 @@ header.site-header {
   aspect-ratio: 16 / 10;
   background: var(--navy-950);
 }
-.car-photo svg { width: 100%; height: 100%; }
+.car-photo svg, .car-photo img { width: 100%; height: 100%; object-fit: cover; }
 .car-photo .frame {
   position: absolute;
   inset: 0;
@@ -417,7 +417,7 @@ footer.site-footer { padding: 56px 0 28px; }
 }
 .gallery-main .frame { position: absolute; inset: 0; opacity: 0; transition: opacity 0.4s ease; }
 .gallery-main .frame.active { opacity: 1; }
-.gallery-main svg { width: 100%; height: 100%; }
+.gallery-main svg, .gallery-main img { width: 100%; height: 100%; object-fit: cover; }
 .gallery-main .gallery-nav {
   position: absolute;
   top: 50%;
@@ -461,7 +461,7 @@ footer.site-footer { padding: 56px 0 28px; }
   opacity: 0.55;
   transition: opacity 0.2s ease, border-color 0.2s ease;
 }
-.thumb svg { width: 100%; height: 100%; }
+.thumb svg, .thumb img { width: 100%; height: 100%; object-fit: cover; }
 .thumb.active { opacity: 1; border-color: var(--gold-500); }
 
 .detail-info .kicker { color: var(--muted); font-size: 0.85rem; letter-spacing: 0.04em; margin-bottom: 6px; }

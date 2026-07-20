@@ -26,7 +26,7 @@ function renderCar(root, car) {
 
   const frames = carGallery(car);
   const savings = savingsPercentD(car);
-  const labels = ["Perfil", "Frontal", "Traseira", "Interior"];
+  const labels = car.fotoLabels || ["Perfil", "Frontal", "Traseira", "Interior"];
 
   root.innerHTML = `
     <a href="index.html#estoque" class="back-link">
