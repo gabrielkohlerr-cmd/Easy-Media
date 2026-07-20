@@ -40,23 +40,9 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ---------- Wordmark ---------- */
-.wordmark { display: flex; flex-direction: column; line-height: 1; }
-.wordmark .line1 {
-  font-family: var(--ff-display);
-  font-weight: 700;
-  font-size: 1.5rem;
-  letter-spacing: 0.06em;
-}
-.wordmark .line1 .totali { color: var(--ivory); }
-.wordmark .line1 .garage { color: var(--gold-500); margin-left: 0.35em; }
-.wordmark .tagline {
-  font-size: 0.6rem;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: var(--gold-400);
-  margin-top: 4px;
-  font-style: italic;
-}
+.wordmark { display: flex; align-items: center; }
+.wordmark img { height: 46px; width: auto; }
+footer .wordmark img { height: 58px; }
 
 /* ---------- Header ---------- */
 header.site-header {
