@@ -4,6 +4,32 @@
 
 const CARS = [
   {
+    id: "toyota-sw4-srx-platinum-2026",
+    marca: "Toyota",
+    modelo: "SW4",
+    versao: "SRX Platinum 7 Lugares",
+    ano: 2026,
+    categoria: "SUV",
+    cor: "Preto",
+    corHex: "#0f0f0f",
+    km: 12000,
+    cambio: "Automático",
+    combustivel: "Diesel",
+    portas: 5,
+    preco: 389990,
+    fipe: 419990,
+    destaque: true,
+    fotos: [
+      "assets/carros/toyota-sw4-srx-platinum-2026/1-frontal.png",
+      "assets/carros/toyota-sw4-srx-platinum-2026/2-traseira.png",
+      "assets/carros/toyota-sw4-srx-platinum-2026/3-motor.png",
+    ],
+    fotoLabels: ["Frontal", "Traseira", "Motor"],
+    descricao:
+      "O SUV mais completo da linha Toyota, na versão topo de linha SRX Platinum com 7 lugares. Praticamente zero km, com acabamento premium e bancos em couro em toda a cabine.",
+    diferenciais: ["7 lugares", "Bancos em couro", "Acabamento premium"],
+  },
+  {
     id: "porsche-911-carrera-2021",
     marca: "Porsche",
     modelo: "911 Carrera",
