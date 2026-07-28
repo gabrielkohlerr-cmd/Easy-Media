@@ -558,6 +558,143 @@ footer.site-footer { padding: 56px 0 28px; }
 
 .sticky-cta { position: sticky; top: 90px; }
 
+/* ---------- Formulário (Vender meu carro) ---------- */
+.form-wrap { max-width: 720px; margin: 0 auto; }
+
+.form-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 28px;
+  background: var(--navy-800);
+}
+
+.form-alert {
+  border: 1px solid rgba(224, 122, 95, 0.4);
+  background: rgba(224, 122, 95, 0.1);
+  color: #e79c88;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  margin-bottom: 22px;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+.field { margin-bottom: 18px; }
+.field label {
+  display: block;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.field label .optional { text-transform: none; letter-spacing: 0; opacity: 0.7; }
+
+.field input[type="text"],
+.field input[type="tel"],
+.field input[type="number"],
+.field textarea {
+  width: 100%;
+  background: var(--navy-900);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--ivory);
+  font-family: var(--ff-body);
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.field textarea { resize: vertical; min-height: 100px; }
+.field input::placeholder, .field textarea::placeholder { color: var(--muted); opacity: 0.7; }
+.field input:focus, .field textarea:focus {
+  outline: none;
+  border-color: var(--gold-500);
+  box-shadow: 0 0 0 3px rgba(233, 196, 106, 0.15);
+}
+
+.field-error-msg {
+  display: none;
+  color: #e79c88;
+  font-size: 0.78rem;
+  margin-top: 6px;
+}
+.field.has-error input, .field.has-error textarea { border-color: #e07a5f; }
+.field.has-error .toggle-chip span { border-color: #e07a5f; }
+.field.has-error .field-error-msg { display: block; }
+
+.toggle-group { display: flex; flex-wrap: wrap; gap: 10px; }
+.toggle-chip { cursor: pointer; }
+.toggle-chip input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.toggle-chip span {
+  display: inline-block;
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--navy-900);
+  color: var(--muted);
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+.toggle-chip input:checked + span {
+  background: linear-gradient(135deg, var(--gold-400), var(--gold-600));
+  color: #1a1204;
+  border-color: transparent;
+  font-weight: 600;
+}
+.toggle-chip input:focus-visible + span { border-color: var(--gold-500); box-shadow: 0 0 0 3px rgba(233, 196, 106, 0.15); }
+
+.consent-field {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  margin: 22px 0 6px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.consent-field input { accent-color: var(--gold-500); width: 18px; height: 18px; flex: none; margin-top: 1px; }
+#consent-error { margin-bottom: 18px; }
+
+#submit-btn { margin-top: 8px; position: relative; }
+#submit-btn[disabled] { opacity: 0.7; cursor: not-allowed; }
+.btn-spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(26, 18, 4, 0.35);
+  border-top-color: #1a1204;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.form-success { text-align: center; }
+.form-success .success-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold-400), var(--gold-600));
+  color: #1a1204;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.form-success h3 { font-family: var(--ff-display); font-size: 1.4rem; margin: 0 0 12px; }
+.form-success p { color: var(--muted); margin: 0 0 8px; max-width: 480px; margin-inline: auto; }
+.form-success .fallback-text { font-size: 0.85rem; margin-bottom: 20px; }
+.form-success .btn { margin-top: 4px; }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
   .detail-grid { grid-template-columns: 1fr; }
@@ -576,6 +713,7 @@ footer.site-footer { padding: 56px 0 28px; }
 @media (max-width: 640px) {
   .site-nav { display: none; }
   .spec-grid { grid-template-columns: 1fr; }
+  .field-row { grid-template-columns: 1fr; }
   .hero { padding: 64px 0 56px; }
   .section { padding: 60px 0; }
 }
