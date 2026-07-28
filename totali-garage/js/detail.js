@@ -18,11 +18,11 @@ function renderNotFound(root) {
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
       Voltar ao estoque
     </a>
-    <div class="empty-state">Não encontramos esse veículo. Ele pode já ter sido vendido — confira o restante do nosso estoque ou fale com a gente pelo WhatsApp.</div>`;
+    <div class="empty-state">Não encontramos esse veículo. Ele pode já ter sido vendido: confira o restante do nosso estoque ou fale com a gente pelo WhatsApp.</div>`;
 }
 
 function renderCar(root, car) {
-  document.title = `${car.marca} ${car.modelo} ${car.ano} — Totali Garage`;
+  document.title = `${car.marca} ${car.modelo} ${car.ano} · Totali Garage`;
 
   const frames = carGallery(car);
   const savings = savingsPercentD(car);

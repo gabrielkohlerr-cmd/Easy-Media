@@ -89,7 +89,7 @@ const FRAME_BUILDERS = [frameProfile, frameFront, frameRear, frameInterior];
 function carGallery(car) {
   if (car.fotos && car.fotos.length) {
     return car.fotos.map(
-      (src, i) => `<img src="${src}" alt="${car.marca} ${car.modelo} — foto ${i + 1}" loading="lazy" />`
+      (src, i) => `<img src="${src}" alt="${car.marca} ${car.modelo}, foto ${i + 1}" loading="lazy" />`
     );
   }
   return FRAME_BUILDERS.map((fn) => fn(car));
