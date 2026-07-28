@@ -148,9 +148,21 @@ header.site-header {
 }
 .hero .cta-row { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 56px; }
 
-.hero-grid { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 48px; align-items: center; }
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  grid-template-areas:
+    "eyebrow video"
+    "title video"
+    "rest video";
+  align-content: center;
+  gap: 12px 48px;
+}
+.hero-grid .hero-eyebrow { grid-area: eyebrow; margin-bottom: 10px; }
+.hero-grid .hero-title { grid-area: title; }
+.hero-grid .hero-rest { grid-area: rest; }
 
-.hero-video { position: relative; justify-self: center; width: 100%; max-width: 320px; }
+.hero-video { grid-area: video; position: relative; align-self: center; justify-self: center; width: 100%; max-width: 320px; }
 .hero-video video {
   width: 100%;
   aspect-ratio: 9 / 16;
@@ -312,6 +324,28 @@ header.site-header {
   transition: background 0.2s ease;
 }
 .car-photo .dots span.active { background: var(--gold-500); }
+
+.car-photo .card-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: rgba(6, 13, 24, 0.55);
+  backdrop-filter: blur(3px);
+  color: var(--ivory);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.car-photo .card-nav svg { width: 14px; height: 14px; }
+.car-photo .card-nav.prev { left: 8px; }
+.car-photo .card-nav.next { right: 8px; }
+.car-photo .card-nav:hover { border-color: var(--gold-500); background: rgba(6, 13, 24, 0.8); }
 
 .car-body { padding: 20px 20px 22px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
 .car-body .kicker { font-size: 0.75rem; color: var(--muted); letter-spacing: 0.04em; }
@@ -517,8 +551,15 @@ footer.site-footer { padding: 56px 0 28px; }
   .detail-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; }
   .sticky-cta { position: static; }
-  .hero-grid { grid-template-columns: 1fr; }
-  .hero-video { order: -1; max-width: 260px; margin-bottom: 8px; }
+  .hero-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "eyebrow"
+      "title"
+      "video"
+      "rest";
+  }
+  .hero-video { max-width: 260px; margin: 8px 0; }
 }
 @media (max-width: 640px) {
   .site-nav { display: none; }

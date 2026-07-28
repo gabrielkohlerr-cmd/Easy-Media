@@ -39,28 +39,44 @@ function attachSlideshow(photoEl, frames) {
   let timer = null;
   const frameEls = photoEl.querySelectorAll(".frame");
   const dotEls = photoEl.querySelectorAll(".dots span");
+  const prevBtn = photoEl.querySelector(".card-nav.prev");
+  const nextBtn = photoEl.querySelector(".card-nav.next");
 
   function show(i) {
-    idx = i;
-    frameEls.forEach((f, fi) => f.classList.toggle("active", fi === i));
-    dotEls.forEach((d, di) => d.classList.toggle("active", di === i));
+    idx = (i + frames.length) % frames.length;
+    frameEls.forEach((f, fi) => f.classList.toggle("active", fi === idx));
+    dotEls.forEach((d, di) => d.classList.toggle("active", di === idx));
+  }
+
+  function clearTimer() {
+    clearInterval(timer);
+    timer = null;
   }
 
   function start() {
-    if (timer) return;
-    timer = setInterval(() => show((idx + 1) % frames.length), 900);
+    if (timer || frames.length < 2) return;
+    timer = setInterval(() => show(idx + 1), 900);
   }
   function stop() {
-    clearInterval(timer);
-    timer = null;
+    clearTimer();
     show(0);
   }
 
   photoEl.addEventListener("mouseenter", start);
   photoEl.addEventListener("mouseleave", stop);
-  photoEl.addEventListener("touchstart", start, { passive: true });
-  photoEl.addEventListener("touchend", stop);
-  photoEl.addEventListener("touchcancel", stop);
+
+  if (prevBtn && nextBtn) {
+    prevBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      clearTimer();
+      show(idx - 1);
+    });
+    nextBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      clearTimer();
+      show(idx + 1);
+    });
+  }
 }
 
 function carCardHtml(car) {
@@ -70,12 +86,22 @@ function carCardHtml(car) {
     .join("");
   const dotsHtml = frames.map((_, i) => `<span class="${i === 0 ? "active" : ""}"></span>`).join("");
   const savings = savingsPercent(car);
+  const navHtml =
+    frames.length > 1
+      ? `<button class="card-nav prev" aria-label="Foto anterior" type="button">
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+         </button>
+         <button class="card-nav next" aria-label="Próxima foto" type="button">
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+         </button>`
+      : "";
 
   return `
     <article class="car-card" data-id="${car.id}">
       <div class="car-photo">
         ${framesHtml}
         <span class="badge">${car.categoria}</span>
+        ${navHtml}
         <div class="dots">${dotsHtml}</div>
       </div>
       <div class="car-body">
