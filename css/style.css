@@ -367,6 +367,18 @@ header.site-header {
   border-radius: 999px;
 }
 
+.card-cta {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--gold-400);
+  letter-spacing: 0.02em;
+  transition: color 0.2s ease, gap 0.2s ease;
+}
+.card-cta:hover { color: var(--gold-500); }
+
 .empty-state {
   text-align: center;
   padding: 60px 20px;
