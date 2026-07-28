@@ -118,6 +118,7 @@ function carCardHtml(car) {
           <span class="fipe">${currency.format(car.fipe)}</span>
           <div><span class="savings">${savings}% abaixo da FIPE</span></div>
         </div>
+        <a class="card-cta" href="carro.html?id=${encodeURIComponent(car.id)}">Ver detalhes →</a>
       </div>
     </article>`;
 }
@@ -141,6 +142,7 @@ function renderGrid() {
   grid.querySelectorAll(".car-card").forEach((card) => {
     const car = results.find((c) => c.id === card.dataset.id);
     attachSlideshow(card.querySelector(".car-photo"), carGallery(car));
+    card.querySelector(".card-cta").addEventListener("click", (e) => e.stopPropagation());
     card.addEventListener("click", () => {
       window.location.href = `carro.html?id=${encodeURIComponent(car.id)}`;
     });
