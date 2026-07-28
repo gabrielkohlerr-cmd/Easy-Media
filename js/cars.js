@@ -4,14 +4,14 @@
 
 const CARS = [
   {
-    id: "toyota-sw4-srx-platinum-2026",
+    id: "toyota-sw4-diamond-2026",
     marca: "Toyota",
     modelo: "SW4",
-    versao: "SRX Platinum 7 Lugares",
+    versao: "Diamond 7 Lugares",
     ano: 2026,
     categoria: "SUV",
-    cor: "Preto",
-    corHex: "#0f0f0f",
+    cor: "Branco",
+    corHex: "#eef0ee",
     km: 12000,
     cambio: "Automático",
     combustivel: "Diesel",
@@ -20,13 +20,12 @@ const CARS = [
     fipe: 419990,
     destaque: true,
     fotos: [
-      "assets/carros/toyota-sw4-srx-platinum-2026/1-frontal.png",
-      "assets/carros/toyota-sw4-srx-platinum-2026/2-traseira.png",
-      "assets/carros/toyota-sw4-srx-platinum-2026/3-motor.png",
+      "assets/carros/toyota-sw4-diamond-2026/1-frontal.jpg",
+      "assets/carros/toyota-sw4-diamond-2026/2-traseira.jpg",
     ],
-    fotoLabels: ["Frontal", "Traseira", "Motor"],
+    fotoLabels: ["Frontal", "Traseira"],
     descricao:
-      "O SUV mais completo da linha Toyota, na versão topo de linha SRX Platinum com 7 lugares. Praticamente zero km, com acabamento premium e bancos em couro em toda a cabine.",
+      "O SUV mais completo da linha Toyota, na versão topo de linha Diamond com 7 lugares. Praticamente zero km, com acabamento premium e bancos em couro em toda a cabine.",
     diferenciais: ["7 lugares", "Bancos em couro", "Acabamento premium"],
   },
   {
