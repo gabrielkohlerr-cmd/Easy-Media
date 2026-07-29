@@ -281,3 +281,11 @@ export function IconeMais(props) {
     </Svg>
   );
 }
+
+export function IconeEstrela(props) {
+  return (
+    <Svg {...props}>
+      <path d="M12 3.3l2.6 5.6 6 .7-4.4 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.4-4.2 6-.7Z" />
+    </Svg>
+  );
+}

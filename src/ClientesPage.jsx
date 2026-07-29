@@ -35,7 +35,10 @@ export default function ClientesPage() {
           display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap",
         }}>
           <Marca />
-          <Botao pequeno variante="fantasmaClaro" onClick={() => navigate("/painel")}>Ver painel de conteúdo</Botao>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Botao pequeno variante="fantasmaClaro" onClick={() => navigate("/planos")}>Planos</Botao>
+            <Botao pequeno variante="fantasmaClaro" onClick={() => navigate("/painel")}>Ver painel de conteúdo</Botao>
+          </div>
         </div>
       </header>
 

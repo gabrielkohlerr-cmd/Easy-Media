@@ -46,7 +46,7 @@ export function Pill({ children, cor, bg }) {
   );
 }
 
-export function Botao({ children, onClick, variante = "primario", pequeno, grande, type = "button", disabled }) {
+export function Botao({ children, onClick, variante = "primario", pequeno, grande, type = "button", disabled, style }) {
   const estilos = {
     primario: { background: ROXO, color: "#fff", border: "none" },
     claro: { background: LAVANDA_2, color: TINTA, border: "none" },
@@ -62,6 +62,7 @@ export function Botao({ children, onClick, variante = "primario", pequeno, grand
       padding: pequeno ? "8px 16px" : grande ? "16px 30px" : "12px 22px",
       borderRadius: 999, cursor: disabled ? "not-allowed" : "pointer",
       opacity: disabled ? 0.55 : 1,
+      ...style,
     }}>{children}</button>
   );
 }

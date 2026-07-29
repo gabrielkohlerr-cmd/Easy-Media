@@ -157,3 +157,6 @@ adicionarColunaSeNaoExistir("posts", "instagram_publicado_em", "TEXT");
 adicionarColunaSeNaoExistir("posts", "instagram_erro", "TEXT");
 
 adicionarColunaSeNaoExistir("cartoes_kanban", "prazo", "TEXT");
+
+adicionarColunaSeNaoExistir("usuarios", "plano", "TEXT");
+adicionarColunaSeNaoExistir("usuarios", "pacote_clientes_extra", "INTEGER NOT NULL DEFAULT 0");

@@ -61,6 +61,30 @@ tendências ao vivo, que não temos integrada), e os números de
 alcance/engajamento por cliente na tela de Início também são
 demonstração, como os do restante dos relatórios.
 
+## Planos e cobrança
+
+A tela **Planos** (link no cabeçalho de Agência e de Clientes) mostra os
+pacotes pagos e deixa escolher um — mas a cobrança ainda não está
+integrada a um meio de pagamento real, então isso hoje é uma simulação:
+ao clicar em "Escolher"/"Comprar pacote", o plano (ou o pacote extra de
+clientes) já fica ativo na hora, sem passar por nenhum checkout de
+verdade, e a tela seguinte só confirma a "compra" simulada.
+
+- **Agências**: Básico (R$99,90/mês, até 15 colaboradores e 50 clientes),
+  Premium (R$149,90/mês, até 40 colaboradores e 100 clientes, recomendado)
+  e Unlimited (R$299,90/mês, colaboradores e clientes ilimitados). As
+  funcionalidades da plataforma (API do Instagram, Kanban e calendário da
+  equipe, agenda, squad, insights) são as mesmas nos três planos — o que
+  muda é só o tamanho do squad/carteira.
+- **Social media freelancer** (sem agência): cadastro gratuito pra até 20
+  clientes; depois disso, dá pra comprar pacotes extras (+20 por R$19,90,
+  +30 por R$24,90 ou +50 por R$39,90, pagamento único). Quem é do squad de
+  uma agência não vê essa cobrança — o plano de quem gerencia a carteira
+  é o da agência.
+
+Hoje esses limites não bloqueiam o cadastro de colaboradores/clientes (só
+são exibidos); a validação fica pra quando a cobrança real for integrada.
+
 ## Estrutura
 
 - `src/` — frontend (Vite + React + react-router).

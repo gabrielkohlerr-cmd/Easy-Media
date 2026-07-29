@@ -97,4 +97,8 @@ export const api = {
   anexarLinkCartao: (id, url, nome) =>
     requisitar(`/kanban/cartoes/${id}/links`, { method: "POST", body: JSON.stringify({ url, nome }) }),
   removerAnexoCartao: (id, anexoId) => requisitar(`/kanban/cartoes/${id}/anexos/${anexoId}`, { method: "DELETE" }),
+
+  meuPlano: () => requisitar("/planos/meu"),
+  escolherPlanoAgencia: plano => requisitar("/planos/agencia", { method: "POST", body: JSON.stringify({ plano }) }),
+  comprarPacoteClientes: pacote => requisitar("/planos/pacote-cliente", { method: "POST", body: JSON.stringify({ pacote }) }),
 };

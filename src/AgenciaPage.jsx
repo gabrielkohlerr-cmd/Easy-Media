@@ -177,6 +177,7 @@ export default function AgenciaPage() {
           <Marca />
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
             <Botao pequeno variante="fantasmaClaro" onClick={() => navigate("/squad")}>Ver squad</Botao>
+            <Botao pequeno variante="fantasmaClaro" onClick={() => navigate("/planos")}>Planos</Botao>
             <Botao pequeno variante="fantasmaClaro" onClick={() => navigate("/painel")}>Ver painel de conteúdo</Botao>
             <button onClick={() => navigate("/perfil")} className="em-btn" style={{
               display: "flex", alignItems: "center", gap: 8, border: "none", background: "transparent",
