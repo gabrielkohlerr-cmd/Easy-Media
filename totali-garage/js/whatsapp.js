@@ -18,7 +18,7 @@ function carWaMessage(car) {
 }
 
 function wireGenericWhatsappLinks() {
-  const ids = ["header-whatsapp", "hero-whatsapp", "band-whatsapp", "footer-whatsapp-link"];
+  const ids = ["header-whatsapp", "hero-whatsapp", "band-whatsapp", "footer-whatsapp-link", "drawer-whatsapp"];
   const href = waLink(genericWaMessage());
   ids.forEach((id) => {
     const el = document.getElementById(id);
