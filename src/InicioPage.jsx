@@ -117,8 +117,8 @@ export default function InicioPage() {
   return (
     <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA }}>
       <header style={{
-        position: "sticky", top: 0, zIndex: 20, background: "rgba(255,255,255,.92)",
-        backdropFilter: "blur(8px)", borderBottom: `1px solid ${LAVANDA_2}`,
+        position: "sticky", top: 0, zIndex: 20, background: "rgba(0,0,0,.88)",
+        backdropFilter: "blur(8px)", borderBottom: "1px solid rgba(255,255,255,.1)",
       }}>
         <div style={{
           maxWidth: 1160, margin: "0 auto", padding: "14px 20px",
@@ -126,16 +126,16 @@ export default function InicioPage() {
         }}>
           <Marca />
           <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-            <Botao pequeno variante="fantasma" onClick={() => navigate("/kanban")}>
+            <Botao pequeno variante="fantasmaClaro" onClick={() => navigate("/kanban")}>
               <span style={{ display: "flex", alignItems: "center", gap: 6 }}><IconeKanban tamanho={14} /> Kanban</span>
             </Botao>
-            <Botao pequeno variante="fantasma" onClick={() => navigate("/calendario")}>
+            <Botao pequeno variante="fantasmaClaro" onClick={() => navigate("/calendario")}>
               <span style={{ display: "flex", alignItems: "center", gap: 6 }}><IconeCalendario tamanho={14} /> Calendário</span>
             </Botao>
-            <Botao pequeno variante="fantasma" onClick={() => navigate("/agenda")}>
+            <Botao pequeno variante="fantasmaClaro" onClick={() => navigate("/agenda")}>
               <span style={{ display: "flex", alignItems: "center", gap: 6 }}><IconeAgenda tamanho={14} /> Agenda</span>
             </Botao>
-            <Botao pequeno onClick={() => navigate("/painel")}>Fila de conteúdo</Botao>
+            <Botao pequeno variante="claro" onClick={() => navigate("/painel")}>Fila de conteúdo</Botao>
           </div>
         </div>
       </header>

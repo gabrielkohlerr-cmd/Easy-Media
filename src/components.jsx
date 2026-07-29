@@ -4,26 +4,16 @@ import { ROXO, ROXO_ESCURO, LAVANDA_2, ROSA, VERDE, TINTA } from "./theme.js";
 
 const NUMERO_WHATSAPP = "5581991270871";
 
-export function Marca({ tamanho = 40, claro = false }) {
+export function Marca({ tamanho = 40 }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
       <div style={{
         width: tamanho, height: tamanho, borderRadius: tamanho * 0.22, background: ROXO_ESCURO,
-        display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+        display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, overflow: "hidden",
       }}>
-        <svg width={tamanho * 0.62} height={tamanho * 0.62} viewBox="0 0 100 100">
-          <g stroke={LAVANDA_2} strokeWidth="15" strokeLinecap="round" fill="none">
-            <path d="M16 26 Q46 26 56 50" />
-            <path d="M16 50 L50 50" />
-            <path d="M16 74 Q46 74 56 50" />
-          </g>
-          <path d="M52 20 L92 50 L52 80 Z" fill={LAVANDA_2} />
-        </svg>
+        <img src="/marca-icone.png" alt="" style={{ width: "70%", height: "70%", objectFit: "contain" }} />
       </div>
-      <span style={{
-        fontWeight: 700, fontSize: tamanho * 0.5, letterSpacing: "-.5px",
-        color: claro ? "#fff" : TINTA,
-      }}>ez media</span>
+      <img src="/marca-wordmark.png" alt="ez media" style={{ height: tamanho * 0.42, width: "auto", display: "block" }} />
     </div>
   );
 }

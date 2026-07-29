@@ -559,8 +559,8 @@ export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia
   return (
     <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA }}>
       <header style={{
-        position: "sticky", top: 0, zIndex: 20, background: "rgba(255,255,255,.92)",
-        backdropFilter: "blur(8px)", borderBottom: `1px solid ${LAVANDA_2}`,
+        position: "sticky", top: 0, zIndex: 20, background: "rgba(0,0,0,.88)",
+        backdropFilter: "blur(8px)", borderBottom: "1px solid rgba(255,255,255,.1)",
       }}>
         <div style={{
           maxWidth: 960, margin: "0 auto", padding: "14px 20px",
@@ -583,7 +583,7 @@ export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia
                 ))}
               </div>
             ) : (
-              <span style={{ fontSize: 13, fontWeight: 800, color: TINTA }}>Visão Social Media</span>
+              <span style={{ fontSize: 13, fontWeight: 800, color: "#fff" }}>Visão Social Media</span>
             )}
             {usuario && visao === "cliente" && clientesReais.length > 1 && (
               <select
@@ -600,7 +600,7 @@ export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia
             {!usuario && (
               <button onClick={reiniciar} className="em-btn" title="Restaura os dados de demonstração originais" style={{
                 border: "none", background: "transparent", cursor: "pointer",
-                fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: CINZA,
+                fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: "rgba(255,255,255,.7)",
                 textDecoration: "underline", padding: 0,
               }}>Reiniciar demo</button>
             )}
@@ -608,34 +608,34 @@ export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia
             {usuario ? (
               <>
                 {aoAbrirInicio && (
-                  <Botao pequeno variante="fantasma" onClick={aoAbrirInicio}>
+                  <Botao pequeno variante="fantasmaClaro" onClick={aoAbrirInicio}>
                     <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
                       <IconeCasa tamanho={14} /> Início
                     </span>
                   </Botao>
                 )}
                 {usuario.tipo === "agencia" && aoAbrirAgencia && (
-                  <Botao pequeno onClick={aoAbrirAgencia}>Squad e clientes</Botao>
+                  <Botao pequeno variante="claro" onClick={aoAbrirAgencia}>Squad e clientes</Botao>
                 )}
                 {usuario.tipo === "social_media" && aoAbrirClientes && (
-                  <Botao pequeno onClick={aoAbrirClientes}>Clientes</Botao>
+                  <Botao pequeno variante="claro" onClick={aoAbrirClientes}>Clientes</Botao>
                 )}
                 {aoAbrirCalendario && (
-                  <Botao pequeno variante="fantasma" onClick={aoAbrirCalendario}>
+                  <Botao pequeno variante="fantasmaClaro" onClick={aoAbrirCalendario}>
                     <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
                       <IconeCalendario tamanho={14} /> Calendário
                     </span>
                   </Botao>
                 )}
                 {aoAbrirAgenda && (
-                  <Botao pequeno variante="fantasma" onClick={aoAbrirAgenda}>
+                  <Botao pequeno variante="fantasmaClaro" onClick={aoAbrirAgenda}>
                     <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
                       <IconeAgenda tamanho={14} /> Agenda
                     </span>
                   </Botao>
                 )}
                 {aoAbrirKanban && (
-                  <Botao pequeno variante="fantasma" onClick={aoAbrirKanban}>
+                  <Botao pequeno variante="fantasmaClaro" onClick={aoAbrirKanban}>
                     <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
                       <IconeKanban tamanho={14} /> Kanban
                     </span>
@@ -654,11 +654,11 @@ export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia
                       ? <img src={usuario.foto_perfil_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                       : usuario.nome?.[0]?.toUpperCase()}
                   </span>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: CINZA }}>Olá, {usuario.nome}</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,.7)" }}>Olá, {usuario.nome}</span>
                 </button>
                 <button onClick={aoSairConta} className="em-btn" style={{
                   border: "none", background: "transparent", cursor: "pointer",
-                  fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: CINZA,
+                  fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: "rgba(255,255,255,.7)",
                   textDecoration: "underline", padding: 0,
                 }}>Sair</button>
               </>
@@ -666,7 +666,7 @@ export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia
               aoSair && (
                 <button onClick={aoSair} className="em-btn" style={{
                   border: "none", background: "transparent", cursor: "pointer",
-                  fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: CINZA,
+                  fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: "rgba(255,255,255,.7)",
                   textDecoration: "underline", padding: 0,
                 }}>← Voltar ao site</button>
               )

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { LAVANDA, LAVANDA_2, TINTA, CINZA } from "./theme.js";
+import { LAVANDA, TINTA, CINZA } from "./theme.js";
 import { Cartao, Toast, Marca } from "./components.jsx";
 import { IconeAlerta } from "./icones.jsx";
 import { VisaoCliente } from "./App.jsx";
@@ -62,8 +62,8 @@ export default function ClientePortal() {
   return (
     <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA }}>
       <header style={{
-        position: "sticky", top: 0, zIndex: 20, background: "rgba(255,255,255,.92)",
-        backdropFilter: "blur(8px)", borderBottom: `1px solid ${LAVANDA_2}`,
+        position: "sticky", top: 0, zIndex: 20, background: "rgba(0,0,0,.88)",
+        backdropFilter: "blur(8px)", borderBottom: "1px solid rgba(255,255,255,.1)",
       }}>
         <div style={{
           maxWidth: 960, margin: "0 auto", padding: "14px 20px",

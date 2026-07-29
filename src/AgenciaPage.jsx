@@ -167,8 +167,8 @@ export default function AgenciaPage() {
   return (
     <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA }}>
       <header style={{
-        position: "sticky", top: 0, zIndex: 20, background: "rgba(255,255,255,.92)",
-        backdropFilter: "blur(8px)", borderBottom: `1px solid ${LAVANDA_2}`,
+        position: "sticky", top: 0, zIndex: 20, background: "rgba(0,0,0,.88)",
+        backdropFilter: "blur(8px)", borderBottom: "1px solid rgba(255,255,255,.1)",
       }}>
         <div style={{
           maxWidth: 960, margin: "0 auto", padding: "14px 20px",
@@ -176,8 +176,8 @@ export default function AgenciaPage() {
         }}>
           <Marca />
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <Botao pequeno variante="fantasma" onClick={() => navigate("/squad")}>Ver squad</Botao>
-            <Botao pequeno variante="fantasma" onClick={() => navigate("/painel")}>Ver painel de conteúdo</Botao>
+            <Botao pequeno variante="fantasmaClaro" onClick={() => navigate("/squad")}>Ver squad</Botao>
+            <Botao pequeno variante="fantasmaClaro" onClick={() => navigate("/painel")}>Ver painel de conteúdo</Botao>
             <button onClick={() => navigate("/perfil")} className="em-btn" style={{
               display: "flex", alignItems: "center", gap: 8, border: "none", background: "transparent",
               cursor: "pointer", fontFamily: "inherit", padding: 0,
@@ -191,11 +191,11 @@ export default function AgenciaPage() {
                   ? <img src={usuario.foto_perfil_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   : usuario?.nome?.[0]?.toUpperCase()}
               </span>
-              <span style={{ fontSize: 12, fontWeight: 700, color: CINZA }}>Olá, {usuario?.nome}</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,.7)" }}>Olá, {usuario?.nome}</span>
             </button>
             <button onClick={() => { sair(); navigate("/"); }} className="em-btn" style={{
               border: "none", background: "transparent", cursor: "pointer",
-              fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: CINZA,
+              fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: "rgba(255,255,255,.7)",
               textDecoration: "underline", padding: 0,
             }}>Sair</button>
           </div>

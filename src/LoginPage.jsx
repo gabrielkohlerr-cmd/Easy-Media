@@ -405,7 +405,7 @@ export default function PaginaLogin() {
           maxWidth: 1080, margin: "0 auto", padding: "14px 20px",
           display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap",
         }}>
-          <Marca claro />
+          <Marca />
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             <button onClick={() => navigate("/painel")} className="em-btn" style={{
               border: "none", background: "transparent", cursor: "pointer",

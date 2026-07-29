@@ -60,8 +60,8 @@ export default function PerfilPage() {
   return (
     <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA }}>
       <header style={{
-        position: "sticky", top: 0, zIndex: 20, background: "rgba(255,255,255,.92)",
-        backdropFilter: "blur(8px)", borderBottom: `1px solid ${LAVANDA_2}`,
+        position: "sticky", top: 0, zIndex: 20, background: "rgba(0,0,0,.88)",
+        backdropFilter: "blur(8px)", borderBottom: "1px solid rgba(255,255,255,.1)",
       }}>
         <div style={{
           maxWidth: 640, margin: "0 auto", padding: "14px 20px",
