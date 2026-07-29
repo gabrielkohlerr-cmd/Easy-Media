@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Totali Garage · Consultoria automotiva</title>
+  <meta name="description" content="Consultoria da Totali Garage: ajudamos você a negociar, avaliar e inspecionar qualquer carro seminovo, esteja ele à venda na Totali ou não." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%230a1626%22/><text x=%2250%22 y=%2266%22 font-size=%2258%22 text-anchor=%22middle%22 fill=%22%23e9c46a%22 font-family=%22Georgia,serif%22>T</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container bar">
+      <a href="index.html" class="wordmark">
+        <img src="assets/logo.png" alt="Totali Garage · Serviços Automotivos" />
+      </a>
+      <nav class="site-nav">
+        <a href="index.html#estoque">Estoque</a>
+        <a href="vender.html">Vender meu carro</a>
+        <a href="consultoria.html">Consultoria</a>
+        <a href="index.html#sobre">Sobre</a>
+        <a href="index.html#contato">Contato</a>
+      </nav>
+      <a class="btn btn-gold" id="header-whatsapp" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.7.8-.8.9-.2.2-.3.2-.5.1-1.4-.7-2.3-1.3-3.2-2.8-.2-.4.2-.4.6-1.2.1-.2 0-.3 0-.4-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.2-.9.9-.9 2.2s1 2.6 1.1 2.8c.1.2 2 3 4.8 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>
+        WhatsApp
+      </a>
+      <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="mobile-drawer">
+        <svg class="icon-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="mobile-drawer" id="mobile-drawer" aria-hidden="true">
+    <div class="drawer-backdrop" data-drawer-close></div>
+    <nav class="drawer-panel">
+      <div class="drawer-head">
+        <svg class="drawer-arc" viewBox="0 0 240 70" aria-hidden="true">
+          <defs>
+            <linearGradient id="drawerArcGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#c9a227" />
+              <stop offset="100%" stop-color="#f0d491" />
+            </linearGradient>
+            <radialGradient id="drawerArcGlow" cx="50%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#e9c46a" stop-opacity="0.35" />
+              <stop offset="100%" stop-color="#e9c46a" stop-opacity="0" />
+            </radialGradient>
+          </defs>
+          <rect width="240" height="70" fill="url(#drawerArcGlow)" />
+          <path d="M20 55 Q120 -8 220 55" fill="none" stroke="url(#drawerArcGrad)" stroke-width="3" stroke-linecap="round" />
+        </svg>
+        <img src="assets/logo.png" alt="Totali Garage" class="drawer-logo" />
+        <button class="drawer-close" data-drawer-close aria-label="Fechar menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <div class="drawer-links">
+        <a href="index.html#estoque">Estoque</a>
+        <a href="vender.html">Vender meu carro</a>
+        <a href="consultoria.html">Consultoria</a>
+        <a href="index.html#sobre">Sobre</a>
+        <a href="index.html#contato">Contato</a>
+      </div>
+      <a class="btn btn-gold btn-block drawer-cta" id="drawer-whatsapp" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.7.8-.8.9-.2.2-.3.2-.5.1-1.4-.7-2.3-1.3-3.2-2.8-.2-.4.2-.4.6-1.2.1-.2 0-.3 0-.4-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.2-.9.9-.9 2.2s1 2.6 1.1 2.8c.1.2 2 3 4.8 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>
+        Falar no WhatsApp
+      </a>
+    </nav>
+  </div>
+
+  <section class="section" style="padding-top:56px;">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Consultoria automotiva</span>
+        <h2>Um especialista do seu lado, antes de comprar ou vender</h2>
+        <p>
+          A Consultoria Totali é um serviço à parte da nossa loja. Ajudamos você a negociar, avaliar o preço e
+          inspecionar (mecânica e pintura) qualquer carro seminovo, esteja ele à venda na Totali ou não.
+        </p>
+      </div>
+
+      <div class="about-grid" style="margin-bottom:32px;">
+        <div class="value-card">
+          <div class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 21H5a2 2 0 0 1-2-2v-6M13 3h6a2 2 0 0 1 2 2v6M8 8l8 8M3 16l5 5M16 3l5 5"/></svg>
+          </div>
+          <h3>Quero comprar um carro</h3>
+          <p>
+            Você já sabe qual carro quer, mas prefere ter alguém experiente do seu lado. Negociamos por você,
+            avaliamos se o preço está justo, fazemos inspeção mecânica e de pintura, e vamos atrás do carro do
+            seu interesse, mesmo que não esteja à venda na Totali.
+          </p>
+          <a class="card-cta" id="cta-comprador-whatsapp" target="_blank" rel="noopener">Falar sobre compra →</a>
+        </div>
+        <div class="value-card">
+          <div class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4.5 8-11V5l-8-3-8 3v6c0 6.5 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <h3>Quero avaliar / vender meu carro</h3>
+          <p>
+            Antes de vender, saiba exatamente o estado do seu carro. Fazemos inspeção mecânica, de pintura e
+            avaliação de preço, com recomendações técnicas para você vender melhor. Se fizer sentido pra gente,
+            também podemos comprar seu carro diretamente.
+          </p>
+          <a class="card-cta" id="cta-vendedor-whatsapp" target="_blank" rel="noopener">Falar sobre avaliação →</a>
+        </div>
+      </div>
+
+      <p style="color:var(--muted); font-size:0.85rem; text-align:center; margin-bottom:56px;">
+        Prefere vender seu carro direto pra Totali? <a href="vender.html" style="color:var(--gold-400); text-decoration:underline;">Preencha o formulário de venda</a>.
+      </p>
+
+      <div class="section-head">
+        <span class="eyebrow">O que está incluso</span>
+        <h2>Cada etapa, cuidada de perto</h2>
+      </div>
+      <ul class="feature-list" style="margin-bottom:60px;">
+        <li>Negociação em seu nome</li>
+        <li>Avaliação de preço de mercado</li>
+        <li>Inspeção mecânica</li>
+        <li>Inspeção de pintura</li>
+        <li>Busca do carro do seu interesse</li>
+        <li>Recomendações técnicas para venda</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="cta-band" id="contato">
+    <div class="container">
+      <h2>Pronto para ter um especialista do seu lado?</h2>
+      <p>É um serviço pago, sob consulta. Fale com a gente pelo WhatsApp para saber mais sobre valores e como funciona.</p>
+      <a id="band-whatsapp" class="btn btn-gold" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.7.8-.8.9-.2.2-.3.2-.5.1-1.4-.7-2.3-1.3-3.2-2.8-.2-.4.2-.4.6-1.2.1-.2 0-.3 0-.4-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.2-.9.9-.9 2.2s1 2.6 1.1 2.8c.1.2 2 3 4.8 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>
+        Falar no WhatsApp
+      </a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="wordmark" style="margin-bottom:14px;">
+            <img src="assets/logo.png" alt="Totali Garage · Serviços Automotivos" />
+          </div>
+          <p>Carros de luxo selecionados com rigor, para quem não abre mão de qualidade, em Recife e toda a Região Metropolitana.</p>
+        </div>
+        <div>
+          <h4>Contato</h4>
+          <ul>
+            <li>Recife, PE</li>
+            <li><a href="#" id="footer-whatsapp-link" target="_blank" rel="noopener">+55 81 98461-6161</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Navegação</h4>
+          <ul>
+            <li><a href="index.html#estoque">Estoque</a></li>
+            <li><a href="vender.html">Vender meu carro</a></li>
+            <li><a href="consultoria.html">Consultoria</a></li>
+            <li><a href="index.html#sobre">Sobre</a></li>
+            <li><a href="index.html#contato">Contato</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span id="year"></span> Totali Garage. Todos os direitos reservados.</span>
+        <span>Serviços Automotivos · Recife/PE</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/whatsapp.js"></script>
+  <script src="js/nav.js"></script>
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+    wireGenericWhatsappLinks();
+    document.getElementById("band-whatsapp").href = waLink(consultoriaGenericWaMessage());
+    document.getElementById("cta-comprador-whatsapp").href = waLink(consultoriaCompradorWaMessage());
+    document.getElementById("cta-vendedor-whatsapp").href = waLink(consultoriaVendedorWaMessage());
+  </script>
+</body>
+</html>

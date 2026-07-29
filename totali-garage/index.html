@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Totali Garage · Carros de Luxo em Recife</title>
+  <meta name="description" content="Totali Garage: carros de luxo selecionados a dedo, a maioria abaixo da tabela FIPE. Curadoria, procedência e atendimento premium em Recife." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%230a1626%22/><text x=%2250%22 y=%2266%22 font-size=%2258%22 text-anchor=%22middle%22 fill=%22%23e9c46a%22 font-family=%22Georgia,serif%22>T</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container bar">
+      <a href="index.html" class="wordmark">
+        <img src="assets/logo.png" alt="Totali Garage · Serviços Automotivos" />
+      </a>
+      <nav class="site-nav">
+        <a href="#estoque">Estoque</a>
+        <a href="vender.html">Vender meu carro</a>
+        <a href="consultoria.html">Consultoria</a>
+        <a href="#sobre">Sobre</a>
+        <a href="#contato">Contato</a>
+      </nav>
+      <a class="btn btn-gold" id="header-whatsapp" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.7.8-.8.9-.2.2-.3.2-.5.1-1.4-.7-2.3-1.3-3.2-2.8-.2-.4.2-.4.6-1.2.1-.2 0-.3 0-.4-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.2-.9.9-.9 2.2s1 2.6 1.1 2.8c.1.2 2 3 4.8 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>
+        WhatsApp
+      </a>
+      <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="mobile-drawer">
+        <svg class="icon-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="mobile-drawer" id="mobile-drawer" aria-hidden="true">
+    <div class="drawer-backdrop" data-drawer-close></div>
+    <nav class="drawer-panel">
+      <div class="drawer-head">
+        <svg class="drawer-arc" viewBox="0 0 240 70" aria-hidden="true">
+          <defs>
+            <linearGradient id="drawerArcGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#c9a227" />
+              <stop offset="100%" stop-color="#f0d491" />
+            </linearGradient>
+            <radialGradient id="drawerArcGlow" cx="50%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#e9c46a" stop-opacity="0.35" />
+              <stop offset="100%" stop-color="#e9c46a" stop-opacity="0" />
+            </radialGradient>
+          </defs>
+          <rect width="240" height="70" fill="url(#drawerArcGlow)" />
+          <path d="M20 55 Q120 -8 220 55" fill="none" stroke="url(#drawerArcGrad)" stroke-width="3" stroke-linecap="round" />
+        </svg>
+        <img src="assets/logo.png" alt="Totali Garage" class="drawer-logo" />
+        <button class="drawer-close" data-drawer-close aria-label="Fechar menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <div class="drawer-links">
+        <a href="#estoque">Estoque</a>
+        <a href="vender.html">Vender meu carro</a>
+        <a href="consultoria.html">Consultoria</a>
+        <a href="#sobre">Sobre</a>
+        <a href="#contato">Contato</a>
+      </div>
+      <a class="btn btn-gold btn-block drawer-cta" id="drawer-whatsapp" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.7.8-.8.9-.2.2-.3.2-.5.1-1.4-.7-2.3-1.3-3.2-2.8-.2-.4.2-.4.6-1.2.1-.2 0-.3 0-.4-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.2-.9.9-.9 2.2s1 2.6 1.1 2.8c.1.2 2 3 4.8 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>
+        Falar no WhatsApp
+      </a>
+    </nav>
+  </div>
+
+  <section class="hero">
+    <div class="container hero-grid">
+      <span class="eyebrow hero-eyebrow">Recife · Curadoria de carros de luxo</span>
+      <h1 class="hero-title">Carros de luxo <em>abaixo da tabela FIPE</em>, sem abrir mão de procedência.</h1>
+
+      <div class="hero-video">
+        <video id="hero-video" src="assets/video/totali-garage-hero.mp4" poster="assets/video/hero-poster.jpg"
+               autoplay muted loop playsinline></video>
+        <button id="hero-video-sound" class="video-sound-btn" aria-label="Ativar som do vídeo" aria-pressed="false">
+          <svg class="icon-muted" viewBox="0 0 24 24" fill="currentColor"><path d="M4 9v6h4l5 5V4L8 9H4Zm11.5 3a4.5 4.5 0 0 0-2.5-4.03v8.06A4.5 4.5 0 0 0 15.5 12Z"/></svg>
+          <svg class="icon-unmuted" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M4 9v6h4l5 5V4L8 9H4Zm11.5 3a4.5 4.5 0 0 0-2.5-4.03v8.06A4.5 4.5 0 0 0 15.5 12ZM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77Z"/></svg>
+        </button>
+      </div>
+
+      <div class="hero-rest">
+        <p class="lead">
+          Compramos direto, sem intermediários. É por isso que o preço fica abaixo da FIPE, sem que a
+          procedência caia junto. Laudo cautelar, histórico verificado e documentação em dia em cada carro.
+        </p>
+        <div class="cta-row">
+          <a href="#estoque" class="btn btn-gold">Ver estoque disponível</a>
+          <a id="hero-whatsapp" class="btn btn-ghost" target="_blank" rel="noopener">Falar com um consultor</a>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="num">+150</div><div class="label">Veículos já negociados</div></div>
+          <div class="stat"><div class="num">100%</div><div class="label">Procedência verificada</div></div>
+          <div class="stat"><div class="num">Até 15%</div><div class="label">Abaixo da tabela FIPE</div></div>
+          <div class="stat"><div class="num">Recife</div><div class="label">Atendimento em toda PE</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding:48px 0; background:var(--navy-900); border-top:1px solid var(--line); border-bottom:1px solid var(--line);">
+    <div class="container">
+      <h2 style="font-family:var(--ff-display); font-size:1.4rem; text-align:center; margin:0 0 28px;">O que você precisa hoje?</h2>
+      <div class="about-grid">
+        <div class="value-card">
+          <div class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 8 9 9 5-1 9-4 9-9V7l-9-5Z"/></svg>
+          </div>
+          <h3>Comprar um carro</h3>
+          <p>Confira nosso estoque selecionado de carros de luxo, a maioria abaixo da tabela FIPE.</p>
+          <a class="card-cta" href="#estoque">Ver estoque →</a>
+        </div>
+        <div class="value-card">
+          <div class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </div>
+          <h3>Vender meu carro</h3>
+          <p>Envie os dados do seu carro e receba uma proposta direto no seu WhatsApp.</p>
+          <a class="card-cta" href="vender.html">Vender meu carro →</a>
+        </div>
+        <div class="value-card">
+          <div class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 21H5a2 2 0 0 1-2-2v-6M13 3h6a2 2 0 0 1 2 2v6M8 8l8 8M3 16l5 5M16 3l5 5"/></svg>
+          </div>
+          <h3>Consultoria automotiva</h3>
+          <p>Quer comprar ou avaliar um carro que não é nosso? A Totali também oferece consultoria especializada.</p>
+          <a class="card-cta" href="consultoria.html">Conhecer consultoria →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="estoque">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Acervo</span>
+        <h2>Nosso estoque selecionado</h2>
+        <p>Filtre por categoria e faixa de preço para encontrar o carro certo. Passe o mouse (ou o dedo) sobre a foto para ver mais ângulos de cada veículo.</p>
+      </div>
+
+      <div class="filters">
+        <div class="filter-group" id="category-filters"></div>
+        <select class="filter-select" id="price-filter">
+          <option value="all">Qualquer preço</option>
+          <option value="0-400000">Até R$ 400 mil</option>
+          <option value="400000-600000">R$ 400 mil – R$ 600 mil</option>
+          <option value="600000-9999999">Acima de R$ 600 mil</option>
+        </select>
+      </div>
+
+      <p class="results-count" id="results-count"></p>
+      <div class="car-grid" id="car-grid"></div>
+      <div class="empty-state" id="empty-state" hidden>Nenhum veículo encontrado com esses filtros. Fale com a gente pelo WhatsApp: talvez tenhamos algo fora do site.</div>
+    </div>
+  </section>
+
+  <section class="section" id="sobre" style="background:var(--navy-900); border-top:1px solid var(--line); border-bottom:1px solid var(--line);">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Sobre a Totali</span>
+        <h2>Excelência automotiva, do jeito que Recife merece</h2>
+        <p>Trabalhamos exclusivamente com veículos de alto padrão, cada um avaliado a fundo antes de entrar no nosso estoque.</p>
+      </div>
+      <div class="about-grid">
+        <div class="value-card">
+          <div class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 8 9 9 5-1 9-4 9-9V7l-9-5Z"/></svg>
+          </div>
+          <h3>Procedência garantida</h3>
+          <p>Histórico verificado, laudo cautelar e documentação 100% regularizada em cada veículo.</p>
+        </div>
+        <div class="value-card">
+          <div class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21c4-3 8-6.5 8-11a8 8 0 1 0-16 0c0 4.5 4 8 8 11Z"/></svg>
+          </div>
+          <h3>Preços abaixo da FIPE</h3>
+          <p>Negociação direta e enxuta que nos permite repassar o benefício para quem compra.</p>
+        </div>
+        <div class="value-card">
+          <div class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 2.9 6.3 6.9.9-5 4.8 1.3 6.8L12 17.8 5.9 20.8l1.3-6.8-5-4.8 6.9-.9L12 2Z"/></svg>
+          </div>
+          <h3>Curadoria de luxo</h3>
+          <p>Marcas e modelos escolhidos a dedo, sempre em estado impecável de conservação.</p>
+        </div>
+        <div class="value-card">
+          <div class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10Z"/></svg>
+          </div>
+          <h3>Atendimento consultivo</h3>
+          <p>Um consultor dedicado te acompanha do primeiro contato até a entrega das chaves.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-band" id="contato">
+    <div class="container">
+      <h2>Pronto para encontrar o seu próximo carro?</h2>
+      <p>Fale agora com um consultor Totali Garage pelo WhatsApp e receba atendimento imediato.</p>
+      <a id="band-whatsapp" class="btn btn-gold" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.7.8-.8.9-.2.2-.3.2-.5.1-1.4-.7-2.3-1.3-3.2-2.8-.2-.4.2-.4.6-1.2.1-.2 0-.3 0-.4-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.2-.9.9-.9 2.2s1 2.6 1.1 2.8c.1.2 2 3 4.8 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>
+        Falar no WhatsApp
+      </a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="wordmark" style="margin-bottom:14px;">
+            <img src="assets/logo.png" alt="Totali Garage · Serviços Automotivos" />
+          </div>
+          <p>Carros de luxo selecionados com rigor, para quem não abre mão de qualidade, em Recife e toda a Região Metropolitana.</p>
+        </div>
+        <div>
+          <h4>Contato</h4>
+          <ul>
+            <li>Recife, PE</li>
+            <li><a href="#" id="footer-whatsapp-link" target="_blank" rel="noopener">+55 81 98461-6161</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Navegação</h4>
+          <ul>
+            <li><a href="#estoque">Estoque</a></li>
+            <li><a href="vender.html">Vender meu carro</a></li>
+            <li><a href="consultoria.html">Consultoria</a></li>
+            <li><a href="#sobre">Sobre</a></li>
+            <li><a href="#contato">Contato</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span id="year"></span> Totali Garage. Todos os direitos reservados.</span>
+        <span>Serviços Automotivos · Recife/PE</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/cars.js"></script>
+  <script src="js/photo-art.js"></script>
+  <script src="js/whatsapp.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
