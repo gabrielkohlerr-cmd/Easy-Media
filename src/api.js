@@ -41,11 +41,14 @@ export const api = {
   aceitarConvite: token => requisitar(`/squad/convites/${token}/aceitar`, { method: "POST" }),
   listarMembros: () => requisitar("/squad/membros"),
   removerMembro: id => requisitar(`/squad/membros/${id}`, { method: "DELETE" }),
+  visaoGeralSquad: () => requisitar("/squad/visao-geral"),
 
   listarClientes: () => requisitar("/clientes"),
   criarCliente: dados => requisitar("/clientes", { method: "POST", body: JSON.stringify(dados) }),
   removerCliente: id => requisitar(`/clientes/${id}`, { method: "DELETE" }),
   rotacionarLinkCliente: id => requisitar(`/clientes/${id}/rotacionar-link`, { method: "POST" }),
+  atualizarResponsavelCliente: (id, responsavelId) =>
+    requisitar(`/clientes/${id}/responsavel`, { method: "PATCH", body: JSON.stringify({ responsavelId }) }),
   acessoCliente: token => requisitar(`/clientes/acesso/${token}`),
 
   listarPosts: () => requisitar("/posts"),

@@ -11,6 +11,7 @@ import CalendarioPage from './CalendarioPage.jsx'
 import AgendaPage from './AgendaPage.jsx'
 import KanbanPage from './KanbanPage.jsx'
 import InicioPage from './InicioPage.jsx'
+import SquadPage from './SquadPage.jsx'
 
 function Painel() {
   const { usuario, sair } = useAuth()
@@ -81,6 +82,13 @@ function RotaInicio() {
   return <InicioPage />
 }
 
+function RotaSquad() {
+  const { usuario, carregando } = useAuth()
+  if (carregando) return null
+  if (!usuario || usuario.tipo !== 'agencia') return <Navigate to="/" replace />
+  return <SquadPage />
+}
+
 function Rotas() {
   const { carregando } = useAuth()
   if (carregando) return null
@@ -96,6 +104,7 @@ function Rotas() {
       <Route path="/agenda" element={<RotaAgenda />} />
       <Route path="/kanban" element={<RotaKanban />} />
       <Route path="/inicio" element={<RotaInicio />} />
+      <Route path="/squad" element={<RotaSquad />} />
       <Route path="/convite/:token" element={<ConvitePage />} />
       <Route path="/cliente/:token" element={<ClientePortal />} />
     </Routes>

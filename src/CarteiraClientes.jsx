@@ -25,10 +25,12 @@ export default function CarteiraClientes({ mostrar }) {
   const podeGerenciar = usuario?.tipo === "agencia" || !usuario?.agencia_id;
 
   const [clientes, setClientes] = useState([]);
+  const [membrosSquad, setMembrosSquad] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [nomeNovo, setNomeNovo] = useState("");
   const [segmentoNovo, setSegmentoNovo] = useState("");
   const [nichoNovo, setNichoNovo] = useState("");
+  const [responsavelNovo, setResponsavelNovo] = useState("");
   const [criando, setCriando] = useState(false);
 
   const recarregar = () => {
@@ -37,6 +39,13 @@ export default function CarteiraClientes({ mostrar }) {
 
   useEffect(recarregar, []);
 
+  useEffect(() => {
+    if (usuario?.tipo === "agencia") {
+      api.listarMembros().then(({ membros }) => setMembrosSquad(membros)).catch(() => {});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [usuario?.tipo]);
+
   const adicionar = async e => {
     e.preventDefault();
     if (!nomeNovo.trim() || !segmentoNovo || !nichoNovo.trim()) return;
@@ -44,8 +53,9 @@ export default function CarteiraClientes({ mostrar }) {
     try {
       const { cliente } = await api.criarCliente({
         nome: nomeNovo.trim(), segmento: segmentoNovo, nicho: nichoNovo.trim(),
+        responsavelId: responsavelNovo || null,
       });
-      setNomeNovo(""); setSegmentoNovo(""); setNichoNovo("");
+      setNomeNovo(""); setSegmentoNovo(""); setNichoNovo(""); setResponsavelNovo("");
       mostrar("✓ Cliente adicionado à carteira");
       recarregar();
       return cliente;
@@ -120,6 +130,15 @@ export default function CarteiraClientes({ mostrar }) {
               value={nichoNovo} onChange={e => setNichoNovo(e.target.value)} placeholder="Nicho * (ex: sushi delivery)"
               style={{ ...campoEstilo, flex: 1, minWidth: 200 }}
             />
+            {membrosSquad.length > 0 && (
+              <select
+                value={responsavelNovo} onChange={e => setResponsavelNovo(e.target.value)}
+                style={{ ...campoEstilo, flex: 1, minWidth: 200, color: responsavelNovo ? TINTA : CINZA }}
+              >
+                <option value="">Sem responsável (opcional)</option>
+                {membrosSquad.map(m => <option key={m.id} value={m.id}>{m.nome}</option>)}
+              </select>
+            )}
           </div>
           <div>
             <Botao pequeno type="submit">{criando ? "Adicionando…" : "Adicionar cliente"}</Botao>
@@ -139,6 +158,11 @@ export default function CarteiraClientes({ mostrar }) {
                   {c.segmento && (
                     <div style={{ fontSize: 11, fontWeight: 700, color: CINZA, marginTop: 2 }}>
                       {c.segmento}{c.nicho ? ` · ${c.nicho}` : ""}
+                    </div>
+                  )}
+                  {c.responsavelNome && (
+                    <div style={{ fontSize: 11, fontWeight: 700, color: ROXO, marginTop: 2 }}>
+                      Responsável: {c.responsavelNome}
                     </div>
                   )}
                 </div>

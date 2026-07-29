@@ -38,6 +38,30 @@ rotaSquad.get("/membros", autenticar, exigirTipo("agencia"), (req, res) => {
   res.json({ membros });
 });
 
+/* visão do squad pra agência: cada social media com os clientes que estão
+   sob a responsabilidade dele, mais os clientes ainda sem responsável definido */
+rotaSquad.get("/visao-geral", autenticar, exigirTipo("agencia"), (req, res) => {
+  const membros = db.prepare(`
+    SELECT id, nome, email FROM usuarios WHERE agencia_id = ? ORDER BY nome
+  `).all(req.usuario.id);
+  const clientes = db.prepare(`
+    SELECT id, nome, segmento, nicho, responsavel_id FROM clientes WHERE dono_id = ? ORDER BY nome
+  `).all(req.usuario.id);
+
+  const porResponsavel = {};
+  clientes.forEach(c => {
+    const chave = c.responsavel_id || "sem_responsavel";
+    (porResponsavel[chave] ||= []).push({
+      id: c.id, nome: c.nome, segmento: c.segmento, nicho: c.nicho, responsavelId: c.responsavel_id,
+    });
+  });
+
+  res.json({
+    membros: membros.map(m => ({ ...m, clientes: porResponsavel[m.id] || [] })),
+    semResponsavel: porResponsavel.sem_responsavel || [],
+  });
+});
+
 rotaSquad.delete("/membros/:id", autenticar, exigirTipo("agencia"), (req, res) => {
   const membro = db.prepare("SELECT * FROM usuarios WHERE id = ? AND agencia_id = ?")
     .get(req.params.id, req.usuario.id);

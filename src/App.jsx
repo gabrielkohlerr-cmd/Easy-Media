@@ -489,7 +489,7 @@ function carregarPosts() {
 }
 
 export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia, aoAbrirPerfil, aoAbrirClientes, aoAbrirCalendario, aoAbrirAgenda, aoAbrirKanban, aoAbrirInicio }) {
-  const podeVerVisaoCliente = !usuario || usuario.tipo === "agencia";
+  const podeVerVisaoCliente = !usuario;
   const [visao, setVisao] = useState("sm");
   const [posts, setPosts] = useState(carregarPosts);
   const [clientesReais, setClientesReais] = useState([]);

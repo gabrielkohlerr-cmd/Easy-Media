@@ -143,6 +143,7 @@ adicionarColunaSeNaoExistir("usuarios", "bio", "TEXT");
 
 adicionarColunaSeNaoExistir("clientes", "segmento", "TEXT");
 adicionarColunaSeNaoExistir("clientes", "nicho", "TEXT");
+adicionarColunaSeNaoExistir("clientes", "responsavel_id", "INTEGER");
 
 adicionarColunaSeNaoExistir("clientes", "instagram_user_id", "TEXT");
 adicionarColunaSeNaoExistir("clientes", "instagram_username", "TEXT");

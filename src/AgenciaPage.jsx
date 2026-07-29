@@ -56,6 +56,7 @@ function CartaoConvite({ aoCriado }) {
 }
 
 function SecaoSquad({ mostrar }) {
+  const navigate = useNavigate();
   const [membros, setMembros] = useState([]);
   const [convites, setConvites] = useState([]);
   const [carregando, setCarregando] = useState(true);
@@ -89,9 +90,14 @@ function SecaoSquad({ mostrar }) {
       <CartaoConvite aoCriado={recarregar} />
 
       <Cartao>
-        <h3 style={{ margin: "0 0 12px", fontSize: 16, fontWeight: 800, color: TINTA }}>
-          Squad ({membros.length} {membros.length === 1 ? "membro" : "membros"})
-        </h3>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
+          <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: TINTA }}>
+            Squad ({membros.length} {membros.length === 1 ? "membro" : "membros"})
+          </h3>
+          {membros.length > 0 && (
+            <Botao pequeno variante="fantasma" onClick={() => navigate("/squad")}>Ver clientes de cada um</Botao>
+          )}
+        </div>
         {membros.length === 0 ? (
           <p style={{ color: CINZA, fontWeight: 600, fontSize: 14, margin: 0 }}>
             Nenhum social media no squad ainda. Gere um link de convite acima.
@@ -170,6 +176,7 @@ export default function AgenciaPage() {
         }}>
           <Marca />
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <Botao pequeno variante="fantasma" onClick={() => navigate("/squad")}>Ver squad</Botao>
             <Botao pequeno variante="fantasma" onClick={() => navigate("/painel")}>Ver painel de conteúdo</Botao>
             <button onClick={() => navigate("/perfil")} className="em-btn" style={{
               display: "flex", alignItems: "center", gap: 8, border: "none", background: "transparent",
