@@ -29,12 +29,18 @@ export default function PagamentoConfirmadoPage() {
             <h1 style={{ margin: 0, fontSize: 20, fontWeight: 900, color: TINTA }}>Pagamento confirmado</h1>
             <p style={{ margin: "8px 0 0", fontSize: 14, color: CINZA, fontWeight: 600 }}>
               {detalhe.tipo === "plano"
-                ? <>Seu plano <strong style={{ color: TINTA }}>{detalhe.nome}</strong> já está ativo.</>
+                ? <>Seu plano <strong style={{ color: TINTA }}>{detalhe.nome}</strong> já está ativo
+                    {detalhe.ciclo === "anual" ? " (cobrança anual)" : " (cobrança mensal)"}.</>
                 : <>Seu pacote <strong style={{ color: TINTA }}>{detalhe.nome}</strong> já foi liberado na sua conta.</>}
             </p>
             <p style={{ margin: "4px 0 0", fontSize: 22, fontWeight: 900, color: TINTA }}>
-              {formatarPreco(detalhe.preco)}{detalhe.mensal ? " /mês" : ""}
+              {formatarPreco(detalhe.preco)}{detalhe.ciclo === "anual" ? " /ano" : detalhe.mensal ? " /mês" : ""}
             </p>
+            {detalhe.ciclo === "anual" && (
+              <p style={{ margin: "2px 0 0", fontSize: 13, fontWeight: 700, color: VERDE }}>
+                Você economizou 5% assinando anualmente 🎉
+              </p>
+            )}
           </>
         ) : (
           <>

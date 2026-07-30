@@ -2,6 +2,7 @@ import { Router } from "express";
 import { db } from "../db.js";
 import { autenticar, exigirTipo, usuarioPublico } from "../auth.js";
 import { gerarTokenAleatorio } from "../tokens.js";
+import { LIMITES_PLANO_AGENCIA } from "./planos.js";
 
 export const rotaSquad = Router();
 
@@ -88,6 +89,15 @@ rotaSquad.post("/convites/:token/aceitar", autenticar, exigirTipo("social_media"
   const convite = db.prepare("SELECT * FROM convites_squad WHERE token = ? AND status = 'pendente'")
     .get(req.params.token);
   if (!convite) return res.status(404).json({ erro: "Convite inválido, já usado ou revogado." });
+
+  const agencia = db.prepare("SELECT * FROM usuarios WHERE id = ?").get(convite.agencia_id);
+  const limiteColaboradores = agencia?.plano ? LIMITES_PLANO_AGENCIA[agencia.plano]?.colaboradores : null;
+  if (limiteColaboradores != null) {
+    const { n: colaboradoresAtuais } = db.prepare("SELECT COUNT(*) AS n FROM usuarios WHERE agencia_id = ?").get(agencia.id);
+    if (colaboradoresAtuais >= limiteColaboradores) {
+      return res.status(403).json({ erro: "Essa agência atingiu o limite de colaboradores do plano atual." });
+    }
+  }
 
   db.prepare("UPDATE usuarios SET agencia_id = ? WHERE id = ?").run(convite.agencia_id, req.usuario.id);
   db.prepare("UPDATE convites_squad SET status = 'aceito', aceito_por = ? WHERE id = ?").run(req.usuario.id, convite.id);

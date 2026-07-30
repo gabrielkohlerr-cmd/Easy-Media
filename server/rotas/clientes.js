@@ -2,6 +2,7 @@ import { Router } from "express";
 import { db } from "../db.js";
 import { autenticar, exigirTipo } from "../auth.js";
 import { gerarTokenAleatorio } from "../tokens.js";
+import { LIMITES_PLANO_AGENCIA, LIMITE_CLIENTES_GRATIS_FREELANCER } from "./planos.js";
 
 export const rotaClientes = Router();
 
@@ -70,6 +71,19 @@ rotaClientes.post("/", autenticar, (req, res) => {
   if (!nicho?.trim()) return res.status(400).json({ erro: "Informe o nicho do cliente." });
   if (responsavelId && !squadValido(req.usuario.id, responsavelId)) {
     return res.status(400).json({ erro: "Escolha um responsável que faça parte do seu squad." });
+  }
+
+  const { n: totalAtual } = db.prepare("SELECT COUNT(*) AS n FROM clientes WHERE dono_id = ?").get(req.usuario.id);
+  if (req.usuario.tipo === "agencia" && req.usuario.plano) {
+    const limite = LIMITES_PLANO_AGENCIA[req.usuario.plano]?.clientes;
+    if (limite != null && totalAtual >= limite) {
+      return res.status(403).json({ erro: "Você atingiu o limite de clientes do seu plano atual. Faça upgrade em Planos." });
+    }
+  } else if (req.usuario.tipo === "social_media" && !req.usuario.agencia_id) {
+    const limite = LIMITE_CLIENTES_GRATIS_FREELANCER + (req.usuario.pacote_clientes_extra || 0);
+    if (totalAtual >= limite) {
+      return res.status(403).json({ erro: "Você atingiu o limite de clientes do seu plano gratuito. Compre um pacote extra em Planos." });
+    }
   }
 
   const token = gerarTokenAleatorio();

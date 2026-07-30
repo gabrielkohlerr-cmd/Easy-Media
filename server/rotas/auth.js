@@ -7,14 +7,22 @@ export const rotaAuth = Router();
 
 const TIPOS_VALIDOS = ["social_media", "agencia"];
 
+function telefoneValido(telefone) {
+  const digitos = (telefone || "").replace(/\D/g, "");
+  return digitos.length === 10 || digitos.length === 11;
+}
+
 rotaAuth.post("/registro", (req, res) => {
-  const { nome, email, senha, tipo, nomeNegocio, conviteToken } = req.body || {};
+  const { nome, email, senha, tipo, nomeNegocio, telefone, conviteToken } = req.body || {};
 
   if (!nome?.trim() || !email?.trim() || !senha || senha.length < 6) {
     return res.status(400).json({ erro: "Preencha nome, e-mail e uma senha com pelo menos 6 caracteres." });
   }
   if (!TIPOS_VALIDOS.includes(tipo)) {
     return res.status(400).json({ erro: "Tipo de conta inválido." });
+  }
+  if (tipo === "agencia" && !telefoneValido(telefone)) {
+    return res.status(400).json({ erro: "Informe um telefone válido, com DDD." });
   }
 
   const existente = db.prepare("SELECT id FROM usuarios WHERE email = ?").get(email.trim().toLowerCase());
@@ -30,9 +38,12 @@ rotaAuth.post("/registro", (req, res) => {
   }
 
   const resultado = db.prepare(`
-    INSERT INTO usuarios (nome, email, senha_hash, tipo, nome_negocio, agencia_id)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `).run(nome.trim(), email.trim().toLowerCase(), hashSenha(senha), tipo, nomeNegocio?.trim() || null, agenciaId);
+    INSERT INTO usuarios (nome, email, senha_hash, tipo, nome_negocio, telefone, agencia_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    nome.trim(), email.trim().toLowerCase(), hashSenha(senha), tipo,
+    nomeNegocio?.trim() || null, telefone?.trim() || null, agenciaId,
+  );
 
   if (convite) {
     db.prepare("UPDATE convites_squad SET status = 'aceito', aceito_por = ? WHERE id = ?")

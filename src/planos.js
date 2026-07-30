@@ -17,6 +17,16 @@ export const FUNCIONALIDADES_INCLUSAS = [
   "Insights e tendências diárias, personalizados por segmento de cada cliente",
 ];
 
+export const DESCONTO_ANUAL = 0.05;
+
+export function precoAnual(precoMensal) {
+  return precoMensal * 12 * (1 - DESCONTO_ANUAL);
+}
+
+export function precoAnualPorMes(precoMensal) {
+  return precoAnual(precoMensal) / 12;
+}
+
 export const LIMITE_CLIENTES_GRATIS_FREELANCER = 20;
 
 export const PACOTES_CLIENTES_FREELANCER = [

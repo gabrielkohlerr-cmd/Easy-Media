@@ -231,22 +231,39 @@ function ModalLogin({ aoFechar, aoEntrar }) {
 
 /* ---------- formulário de cadastro por persona ---------- */
 
+function formatarTelefone(v) {
+  const d = v.replace(/\D/g, "").slice(0, 11);
+  if (d.length <= 2) return d;
+  if (d.length <= 7) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+}
+
+function telefoneValido(v) {
+  const d = (v || "").replace(/\D/g, "");
+  return d.length === 10 || d.length === 11;
+}
+
 function FormularioCadastro({ persona, aoCadastrar }) {
   const { registrar } = useAuth();
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [negocio, setNegocio] = useState("");
+  const [telefone, setTelefone] = useState("");
   const [erro, setErro] = useState("");
   const [enviando, setEnviando] = useState(false);
 
   const submeter = async e => {
     e.preventDefault();
     setErro("");
+    if (persona.agencia && !telefoneValido(telefone)) {
+      setErro("Informe um telefone válido, com DDD.");
+      return;
+    }
     setEnviando(true);
     try {
       const usuario = await registrar({
-        nome, email, senha, tipo: persona.id, nomeNegocio: negocio,
+        nome, email, senha, tipo: persona.id, nomeNegocio: negocio, telefone,
       });
       aoCadastrar(usuario);
     } catch (err) {
@@ -311,6 +328,19 @@ function FormularioCadastro({ persona, aoCadastrar }) {
             />
           </label>
         </div>
+        {persona.agencia && (
+          <label style={{ display: "grid", gap: 6, fontSize: 13, fontWeight: 600, color: CINZA }}>
+            Telefone (com DDD)
+            <input
+              required value={telefone} onChange={e => setTelefone(formatarTelefone(e.target.value))}
+              placeholder="(11) 91234-5678"
+              style={{
+                borderRadius: 14, border: `2px solid ${LAVANDA_2}`, padding: "12px 14px",
+                fontFamily: "inherit", fontWeight: 600, fontSize: 14, color: TINTA, outline: "none",
+              }}
+            />
+          </label>
+        )}
         {erro && <div style={{ fontSize: 13, fontWeight: 600, color: ROSA }}>{erro}</div>}
         <Botao type="submit" grande>{enviando ? "Criando conta…" : `${persona.cta} →`}</Botao>
       </form>
@@ -389,10 +419,21 @@ export default function PaginaLogin() {
     setTimeout(() => setToast(""), 2800);
   };
 
-  const aoEntrarOuCadastrar = usuario => {
+  const aoEntrar = usuario => {
     setLoginAberto(false);
     setPersonaAtiva(null);
     navigate(usuario.tipo === "agencia" ? "/agencia" : "/inicio");
+  };
+
+  const aoCadastrar = usuario => {
+    setLoginAberto(false);
+    setPersonaAtiva(null);
+    if (usuario.tipo === "agencia") {
+      // logo após o cadastro, a agência já escolhe o plano de pagamento
+      navigate("/planos", { state: { onboarding: true } });
+    } else {
+      navigate("/inicio");
+    }
   };
 
   return (
@@ -563,7 +604,7 @@ export default function PaginaLogin() {
           {(personaAtiva === "social_media" || personaAtiva === "agencia") && (
             <FormularioCadastro
               persona={PERSONAS.find(p => p.id === personaAtiva)}
-              aoCadastrar={aoEntrarOuCadastrar}
+              aoCadastrar={aoCadastrar}
             />
           )}
         </div>
@@ -663,7 +704,7 @@ export default function PaginaLogin() {
       {loginAberto && (
         <ModalLogin
           aoFechar={() => setLoginAberto(false)}
-          aoEntrar={aoEntrarOuCadastrar}
+          aoEntrar={aoEntrar}
         />
       )}
 

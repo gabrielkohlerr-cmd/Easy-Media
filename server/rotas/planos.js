@@ -13,6 +13,9 @@ export const LIMITES_PLANO_AGENCIA = {
 export const PACOTES_CLIENTES_VALIDOS = { mais20: 20, mais30: 30, mais50: 50 };
 export const LIMITE_CLIENTES_GRATIS_FREELANCER = 20;
 
+export const CICLOS_VALIDOS = ["mensal", "anual"];
+export const DESCONTO_ANUAL = 0.05;
+
 function donoDaCarteira(usuario) {
   return usuario.tipo === "social_media" && usuario.agencia_id ? usuario.agencia_id : usuario.id;
 }
@@ -29,6 +32,7 @@ rotaPlanos.get("/meu", autenticar, (req, res) => {
     return res.json({
       tipo: "agencia",
       plano: usuario.plano || null,
+      planoCiclo: usuario.plano_ciclo || null,
       limites: usuario.plano ? LIMITES_PLANO_AGENCIA[usuario.plano] : null,
       colaboradoresAtuais,
       clientesCadastrados,
@@ -53,13 +57,16 @@ rotaPlanos.get("/meu", autenticar, (req, res) => {
 /* "compra" o plano da agência — cobrança ainda não integrada, é só uma
    simulação: o plano fica ativo assim que o botão é clicado. */
 rotaPlanos.post("/agencia", autenticar, exigirTipo("agencia"), (req, res) => {
-  const { plano } = req.body || {};
+  const { plano, ciclo = "mensal" } = req.body || {};
   if (!Object.keys(LIMITES_PLANO_AGENCIA).includes(plano)) {
     return res.status(400).json({ erro: "Escolha um plano válido." });
   }
+  if (!CICLOS_VALIDOS.includes(ciclo)) {
+    return res.status(400).json({ erro: "Escolha um ciclo de cobrança válido." });
+  }
 
-  db.prepare("UPDATE usuarios SET plano = ? WHERE id = ?").run(plano, req.usuario.id);
-  res.json({ ok: true, plano });
+  db.prepare("UPDATE usuarios SET plano = ?, plano_ciclo = ? WHERE id = ?").run(plano, ciclo, req.usuario.id);
+  res.json({ ok: true, plano, ciclo });
 });
 
 /* "compra" um pacote extra de clientes pro social media freelancer —

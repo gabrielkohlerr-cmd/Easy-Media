@@ -160,3 +160,5 @@ adicionarColunaSeNaoExistir("cartoes_kanban", "prazo", "TEXT");
 
 adicionarColunaSeNaoExistir("usuarios", "plano", "TEXT");
 adicionarColunaSeNaoExistir("usuarios", "pacote_clientes_extra", "INTEGER NOT NULL DEFAULT 0");
+adicionarColunaSeNaoExistir("usuarios", "telefone", "TEXT");
+adicionarColunaSeNaoExistir("usuarios", "plano_ciclo", "TEXT");

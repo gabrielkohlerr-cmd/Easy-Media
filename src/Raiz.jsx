@@ -13,6 +13,7 @@ import KanbanPage from './KanbanPage.jsx'
 import InicioPage from './InicioPage.jsx'
 import SquadPage from './SquadPage.jsx'
 import PlanosPage from './PlanosPage.jsx'
+import PagamentoCartaoPage from './PagamentoCartaoPage.jsx'
 import PagamentoConfirmadoPage from './PagamentoConfirmadoPage.jsx'
 
 function Painel() {
@@ -98,6 +99,13 @@ function RotaPlanos() {
   return <PlanosPage />
 }
 
+function RotaPagamentoCartao() {
+  const { usuario, carregando } = useAuth()
+  if (carregando) return null
+  if (!usuario) return <Navigate to="/" replace />
+  return <PagamentoCartaoPage />
+}
+
 function RotaPagamentoConfirmado() {
   const { usuario, carregando } = useAuth()
   if (carregando) return null
@@ -122,6 +130,7 @@ function Rotas() {
       <Route path="/inicio" element={<RotaInicio />} />
       <Route path="/squad" element={<RotaSquad />} />
       <Route path="/planos" element={<RotaPlanos />} />
+      <Route path="/planos/cartao" element={<RotaPagamentoCartao />} />
       <Route path="/planos/confirmacao" element={<RotaPagamentoConfirmado />} />
       <Route path="/convite/:token" element={<ConvitePage />} />
       <Route path="/cliente/:token" element={<ClientePortal />} />

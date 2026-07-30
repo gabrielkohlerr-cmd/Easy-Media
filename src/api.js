@@ -99,6 +99,7 @@ export const api = {
   removerAnexoCartao: (id, anexoId) => requisitar(`/kanban/cartoes/${id}/anexos/${anexoId}`, { method: "DELETE" }),
 
   meuPlano: () => requisitar("/planos/meu"),
-  escolherPlanoAgencia: plano => requisitar("/planos/agencia", { method: "POST", body: JSON.stringify({ plano }) }),
+  escolherPlanoAgencia: (plano, ciclo = "mensal") =>
+    requisitar("/planos/agencia", { method: "POST", body: JSON.stringify({ plano, ciclo }) }),
   comprarPacoteClientes: pacote => requisitar("/planos/pacote-cliente", { method: "POST", body: JSON.stringify({ pacote }) }),
 };

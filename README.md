@@ -63,27 +63,41 @@ demonstração, como os do restante dos relatórios.
 
 ## Planos e cobrança
 
-A tela **Planos** (link no cabeçalho de Agência e de Clientes) mostra os
-pacotes pagos e deixa escolher um — mas a cobrança ainda não está
-integrada a um meio de pagamento real, então isso hoje é uma simulação:
-ao clicar em "Escolher"/"Comprar pacote", o plano (ou o pacote extra de
-clientes) já fica ativo na hora, sem passar por nenhum checkout de
-verdade, e a tela seguinte só confirma a "compra" simulada.
+Ao cadastrar uma conta de **agência**, o telefone (com DDD) passa a ser
+obrigatório, e logo depois do cadastro a agência já cai direto na tela de
+**Planos** pra escolher um pacote — não é preciso ir procurar essa opção
+depois. A tela **Planos** também fica disponível a qualquer momento pelo
+cabeçalho de Agência e de Clientes.
 
 - **Agências**: Básico (R$99,90/mês, até 15 colaboradores e 50 clientes),
   Premium (R$149,90/mês, até 40 colaboradores e 100 clientes, recomendado)
   e Unlimited (R$299,90/mês, colaboradores e clientes ilimitados). As
   funcionalidades da plataforma (API do Instagram, Kanban e calendário da
   equipe, agenda, squad, insights) são as mesmas nos três planos — o que
-  muda é só o tamanho do squad/carteira.
+  muda é só o tamanho do squad/carteira. Cada plano pode ser assinado
+  mensal ou anualmente; no anual tem 5% de desconto sobre o total do ano
+  (destacado na própria tela, incentivando a assinatura anual).
 - **Social media freelancer** (sem agência): cadastro gratuito pra até 20
   clientes; depois disso, dá pra comprar pacotes extras (+20 por R$19,90,
   +30 por R$24,90 ou +50 por R$39,90, pagamento único). Quem é do squad de
   uma agência não vê essa cobrança — o plano de quem gerencia a carteira
   é o da agência.
 
-Hoje esses limites não bloqueiam o cadastro de colaboradores/clientes (só
-são exibidos); a validação fica pra quando a cobrança real for integrada.
+Ao clicar em "Assinar" ou "Comprar pacote", o usuário é levado pra uma
+tela de pagamento com cartão de crédito (número, nome impresso, validade
+e CVV). A cobrança ainda não está integrada a um meio de pagamento real —
+é uma simulação: os dados do cartão passam só por validações de formato
+no navegador e nunca são enviados nem armazenados; ao confirmar, o plano
+(ou pacote de clientes) já fica ativo na hora, e a tela seguinte confirma
+a "compra" simulada.
+
+Diferente da versão anterior, os limites de cada plano **já são
+aplicados de verdade**: uma agência com plano ativo não consegue
+cadastrar mais clientes nem aceitar mais colaboradores no squad do que o
+plano permite (a tentativa retorna erro pedindo upgrade), e o mesmo vale
+pro limite de clientes do freelancer gratuito. Agências que ainda não
+escolheram nenhum plano continuam sem restrição, pra não quebrar contas
+já em uso antes dessa mudança.
 
 ## Estrutura
 

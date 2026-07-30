@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ROXO_CLARO, LAVANDA, TINTA, CINZA, VERDE } from "./theme.js";
-import { Botao, Cartao, Toast } from "./components.jsx";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ROXO, ROXO_ESCURO, ROXO_CLARO, LAVANDA, TINTA, CINZA, VERDE } from "./theme.js";
+import { Botao, Cartao } from "./components.jsx";
 import { IconeCheck, IconeEstrela } from "./icones.jsx";
 import { useAuth } from "./AuthContext.jsx";
 import { api } from "./api.js";
-import { PLANOS_AGENCIA, FUNCIONALIDADES_INCLUSAS, PACOTES_CLIENTES_FREELANCER, formatarPreco } from "./planos.js";
+import {
+  PLANOS_AGENCIA, FUNCIONALIDADES_INCLUSAS, PACOTES_CLIENTES_FREELANCER,
+  formatarPreco, precoAnual, precoAnualPorMes,
+} from "./planos.js";
 
 function CartaoFuncionalidades() {
   return (
@@ -25,8 +28,34 @@ function CartaoFuncionalidades() {
   );
 }
 
-function CartaoPlanoAgencia({ plano, planoAtual, aoEscolher, escolhendo }) {
-  const ehAtual = planoAtual === plano.id;
+function SeletorCiclo({ ciclo, aoAlterar }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+      <div style={{ display: "inline-flex", gap: 4, background: LAVANDA, borderRadius: 999, padding: 4 }}>
+        {["mensal", "anual"].map(c => (
+          <button key={c} onClick={() => aoAlterar(c)} className="em-btn" style={{
+            border: "none", cursor: "pointer", fontFamily: "inherit", fontWeight: 800, fontSize: 13,
+            padding: "9px 16px", borderRadius: 999,
+            background: ciclo === c ? ROXO : "transparent", color: ciclo === c ? "#fff" : CINZA,
+          }}>{c === "mensal" ? "Mensal" : "Anual"}</button>
+        ))}
+      </div>
+      {ciclo === "anual" ? (
+        <span style={{ fontSize: 13, fontWeight: 700, color: VERDE }}>✓ Você está economizando 5% pagando anualmente</span>
+      ) : (
+        <span style={{ fontSize: 13, fontWeight: 700, color: ROXO_CLARO }}>
+          Vale a pena assinar anualmente — 5% de desconto no total do ano.
+        </span>
+      )}
+    </div>
+  );
+}
+
+function CartaoPlanoAgencia({ plano, ciclo, planoAtual, planoCicloAtual, aoEscolher }) {
+  const ehAtual = planoAtual === plano.id && planoCicloAtual === ciclo;
+  const preco = ciclo === "anual" ? precoAnual(plano.preco) : plano.preco;
+  const porMes = ciclo === "anual" ? precoAnualPorMes(plano.preco) : null;
+
   return (
     <Cartao style={{
       display: "flex", flexDirection: "column", gap: 12, position: "relative",
@@ -43,8 +72,13 @@ function CartaoPlanoAgencia({ plano, planoAtual, aoEscolher, escolhendo }) {
       )}
       <h3 style={{ margin: "6px 0 0", fontSize: 18, fontWeight: 900, color: TINTA }}>{plano.nome}</h3>
       <div>
-        <span style={{ fontSize: 28, fontWeight: 900, color: TINTA }}>{formatarPreco(plano.preco)}</span>
-        <span style={{ fontSize: 13, fontWeight: 700, color: CINZA }}> /mês</span>
+        <span style={{ fontSize: 28, fontWeight: 900, color: TINTA }}>{formatarPreco(preco)}</span>
+        <span style={{ fontSize: 13, fontWeight: 700, color: CINZA }}>{ciclo === "anual" ? " /ano" : " /mês"}</span>
+        {ciclo === "anual" && (
+          <div style={{ fontSize: 12, fontWeight: 700, color: CINZA, marginTop: 2 }}>
+            equivale a {formatarPreco(porMes)}/mês
+          </div>
+        )}
       </div>
       <div style={{ display: "grid", gap: 6, fontSize: 13.5, fontWeight: 700, color: CINZA }}>
         <div>{plano.colaboradores ? `Até ${plano.colaboradores} colaboradores` : "Colaboradores ilimitados"}</div>
@@ -52,42 +86,47 @@ function CartaoPlanoAgencia({ plano, planoAtual, aoEscolher, escolhendo }) {
       </div>
       <Botao
         variante={ehAtual ? "claro" : plano.recomendado ? "primario" : "fantasma"}
-        disabled={ehAtual || escolhendo === plano.id}
+        disabled={ehAtual}
         onClick={() => aoEscolher(plano)}
         style={{ marginTop: "auto" }}
       >
-        {ehAtual ? "Plano atual" : escolhendo === plano.id ? "Ativando…" : `Escolher ${plano.nome}`}
+        {ehAtual ? "Plano atual" : `Assinar ${plano.nome}`}
       </Botao>
     </Cartao>
   );
 }
 
-function PlanosDeAgencia({ mostrar }) {
+function PlanosDeAgencia({ onboarding }) {
   const navigate = useNavigate();
   const [status, setStatus] = useState(null);
-  const [escolhendo, setEscolhendo] = useState(null);
+  const [ciclo, setCiclo] = useState("mensal");
 
   const carregar = () => { api.meuPlano().then(setStatus); };
   useEffect(carregar, []);
 
-  const escolher = async plano => {
-    setEscolhendo(plano.id);
-    try {
-      await api.escolherPlanoAgencia(plano.id);
-      navigate("/planos/confirmacao", { state: { tipo: "plano", nome: plano.nome, preco: plano.preco, mensal: true } });
-    } catch (err) {
-      mostrar(err.message);
-      setEscolhendo(null);
-    }
+  const escolher = plano => {
+    const preco = ciclo === "anual" ? precoAnual(plano.preco) : plano.preco;
+    navigate("/planos/cartao", {
+      state: { tipo: "plano", id: plano.id, nome: plano.nome, preco, ciclo, precoMensalBase: plano.preco },
+    });
   };
 
   return (
     <div style={{ display: "grid", gap: 20 }}>
+      {onboarding && (
+        <Cartao style={{ background: ROXO_ESCURO, border: "none" }}>
+          <div style={{ color: "#fff", fontWeight: 800, fontSize: 15 }}>🎉 Sua conta foi criada!</div>
+          <div style={{ color: "rgba(255,255,255,.7)", fontWeight: 600, fontSize: 13, marginTop: 4 }}>
+            Escolha um plano abaixo pra liberar todos os recursos da sua agência.
+          </div>
+        </Cartao>
+      )}
+
       <div>
         <h1 style={{ margin: 0, fontSize: 24, fontWeight: 900, color: TINTA }}>Planos para agências</h1>
         <p style={{ margin: "4px 0 0", color: CINZA, fontWeight: 600, fontSize: 14 }}>
-          Escolha o plano de acordo com o tamanho do seu squad. Cobrança mensal — o pagamento ainda
-          não está integrado, então essa é uma simulação da experiência de compra.
+          Escolha o plano de acordo com o tamanho do seu squad. O pagamento ainda não está integrado
+          a um meio de cobrança real, então essa é uma simulação da experiência de compra.
         </p>
       </div>
 
@@ -95,6 +134,7 @@ function PlanosDeAgencia({ mostrar }) {
         <Cartao style={{ background: LAVANDA }}>
           <div style={{ fontWeight: 800, color: TINTA, fontSize: 14 }}>
             Seu plano atual: {PLANOS_AGENCIA.find(p => p.id === status.plano)?.nome}
+            {status.planoCiclo && ` (cobrança ${status.planoCiclo})`}
           </div>
           <div style={{ fontSize: 13, color: CINZA, fontWeight: 600, marginTop: 2 }}>
             {status.colaboradoresAtuais} colaboradores no squad · {status.clientesCadastrados} clientes na carteira
@@ -102,11 +142,14 @@ function PlanosDeAgencia({ mostrar }) {
         </Cartao>
       )}
 
+      <SeletorCiclo ciclo={ciclo} aoAlterar={setCiclo} />
+
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20, marginTop: 8 }}>
         {PLANOS_AGENCIA.map(plano => (
           <CartaoPlanoAgencia
-            key={plano.id} plano={plano} planoAtual={status?.plano}
-            aoEscolher={escolher} escolhendo={escolhendo}
+            key={plano.id} plano={plano} ciclo={ciclo}
+            planoAtual={status?.plano} planoCicloAtual={status?.planoCiclo}
+            aoEscolher={escolher}
           />
         ))}
       </div>
@@ -116,23 +159,17 @@ function PlanosDeAgencia({ mostrar }) {
   );
 }
 
-function PlanoDeFreelancer({ mostrar }) {
+function PlanoDeFreelancer() {
   const navigate = useNavigate();
   const [status, setStatus] = useState(null);
-  const [comprando, setComprando] = useState(null);
 
   const carregar = () => { api.meuPlano().then(setStatus); };
   useEffect(carregar, []);
 
-  const comprar = async pacote => {
-    setComprando(pacote.id);
-    try {
-      await api.comprarPacoteClientes(pacote.id);
-      navigate("/planos/confirmacao", { state: { tipo: "pacote", nome: pacote.nome, preco: pacote.preco, mensal: false } });
-    } catch (err) {
-      mostrar(err.message);
-      setComprando(null);
-    }
+  const comprar = pacote => {
+    navigate("/planos/cartao", {
+      state: { tipo: "pacote", id: pacote.id, nome: pacote.nome, preco: pacote.preco, mensal: false },
+    });
   };
 
   if (status?.gerenciadoPelaAgencia) {
@@ -183,11 +220,8 @@ function PlanoDeFreelancer({ mostrar }) {
               <span style={{ fontSize: 26, fontWeight: 900, color: TINTA }}>{formatarPreco(pacote.preco)}</span>
               <span style={{ fontSize: 13, fontWeight: 700, color: CINZA }}> pagamento único</span>
             </div>
-            <Botao
-              variante="fantasma" disabled={comprando === pacote.id}
-              onClick={() => comprar(pacote)} style={{ marginTop: "auto" }}
-            >
-              {comprando === pacote.id ? "Comprando…" : "Comprar pacote"}
+            <Botao variante="fantasma" onClick={() => comprar(pacote)} style={{ marginTop: "auto" }}>
+              Comprar pacote
             </Botao>
           </Cartao>
         ))}
@@ -200,13 +234,8 @@ function PlanoDeFreelancer({ mostrar }) {
 
 export default function PlanosPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { usuario } = useAuth();
-  const [toast, setToast] = useState("");
-
-  const mostrar = msg => {
-    setToast(msg);
-    setTimeout(() => setToast(""), 2800);
-  };
 
   return (
     <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA }}>
@@ -228,11 +257,9 @@ export default function PlanosPage() {
 
       <main style={{ maxWidth: 1000, margin: "0 auto", padding: "24px 20px 60px" }}>
         {usuario?.tipo === "agencia"
-          ? <PlanosDeAgencia mostrar={mostrar} />
-          : <PlanoDeFreelancer mostrar={mostrar} />}
+          ? <PlanosDeAgencia onboarding={location.state?.onboarding} />
+          : <PlanoDeFreelancer />}
       </main>
-
-      <Toast msg={toast} />
     </div>
   );
 }
