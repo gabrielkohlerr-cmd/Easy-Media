@@ -69,14 +69,18 @@ no **segmento** e **nicho** do cliente, por isso os dois viraram campos
 obrigatórios ao cadastrar um cliente novo.
 
 As sugestões de tendência rodam num banco de conteúdo por segmento que
-muda diariamente (não vêm de uma API de tendências ao vivo, que não
-temos integrada). Cada sugestão tem um link "Ver referências sobre
-isso" — uma busca no Google Notícias montada com as palavras-chave do
-tema, sempre atual (em vez de um link fixo pra uma matéria específica,
-que ficaria velho/quebrado com o tempo). O botão "Ver todas as
-tendências" mostra o banco inteiro por segmento, com a data em que cada
-uma foi destaque, pra dar pra avaliar se ainda vale considerar ou se já
-ficou datada.
+muda diariamente. Não vêm de uma API de tendências ao vivo do Instagram,
+TikTok ou X — nenhuma das três oferece isso pra um app comum (o TikTok
+só libera dados de tendência pra parceiros aprovados na Research API, e
+o X exige um nível pago da API pra acessar `trends`, por localização, não
+por segmento de negócio). Em vez disso, cada sugestão tem uma linha
+"Pesquisar em: Instagram · TikTok · X", com um link de busca real e
+sempre atual em cada rede (montado com as palavras-chave do tema) — são
+buscas manuais mesmo, pra você conferir com os próprios olhos o que está
+rolando e decidir se vale considerar, não uma automação puxando dados.
+O botão "Ver todas as tendências" mostra o banco inteiro por segmento,
+com a data em que cada uma foi destaque, pra dar pra avaliar se ainda
+vale considerar ou se já ficou datada.
 
 Os insights de alcance/engajamento por cliente **só aparecem com o
 Instagram do cliente conectado** — e quando aparecem, vêm de verdade da

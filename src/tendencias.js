@@ -1,13 +1,18 @@
 /* Sugestões de conteúdo por segmento, para a página "Início" do social media.
-   Não vêm de uma API de tendências ao vivo (não temos uma integrada) — são um banco
-   de sugestões por segmento que roda de forma determinística por dia do ano, então
-   muda diariamente mas de forma previsível, sem precisar de uma fonte externa.
+   Não vêm de uma API de tendências ao vivo — não existe uma API pública de
+   "tendências por segmento" pro Instagram ou TikTok pra um app comum (só a
+   Research API do TikTok, restrita a parceiros aprovados), e a do X exige um
+   nível pago com autenticação própria. Então isso aqui é um banco de
+   sugestões por segmento que roda de forma determinística por dia do ano —
+   muda diariamente, de forma previsível, sem depender de credenciais externas.
 
-   Cada item tem um "tema" (palavras-chave curtas) usado pra montar um link de
-   referência real — uma busca no Google Notícias sobre aquele assunto no
-   segmento do cliente, pra servir de referência (post em alta, notícia,
-   material) na hora de planejar. Não é um link fixo pra uma matéria específica
-   (que ficaria velho/quebrado com o tempo) — é uma busca sempre atual. */
+   Cada item tem um "tema" (palavras-chave curtas) usado pra montar três links
+   de busca reais — um pro Instagram, um pro TikTok e um pro X — pra você
+   conferir com os próprios olhos o que está rolando de verdade em cada rede
+   sobre aquele assunto, e decidir se vale levar em consideração. Não é um
+   link fixo pra um post específico (que ficaria velho/quebrado com o tempo)
+   nem uma automação puxando esses dados — é uma busca sempre atual, mas
+   manual: você é quem abre e avalia. */
 const BANCO_TENDENCIAS = {
   "Alimentação e Gastronomia": [
     { texto: "Vídeos de bastidores da cozinha (\"como é feito\") estão com bom engajamento.", tema: "bastidores de cozinha restaurante" },
@@ -93,15 +98,28 @@ function diaDoAno(data) {
   return Math.floor((data - inicio) / 86400000);
 }
 
-/* link de referência real — uma busca no Google Notícias (sempre atual, sem
-   risco de virar um link morto) combinando o tema do item com o segmento */
-export function linkReferenciaTendencia(tema, segmento) {
-  const consulta = `${tema} ${segmento}`;
-  return `https://news.google.com/search?q=${encodeURIComponent(consulta)}&hl=pt-BR&gl=BR&ceid=BR%3Apt-419`;
+function normalizarTag(texto) {
+  return texto
+    .normalize("NFD").replace(/\p{Diacritic}/gu, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "");
+}
+
+/* três links de busca reais (Instagram, TikTok e X) pro tema do item — sempre
+   atuais, sem risco de virar link morto, mas são buscas manuais mesmo: quem
+   decide o que vale ou não é quem está olhando, não uma automação */
+export function linksReferenciaTendencia(tema, segmento) {
+  const tag = normalizarTag(tema);
+  const consultaAmpla = encodeURIComponent(`${tema} ${segmento}`);
+  return {
+    instagram: `https://www.instagram.com/explore/tags/${tag}/`,
+    tiktok: `https://www.tiktok.com/search?q=${consultaAmpla}`,
+    x: `https://x.com/search?q=${consultaAmpla}&f=live`,
+  };
 }
 
 function itemComLink(item, segmento) {
-  return { texto: item.texto, tema: item.tema, link: linkReferenciaTendencia(item.tema, segmento) };
+  return { texto: item.texto, tema: item.tema, links: linksReferenciaTendencia(item.tema, segmento) };
 }
 
 export function tendenciaDoDia(segmento, deslocamento = 0, data = new Date()) {

@@ -30,6 +30,31 @@ function formatarData(data) {
   return data.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
 }
 
+const REDES = [
+  { chave: "instagram", rotulo: "Instagram" },
+  { chave: "tiktok", rotulo: "TikTok" },
+  { chave: "x", rotulo: "X" },
+];
+
+/* pesquisas manuais reais em cada rede — não é uma automação puxando
+   tendências ao vivo (nenhuma das três oferece isso pra um app comum),
+   é um atalho pra você mesmo conferir o que está rolando em cada uma */
+function LinksRedes({ links, cor }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+      <span style={{ fontSize: 10, fontWeight: 700, color: cor, opacity: 0.75 }}>Pesquisar em:</span>
+      {REDES.map(r => (
+        <a key={r.chave} href={links[r.chave]} target="_blank" rel="noreferrer" style={{
+          display: "inline-flex", alignItems: "center", gap: 4, fontSize: 11, fontWeight: 800,
+          color: cor, textDecoration: "underline",
+        }}>
+          <IconeLink tamanho={10} /> {r.rotulo}
+        </a>
+      ))}
+    </div>
+  );
+}
+
 function ModalTodasTendencias({ segmentos, aoFechar }) {
   return (
     <div onClick={aoFechar} style={{
@@ -69,12 +94,7 @@ function ModalTodasTendencias({ segmentos, aoFechar }) {
                       <p style={{ margin: "0 0 6px", fontSize: 13, color: TINTA, fontWeight: 600, lineHeight: 1.5 }}>
                         {item.texto}
                       </p>
-                      <a href={item.link} target="_blank" rel="noreferrer" style={{
-                        display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 800,
-                        color: ROXO, textDecoration: "none",
-                      }}>
-                        <IconeLink tamanho={12} /> Ver referências sobre isso
-                      </a>
+                      <LinksRedes links={item.links} cor={ROXO} />
                     </div>
                   ))}
                 </div>
@@ -368,15 +388,10 @@ export default function InicioPage() {
                       </div>
                     )}
 
-                    <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: CINZA, lineHeight: 1.5 }}>
+                    <p style={{ margin: "0 0 6px", fontSize: 12, fontWeight: 600, color: CINZA, lineHeight: 1.5 }}>
                       {dica.texto}
                     </p>
-                    <a href={dica.link} target="_blank" rel="noreferrer" style={{
-                      display: "inline-flex", alignItems: "center", gap: 5, marginTop: 6, fontSize: 11, fontWeight: 800,
-                      color: ROXO, textDecoration: "none",
-                    }}>
-                      <IconeLink tamanho={11} /> Ver referências sobre isso
-                    </a>
+                    <LinksRedes links={dica.links} cor={ROXO} />
                   </div>
                 );
               })}
@@ -384,6 +399,7 @@ export default function InicioPage() {
           )}
           <p style={{ margin: "12px 0 0", fontSize: 11, fontWeight: 600, color: CINZA }}>
             Alcance e engajamento só aparecem quando o Instagram do cliente está conectado, e vêm direto da conta real dele.
+            As buscas por rede acima são manuais — não puxamos tendências ao vivo de nenhuma plataforma.
           </p>
         </Cartao>
 
@@ -415,17 +431,10 @@ export default function InicioPage() {
                     <div style={{ fontSize: 13, color: "#EDE9FE", fontWeight: 600, lineHeight: 1.5, marginBottom: 6 }}>
                       {dica.texto}
                     </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
-                      <div style={{ fontSize: 11, fontWeight: 700, color: "#C4B5FD" }}>
-                        Vale pra: {clientesDoSegmento.map(c => c.nome).join(", ")}
-                      </div>
-                      <a href={dica.link} target="_blank" rel="noreferrer" style={{
-                        display: "inline-flex", alignItems: "center", gap: 5, fontSize: 11, fontWeight: 800,
-                        color: "#fff", textDecoration: "underline",
-                      }}>
-                        <IconeLink tamanho={11} /> Ver referências
-                      </a>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "#C4B5FD", marginBottom: 6 }}>
+                      Vale pra: {clientesDoSegmento.map(c => c.nome).join(", ")}
                     </div>
+                    <LinksRedes links={dica.links} cor="#fff" />
                   </div>
                 );
               })}
