@@ -65,13 +65,29 @@ resumo com os cartões do Kanban em urgência, perto do prazo ou já
 atrasados (de todos os quadros que o usuário acessa), uma prévia da
 semana do calendário e da agenda, insights por cliente e sugestões de
 conteúdo ("tendências do dia") organizadas por segmento — tudo com base
-no **segmento** e
-**nicho** do cliente, por isso os dois viraram campos obrigatórios ao
-cadastrar um cliente novo. As sugestões de tendência rodam num banco de
-conteúdo por segmento que muda diariamente (não vêm de uma API de
-tendências ao vivo, que não temos integrada), e os números de
-alcance/engajamento por cliente na tela de Início também são
-demonstração, como os do restante dos relatórios.
+no **segmento** e **nicho** do cliente, por isso os dois viraram campos
+obrigatórios ao cadastrar um cliente novo.
+
+As sugestões de tendência rodam num banco de conteúdo por segmento que
+muda diariamente (não vêm de uma API de tendências ao vivo, que não
+temos integrada). Cada sugestão tem um link "Ver referências sobre
+isso" — uma busca no Google Notícias montada com as palavras-chave do
+tema, sempre atual (em vez de um link fixo pra uma matéria específica,
+que ficaria velho/quebrado com o tempo). O botão "Ver todas as
+tendências" mostra o banco inteiro por segmento, com a data em que cada
+uma foi destaque, pra dar pra avaliar se ainda vale considerar ou se já
+ficou datada.
+
+Os insights de alcance/engajamento por cliente **só aparecem com o
+Instagram do cliente conectado** — e quando aparecem, vêm de verdade da
+conta dele (agregado dos últimos posts publicados via API do
+Instagram), não são mais uma demonstração. Sem o Instagram conectado, a
+tela mostra um link direto pra conectar em vez de qualquer número.
+
+Cada cliente também tem uma **Pasta** (botão ao lado do nome, na
+Carteira de clientes) pra guardar planejamentos, roteiros e outras
+referências — como nota de texto, link ou arquivo — servindo de banco
+de dados da conta, independente do calendário/Kanban.
 
 ## Planos e cobrança
 
@@ -195,6 +211,14 @@ Limitações da integração atual:
   (fica registrado o motivo no post, pra publicar manualmente).
 - Os tokens de acesso são de longa duração (~60 dias) mas não há rotina
   automática de renovação ainda — reconectar manualmente quando expirar.
+- Os insights reais (alcance/engajamento) usam o escopo
+  `instagram_business_manage_insights` e o endpoint de insights por mídia
+  da API do Instagram. Esse escopo/endpoint não foi testado contra uma
+  conta real neste ambiente (sem credenciais de desenvolvedor aqui) — se
+  a Meta rejeitar alguma das métricas pedidas (`reach,likes,comments,saved,shares`)
+  pra algum tipo de conta, o card do cliente simplesmente não mostra
+  números (like "não deu pra carregar"), sem quebrar o resto da tela.
+  Vale testar com uma conta conectada de verdade depois do deploy.
 
 ## Vídeo do hero da página inicial
 

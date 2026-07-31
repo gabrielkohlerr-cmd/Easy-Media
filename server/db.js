@@ -129,6 +129,16 @@ db.exec(`
     cor TEXT,
     UNIQUE(quadro_id, coluna)
   );
+
+  CREATE TABLE IF NOT EXISTS documentos_cliente (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    cliente_id INTEGER NOT NULL REFERENCES clientes(id) ON DELETE CASCADE,
+    tipo TEXT NOT NULL CHECK(tipo IN ('nota','link','arquivo')),
+    titulo TEXT NOT NULL,
+    conteudo TEXT,
+    autor_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    criado_em TEXT NOT NULL DEFAULT (datetime('now'))
+  );
 `);
 
 function adicionarColunaSeNaoExistir(tabela, coluna, definicao) {

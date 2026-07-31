@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { ROXO, ROXO_ESCURO, ROXO_CLARO, LAVANDA, LAVANDA_2, TINTA, CINZA, VERDE, AMBAR, ROSA } from "./theme.js";
 import { Botao, Cartao, Pill } from "./components.jsx";
 import {
-  IconeKanban, IconeCalendario, IconeAgenda, IconeRelogio, IconeGrafico, IconeIA,
+  IconeKanban, IconeCalendario, IconeAgenda, IconeRelogio, IconeGrafico, IconeIA, IconeLink, IconeCamera,
 } from "./icones.jsx";
 import { useAuth } from "./AuthContext.jsx";
 import { api } from "./api.js";
-import { tendenciaDoDia } from "./tendencias.js";
+import { tendenciaDoDia, todasTendencias } from "./tendencias.js";
 import { statusPrazo, rotuloPrazo } from "./prazos.js";
 import NavLateral from "./NavLateral.jsx";
 
@@ -26,21 +26,65 @@ function inicioDaSemana(date) {
   return d;
 }
 
-function hashSimples(texto) {
-  let h = 0;
-  for (let i = 0; i < texto.length; i++) h = (h * 31 + texto.charCodeAt(i)) >>> 0;
-  return h;
+function formatarData(data) {
+  return data.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
 }
 
-/* métrica fixa (não é dado real do Instagram) só pra dar uma referência de
-   desempenho por cliente na tela de início — mesma lógica de "dados de
-   demonstração" já usada nos relatórios do resto do app */
-function metricasDemo(cliente) {
-  const h = hashSimples(`${cliente.id}-${cliente.nome}`);
-  return {
-    alcance: 6000 + (h % 42000),
-    engajamento: 250 + (h % 3800),
-  };
+function ModalTodasTendencias({ segmentos, aoFechar }) {
+  return (
+    <div onClick={aoFechar} style={{
+      position: "fixed", inset: 0, background: "rgba(23,19,16,.55)", zIndex: 100,
+      display: "flex", alignItems: "flex-start", justifyContent: "center", padding: 20, overflowY: "auto",
+    }}>
+      <div onClick={e => e.stopPropagation()} style={{ width: "100%", maxWidth: 640, marginTop: 40 }}>
+        <Cartao style={{ padding: 26 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+            <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: TINTA }}>Todas as tendências</h2>
+            <button onClick={aoFechar} aria-label="Fechar" className="em-btn" style={{
+              border: "none", background: LAVANDA, width: 30, height: 30, borderRadius: 999,
+              cursor: "pointer", fontWeight: 800, color: CINZA, fontSize: 15,
+            }}>×</button>
+          </div>
+          <p style={{ margin: "0 0 18px", fontSize: 13, color: CINZA, fontWeight: 600 }}>
+            Todo o banco de sugestões por segmento, com a data em que cada uma foi destaque —
+            use isso pra avaliar se ainda vale considerar ou se já ficou datada.
+          </p>
+          <div style={{ display: "grid", gap: 22 }}>
+            {segmentos.map(seg => (
+              <div key={seg}>
+                <h3 style={{ margin: "0 0 10px", fontSize: 14, fontWeight: 800, color: ROXO }}>{seg}</h3>
+                <div style={{ display: "grid", gap: 8 }}>
+                  {todasTendencias(seg).map((item, i) => (
+                    <div key={i} style={{
+                      background: LAVANDA, borderRadius: 14, padding: 12,
+                      border: item.ehHoje ? `2px solid ${ROXO_CLARO}` : "none",
+                    }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                        {item.ehHoje
+                          ? <Pill cor="#fff" bg={ROXO_CLARO}>Tendência de hoje</Pill>
+                          : <span style={{ fontSize: 11, fontWeight: 700, color: CINZA }}>
+                              Destaque em {formatarData(item.ultimaVez)}
+                            </span>}
+                      </div>
+                      <p style={{ margin: "0 0 6px", fontSize: 13, color: TINTA, fontWeight: 600, lineHeight: 1.5 }}>
+                        {item.texto}
+                      </p>
+                      <a href={item.link} target="_blank" rel="noreferrer" style={{
+                        display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 800,
+                        color: ROXO, textDecoration: "none",
+                      }}>
+                        <IconeLink tamanho={12} /> Ver referências sobre isso
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Cartao>
+      </div>
+    </div>
+  );
 }
 
 export default function InicioPage() {
@@ -53,6 +97,8 @@ export default function InicioPage() {
   const [totalCartoes, setTotalCartoes] = useState(0);
   const [cartoesAtencao, setCartoesAtencao] = useState([]);
   const [carregando, setCarregando] = useState(true);
+  const [insightsPorCliente, setInsightsPorCliente] = useState({});
+  const [tendenciasAbertas, setTendenciasAbertas] = useState(false);
 
   const inicioSemana = useMemo(() => inicioDaSemana(new Date()), []);
   const diasSemana = useMemo(() => {
@@ -112,6 +158,21 @@ export default function InicioPage() {
 
   const clientesComSegmento = clientes.filter(c => c.segmento);
   const segmentosDosClientes = [...new Set(clientesComSegmento.map(c => c.segmento))];
+  const clientesConectados = clientesComSegmento.filter(c => c.instagram_conectado);
+
+  // insights reais só existem pra clientes com Instagram conectado — busca
+  // um a um (a API do Instagram não tem um endpoint em lote) e guarda o
+  // resultado por cliente conforme cada chamada termina
+  useEffect(() => {
+    clientesConectados.forEach(c => {
+      if (insightsPorCliente[c.id]) return;
+      setInsightsPorCliente(atual => ({ ...atual, [c.id]: { carregando: true } }));
+      api.insightsInstagramCliente(c.id)
+        .then(dados => setInsightsPorCliente(atual => ({ ...atual, [c.id]: { carregando: false, ...dados } })))
+        .catch(() => setInsightsPorCliente(atual => ({ ...atual, [c.id]: { carregando: false, erro: true } })));
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clientes]);
 
   if (carregando) return null;
 
@@ -259,40 +320,82 @@ export default function InicioPage() {
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 12 }}>
               {clientesComSegmento.map(c => {
-                const metricas = metricasDemo(c);
+                const dica = tendenciaDoDia(c.segmento, 2);
+                const insights = insightsPorCliente[c.id];
                 return (
                   <div key={c.id} style={{ background: LAVANDA, borderRadius: 16, padding: 14 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8, marginBottom: 8 }}>
                       <span style={{ fontWeight: 800, color: TINTA, fontSize: 14 }}>{c.nome}</span>
                       <Pill cor={ROXO} bg="#fff">{c.segmento}</Pill>
                     </div>
-                    <div style={{ display: "flex", gap: 14, marginBottom: 8 }}>
-                      <div>
-                        <div style={{ fontSize: 16, fontWeight: 800, color: ROXO }}>{metricas.alcance.toLocaleString("pt-BR")}</div>
-                        <div style={{ fontSize: 11, fontWeight: 700, color: CINZA }}>alcance médio</div>
+
+                    {!c.instagram_conectado && (
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
+                        <IconeCamera tamanho={13} style={{ color: CINZA, flexShrink: 0 }} />
+                        <button onClick={() => navigate("/clientes")} className="em-btn" style={{
+                          border: "none", background: "transparent", cursor: "pointer", textAlign: "left",
+                          fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: ROXO, textDecoration: "underline", padding: 0,
+                        }}>Conecte o Instagram desse cliente pra ver insights reais</button>
                       </div>
-                      <div>
-                        <div style={{ fontSize: 16, fontWeight: 800, color: VERDE }}>{metricas.engajamento.toLocaleString("pt-BR")}</div>
-                        <div style={{ fontSize: 11, fontWeight: 700, color: CINZA }}>engajamento</div>
+                    )}
+
+                    {c.instagram_conectado && insights?.carregando && (
+                      <p style={{ margin: "0 0 10px", fontSize: 12, fontWeight: 600, color: CINZA }}>Carregando insights reais…</p>
+                    )}
+
+                    {c.instagram_conectado && !insights?.carregando && insights?.erro && (
+                      <p style={{ margin: "0 0 10px", fontSize: 12, fontWeight: 600, color: CINZA }}>
+                        Não deu pra carregar os insights reais agora.
+                      </p>
+                    )}
+
+                    {c.instagram_conectado && !insights?.carregando && !insights?.erro && insights?.postsConsiderados === 0 && (
+                      <p style={{ margin: "0 0 10px", fontSize: 12, fontWeight: 600, color: CINZA }}>
+                        Instagram conectado, mas ainda sem posts publicados pra calcular insights.
+                      </p>
+                    )}
+
+                    {c.instagram_conectado && !insights?.carregando && !insights?.erro && insights?.postsConsiderados > 0 && (
+                      <div style={{ display: "flex", gap: 14, marginBottom: 8 }}>
+                        <div>
+                          <div style={{ fontSize: 16, fontWeight: 800, color: ROXO }}>{insights.alcance.toLocaleString("pt-BR")}</div>
+                          <div style={{ fontSize: 11, fontWeight: 700, color: CINZA }}>alcance real</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: 16, fontWeight: 800, color: VERDE }}>{insights.engajamento.toLocaleString("pt-BR")}</div>
+                          <div style={{ fontSize: 11, fontWeight: 700, color: CINZA }}>engajamento real</div>
+                        </div>
                       </div>
-                    </div>
+                    )}
+
                     <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: CINZA, lineHeight: 1.5 }}>
-                      {tendenciaDoDia(c.segmento, 2)}
+                      {dica.texto}
                     </p>
+                    <a href={dica.link} target="_blank" rel="noreferrer" style={{
+                      display: "inline-flex", alignItems: "center", gap: 5, marginTop: 6, fontSize: 11, fontWeight: 800,
+                      color: ROXO, textDecoration: "none",
+                    }}>
+                      <IconeLink tamanho={11} /> Ver referências sobre isso
+                    </a>
                   </div>
                 );
               })}
             </div>
           )}
           <p style={{ margin: "12px 0 0", fontSize: 11, fontWeight: 600, color: CINZA }}>
-            Números de alcance e engajamento são uma demonstração — ainda não vêm do Instagram real do cliente.
+            Alcance e engajamento só aparecem quando o Instagram do cliente está conectado, e vêm direto da conta real dele.
           </p>
         </Cartao>
 
         <Cartao style={{ background: `linear-gradient(135deg, ${ROXO_ESCURO}, ${ROXO})` }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-            <IconeIA tamanho={18} style={{ color: "#fff" }} />
-            <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: "#fff" }}>Tendências de hoje</h3>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8, marginBottom: 6 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <IconeIA tamanho={18} style={{ color: "#fff" }} />
+              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: "#fff" }}>Tendências de hoje</h3>
+            </div>
+            {segmentosDosClientes.length > 0 && (
+              <Botao pequeno variante="fantasmaClaro" onClick={() => setTendenciasAbertas(true)}>Ver todas as tendências</Botao>
+            )}
           </div>
           <p style={{ margin: "0 0 14px", fontSize: 12, fontWeight: 600, color: "#DDD6FE" }}>
             Sugestões por segmento, atualizadas diariamente — adapte pro nicho de cada cliente abaixo.
@@ -305,14 +408,23 @@ export default function InicioPage() {
             <div style={{ display: "grid", gap: 10 }}>
               {segmentosDosClientes.map(seg => {
                 const clientesDoSegmento = clientesComSegmento.filter(c => c.segmento === seg);
+                const dica = tendenciaDoDia(seg);
                 return (
                   <div key={seg} style={{ background: "rgba(255,255,255,.12)", borderRadius: 16, padding: 14 }}>
                     <div style={{ fontWeight: 800, color: "#fff", fontSize: 13, marginBottom: 4 }}>{seg}</div>
                     <div style={{ fontSize: 13, color: "#EDE9FE", fontWeight: 600, lineHeight: 1.5, marginBottom: 6 }}>
-                      {tendenciaDoDia(seg)}
+                      {dica.texto}
                     </div>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: "#C4B5FD" }}>
-                      Vale pra: {clientesDoSegmento.map(c => c.nome).join(", ")}
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "#C4B5FD" }}>
+                        Vale pra: {clientesDoSegmento.map(c => c.nome).join(", ")}
+                      </div>
+                      <a href={dica.link} target="_blank" rel="noreferrer" style={{
+                        display: "inline-flex", alignItems: "center", gap: 5, fontSize: 11, fontWeight: 800,
+                        color: "#fff", textDecoration: "underline",
+                      }}>
+                        <IconeLink tamanho={11} /> Ver referências
+                      </a>
                     </div>
                   </div>
                 );
@@ -321,6 +433,10 @@ export default function InicioPage() {
           )}
         </Cartao>
       </main>
+
+      {tendenciasAbertas && (
+        <ModalTodasTendencias segmentos={segmentosDosClientes} aoFechar={() => setTendenciasAbertas(false)} />
+      )}
     </div>
   );
 }

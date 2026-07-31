@@ -417,10 +417,22 @@ export default function KanbanPage() {
     setTimeout(() => setToast(""), 2600);
   };
 
+  const [carregouInicial, setCarregouInicial] = useState(false);
+
+  // carga inicial num único request (quadros + colunas/cartões/membros do
+  // quadro pessoal, que é o que abre por padrão) — evita o vai-e-vem de
+  // "busca os quadros, espera, só então busca o resto" que deixava a tela
+  // demorando mais pra aparecer
   useEffect(() => {
-    api.listarQuadrosKanban().then(({ quadros }) => {
+    api.kanbanInicial().then(({ quadros, quadroAtivoId: ativoId, colunas, cartoes, membros }) => {
       setQuadros(quadros);
-      setQuadroAtivoId(atual => atual || quadros[0]?.id || null);
+      setQuadroAtivoId(ativoId);
+      setColunas(colunas);
+      setCartoes(cartoes);
+      setMembrosDisponiveis(membros);
+    }).finally(() => {
+      setCarregouInicial(true);
+      setCarregando(false);
     });
   }, []);
 
@@ -434,8 +446,10 @@ export default function KanbanPage() {
     api.listarColunasKanban(quadroAtivoId).then(({ colunas }) => setColunas(colunas));
   };
 
+  // só refaz a busca completa quando o usuário troca de quadro (a carga
+  // inicial já trouxe os dados do primeiro quadro, então pula aqui)
   useEffect(() => {
-    if (!quadroAtivoId) return;
+    if (!carregouInicial || !quadroAtivoId) return;
     setCarregando(true);
     Promise.all([
       api.listarCartoesKanban(quadroAtivoId),
@@ -475,11 +489,11 @@ export default function KanbanPage() {
     <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA, display: "flex" }}>
       <NavLateral usuario={usuario} aoSair={() => { sair(); navigate("/"); }} />
 
-      <main className="ez-conteudo-com-sidebar" style={{ flex: 1, minWidth: 0, maxWidth: 1400, margin: "0 auto", padding: "24px 20px 60px", display: "grid", gap: 20 }}>
+      <main className="ez-conteudo-com-sidebar" style={{ flex: 1, minWidth: 0, maxWidth: 1400, margin: "0 auto", padding: "14px 20px 60px", display: "grid", gap: 12 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
           <div>
-            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 900, color: TINTA }}>Kanban</h1>
-            <p style={{ margin: "4px 0 0", color: CINZA, fontWeight: 600, fontSize: 14 }}>
+            <h1 style={{ margin: 0, fontSize: 20, fontWeight: 900, color: TINTA }}>Kanban</h1>
+            <p style={{ margin: "2px 0 0", color: CINZA, fontWeight: 600, fontSize: 13 }}>
               Organize os processos da sua operação, do pedido à entrega.
             </p>
           </div>

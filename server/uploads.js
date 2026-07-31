@@ -10,9 +10,11 @@ export const PASTA_UPLOADS = path.join(__dirname, "..", "uploads");
 const PASTA_POSTS = path.join(PASTA_UPLOADS, "posts");
 const PASTA_PERFIS = path.join(PASTA_UPLOADS, "perfis");
 const PASTA_KANBAN = path.join(PASTA_UPLOADS, "kanban");
+const PASTA_DOCUMENTOS = path.join(PASTA_UPLOADS, "documentos");
 fs.mkdirSync(PASTA_POSTS, { recursive: true });
 fs.mkdirSync(PASTA_PERFIS, { recursive: true });
 fs.mkdirSync(PASTA_KANBAN, { recursive: true });
+fs.mkdirSync(PASTA_DOCUMENTOS, { recursive: true });
 
 function armazenamento(destino) {
   return multer.diskStorage({
@@ -47,5 +49,10 @@ export const uploadFotoPerfil = multer({
 
 export const uploadAnexoCartao = multer({
   storage: armazenamento(PASTA_KANBAN),
+  limits: { fileSize: 25 * 1024 * 1024, files: 1 },
+});
+
+export const uploadDocumentoCliente = multer({
+  storage: armazenamento(PASTA_DOCUMENTOS),
   limits: { fileSize: 25 * 1024 * 1024, files: 1 },
 });

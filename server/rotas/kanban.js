@@ -94,6 +94,48 @@ function serializarCartao(cartao) {
   };
 }
 
+/* mesma serialização de serializarCartao, mas em lote: evita 1+3N consultas
+   ao carregar a lista inteira de um quadro (uma consulta por cartão pra
+   membros/comentários/anexos era o principal motivo do Kanban demorar pra
+   abrir com mais alguns cartões) */
+function serializarCartoesEmLote(cartoes) {
+  if (cartoes.length === 0) return [];
+  const ids = cartoes.map(c => c.id);
+  const marcadores = ids.map(() => "?").join(",");
+
+  const membrosLinhas = db.prepare(`
+    SELECT m.cartao_id AS cartaoId, u.id, u.nome FROM cartoes_kanban_membros m
+    JOIN usuarios u ON u.id = m.usuario_id
+    WHERE m.cartao_id IN (${marcadores}) ORDER BY u.nome
+  `).all(...ids);
+  const comentariosLinhas = db.prepare(`
+    SELECT cartao_id AS cartaoId, COUNT(*) AS n FROM cartoes_kanban_comentarios
+    WHERE cartao_id IN (${marcadores}) GROUP BY cartao_id
+  `).all(...ids);
+  const anexosLinhas = db.prepare(`
+    SELECT cartao_id AS cartaoId, COUNT(*) AS n FROM cartoes_kanban_anexos
+    WHERE cartao_id IN (${marcadores}) GROUP BY cartao_id
+  `).all(...ids);
+
+  const membrosPorCartao = {};
+  membrosLinhas.forEach(m => { (membrosPorCartao[m.cartaoId] ||= []).push({ id: m.id, nome: m.nome }); });
+  const comentariosPorCartao = Object.fromEntries(comentariosLinhas.map(c => [c.cartaoId, c.n]));
+  const anexosPorCartao = Object.fromEntries(anexosLinhas.map(a => [a.cartaoId, a.n]));
+
+  return cartoes.map(cartao => ({
+    id: cartao.id,
+    quadroId: cartao.quadro_id,
+    coluna: cartao.coluna,
+    titulo: cartao.titulo,
+    descricao: cartao.descricao,
+    prazo: cartao.prazo,
+    criadoEm: cartao.criado_em,
+    membros: membrosPorCartao[cartao.id] || [],
+    totalComentarios: comentariosPorCartao[cartao.id] || 0,
+    totalAnexos: anexosPorCartao[cartao.id] || 0,
+  }));
+}
+
 /* lista os quadros que o usuário pode ver: sempre o pessoal, e o do squad se
    ele for agência ou social media vinculado a uma */
 rotaKanban.get("/quadros", autenticar, (req, res) => {
@@ -140,7 +182,28 @@ rotaKanban.get("/quadros/:id/cartoes", autenticar, (req, res) => {
   const quadro = quadroAcessivel(req.usuario, req.params.id);
   if (!quadro) return res.status(404).json({ erro: "Quadro não encontrado." });
   const cartoes = db.prepare("SELECT * FROM cartoes_kanban WHERE quadro_id = ? ORDER BY criado_em ASC").all(quadro.id);
-  res.json({ cartoes: cartoes.map(serializarCartao) });
+  res.json({ cartoes: serializarCartoesEmLote(cartoes) });
+});
+
+/* carga inicial do Kanban num único request: quadros do usuário + colunas,
+   cartões e membros do quadro que abre por padrão (o pessoal). Evita a
+   sequência "busca quadros -> espera -> busca o resto do quadro ativo"
+   que fazia a tela demorar mais pra aparecer. */
+rotaKanban.get("/inicial", autenticar, (req, res) => {
+  const quadroPessoal = { ...obterOuCriarQuadroPessoal(req.usuario.id), nome: "Meu quadro" };
+  const quadros = [quadroPessoal];
+  const agenciaId = squadAgenciaId(req.usuario);
+  if (agenciaId) quadros.push({ ...obterOuCriarQuadroSquad(agenciaId), nome: "Quadro do squad" });
+
+  const cartoes = db.prepare("SELECT * FROM cartoes_kanban WHERE quadro_id = ? ORDER BY criado_em ASC").all(quadroPessoal.id);
+
+  res.json({
+    quadros: quadros.map(q => ({ id: q.id, tipo: q.tipo, nome: q.nome })),
+    quadroAtivoId: quadroPessoal.id,
+    colunas: obterColunasDoQuadro(quadroPessoal.id),
+    cartoes: serializarCartoesEmLote(cartoes),
+    membros: [{ id: req.usuario.id, nome: req.usuario.nome }],
+  });
 });
 
 rotaKanban.post("/quadros/:id/cartoes", autenticar, (req, res) => {

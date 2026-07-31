@@ -87,6 +87,42 @@ rotaInstagram.get("/posts/:postId/comentarios", autenticar, async (req, res) => 
   }
 });
 
+/* insights reais (alcance/engajamento) agregados dos últimos posts publicados
+   no Instagram do cliente — só existe quando o Instagram está conectado; sem
+   conexão não tem como saber nada real, então não é chamado. */
+rotaInstagram.get("/clientes/:id/insights", autenticar, async (req, res) => {
+  const cliente = clienteAcessivel(req.usuario, req.params.id);
+  if (!cliente) return res.status(404).json({ erro: "Cliente não encontrado." });
+  if (!cliente.instagram_access_token) return res.status(400).json({ erro: "Cliente não tem Instagram conectado." });
+
+  const publicados = db.prepare(`
+    SELECT id, instagram_media_id, instagram_permalink FROM posts
+    WHERE cliente_id = ? AND status = 'publicado' AND instagram_media_id IS NOT NULL
+    ORDER BY instagram_publicado_em DESC LIMIT 12
+  `).all(cliente.id);
+
+  if (publicados.length === 0) {
+    return res.json({ postsConsiderados: 0, alcance: 0, engajamento: 0 });
+  }
+
+  let alcance = 0;
+  let engajamento = 0;
+  let postsConsiderados = 0;
+  for (const post of publicados) {
+    try {
+      const metricas = await ig.buscarInsightsMedia(post.instagram_media_id, cliente.instagram_access_token);
+      alcance += metricas.reach || 0;
+      engajamento += (metricas.likes || 0) + (metricas.comments || 0) + (metricas.saved || 0) + (metricas.shares || 0);
+      postsConsiderados += 1;
+    } catch {
+      // uma mídia sem insights disponíveis (ainda processando, tipo não suportado etc.)
+      // não deve derrubar o resto do agregado — só é ignorada
+    }
+  }
+
+  res.json({ postsConsiderados, alcance, engajamento });
+});
+
 rotaInstagram.post("/posts/:postId/comentarios/:comentarioId/responder", autenticar, async (req, res) => {
   const post = db.prepare("SELECT * FROM posts WHERE id = ?").get(req.params.postId);
   if (!post) return res.status(404).json({ erro: "Post não encontrado." });

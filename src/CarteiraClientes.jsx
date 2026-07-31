@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ROXO, LAVANDA, LAVANDA_2, TINTA, CINZA } from "./theme.js";
 import { Botao, Cartao, Pill } from "./components.jsx";
-import { IconeCamera } from "./icones.jsx";
+import { IconeCamera, IconePasta } from "./icones.jsx";
 import { useAuth } from "./AuthContext.jsx";
 import { api } from "./api.js";
 import { SEGMENTOS } from "./segmentos.js";
@@ -22,6 +23,7 @@ async function copiar(texto) {
 
 export default function CarteiraClientes({ mostrar }) {
   const { usuario } = useAuth();
+  const navigate = useNavigate();
   const podeGerenciar = usuario?.tipo === "agencia" || !usuario?.agencia_id;
 
   const [clientes, setClientes] = useState([]);
@@ -166,15 +168,22 @@ export default function CarteiraClientes({ mostrar }) {
                     </div>
                   )}
                 </div>
-                {c.token_acesso ? (
-                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                    <Botao pequeno variante="fantasma" onClick={() => copiarLink(c)}>Copiar link do cliente</Botao>
-                    <Botao pequeno variante="fantasma" onClick={() => rotacionarLink(c)}>Renovar link</Botao>
-                    <Botao pequeno variante="perigo" onClick={() => remover(c.id)}>Remover</Botao>
-                  </div>
-                ) : (
-                  <span style={{ fontSize: 12, color: CINZA, fontWeight: 600 }}>Gerenciado pela sua agência</span>
-                )}
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+                  <Botao pequeno variante="fantasma" onClick={() => navigate(`/pasta/${c.id}`)}>
+                    <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <IconePasta tamanho={14} /> Pasta
+                    </span>
+                  </Botao>
+                  {c.token_acesso ? (
+                    <>
+                      <Botao pequeno variante="fantasma" onClick={() => copiarLink(c)}>Copiar link do cliente</Botao>
+                      <Botao pequeno variante="fantasma" onClick={() => rotacionarLink(c)}>Renovar link</Botao>
+                      <Botao pequeno variante="perigo" onClick={() => remover(c.id)}>Remover</Botao>
+                    </>
+                  ) : (
+                    <span style={{ fontSize: 12, color: CINZA, fontWeight: 600 }}>Gerenciado pela sua agência</span>
+                  )}
+                </div>
               </div>
 
               {podeGerenciar && (

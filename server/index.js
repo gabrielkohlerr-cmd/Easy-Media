@@ -9,6 +9,7 @@ import { rotaAgenda } from "./rotas/agenda.js";
 import { rotaInstagram } from "./rotas/instagram.js";
 import { rotaKanban } from "./rotas/kanban.js";
 import { rotaPlanos } from "./rotas/planos.js";
+import { rotaPasta } from "./rotas/pasta.js";
 import { PASTA_UPLOADS } from "./uploads.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -26,6 +27,7 @@ app.use("/api/agenda", rotaAgenda);
 app.use("/api/instagram", rotaInstagram);
 app.use("/api/kanban", rotaKanban);
 app.use("/api/planos", rotaPlanos);
+app.use("/api", rotaPasta);
 
 const DIST = path.join(__dirname, "..", "dist");
 app.use(express.static(DIST));

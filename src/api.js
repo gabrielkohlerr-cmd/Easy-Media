@@ -76,7 +76,9 @@ export const api = {
     requisitar(`/instagram/posts/${postId}/comentarios/${comentarioId}/responder`, {
       method: "POST", body: JSON.stringify({ mensagem }),
     }),
+  insightsInstagramCliente: clienteId => requisitar(`/instagram/clientes/${clienteId}/insights`),
 
+  kanbanInicial: () => requisitar("/kanban/inicial"),
   listarQuadrosKanban: () => requisitar("/kanban/quadros"),
   listarMembrosQuadroKanban: quadroId => requisitar(`/kanban/quadros/${quadroId}/membros`),
   listarColunasKanban: quadroId => requisitar(`/kanban/quadros/${quadroId}/colunas`),
@@ -102,4 +104,11 @@ export const api = {
   escolherPlanoAgencia: (plano, ciclo = "mensal") =>
     requisitar("/planos/agencia", { method: "POST", body: JSON.stringify({ plano, ciclo }) }),
   comprarPacoteClientes: pacote => requisitar("/planos/pacote-cliente", { method: "POST", body: JSON.stringify({ pacote }) }),
+
+  listarPastaCliente: clienteId => requisitar(`/clientes/${clienteId}/pasta`),
+  criarDocumentoPasta: (clienteId, dados) =>
+    requisitar(`/clientes/${clienteId}/pasta`, { method: "POST", body: JSON.stringify(dados) }),
+  enviarArquivoPasta: (clienteId, formData) =>
+    requisitar(`/clientes/${clienteId}/pasta/arquivo`, { method: "POST", body: formData }),
+  removerDocumentoPasta: id => requisitar(`/pasta/${id}`, { method: "DELETE" }),
 };

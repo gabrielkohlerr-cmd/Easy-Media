@@ -25,7 +25,7 @@ export function urlAutorizacao(redirectUri, state) {
     client_id: APP_ID,
     redirect_uri: redirectUri,
     response_type: "code",
-    scope: "instagram_business_basic,instagram_business_content_publish,instagram_business_manage_comments",
+    scope: "instagram_business_basic,instagram_business_content_publish,instagram_business_manage_comments,instagram_business_manage_insights",
     state,
   });
   return `${AUTH_BASE}?${params.toString()}`;
@@ -122,4 +122,20 @@ export async function listarComentarios(mediaId, token) {
 
 export async function responderComentario(commentId, token, mensagem) {
   return chamarForm(`${API_BASE}/${commentId}/replies`, { message: mensagem, access_token: token });
+}
+
+/* insights reais de uma mídia publicada (alcance e interações) — exige o
+   escopo instagram_business_manage_insights concedido na conexão do cliente */
+export async function buscarInsightsMedia(mediaId, token) {
+  const params = new URLSearchParams({
+    metric: "reach,likes,comments,saved,shares",
+    access_token: token,
+  });
+  const dados = await chamarGet(`${API_BASE}/${mediaId}/insights?${params.toString()}`);
+  const porMetrica = {};
+  (dados.data || []).forEach(m => {
+    const valor = m.values?.[0]?.value ?? m.total_value?.value ?? 0;
+    porMetrica[m.name] = valor;
+  });
+  return porMetrica;
 }
