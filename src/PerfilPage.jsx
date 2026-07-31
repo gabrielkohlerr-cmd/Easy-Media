@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ROXO, LAVANDA, LAVANDA_2, TINTA, CINZA, ROSA } from "./theme.js";
-import { Cartao, Botao, Toast, Marca } from "./components.jsx";
+import { Cartao, Botao, Toast } from "./components.jsx";
 import { useAuth } from "./AuthContext.jsx";
 import { api } from "./api.js";
+import NavLateral from "./NavLateral.jsx";
 
 const campoEstilo = {
   borderRadius: 14, border: `2px solid ${LAVANDA_2}`, padding: "12px 14px",
@@ -11,7 +12,7 @@ const campoEstilo = {
 };
 
 export default function PerfilPage() {
-  const { usuario, recarregarUsuario } = useAuth();
+  const { usuario, sair, recarregarUsuario } = useAuth();
   const navigate = useNavigate();
 
   const [nome, setNome] = useState(usuario?.nome || "");
@@ -58,20 +59,10 @@ export default function PerfilPage() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA }}>
-      <header style={{
-        position: "sticky", top: 0, zIndex: 20, background: "rgba(0,0,0,.88)",
-        backdropFilter: "blur(8px)", borderBottom: "1px solid rgba(255,255,255,.1)",
-      }}>
-        <div style={{
-          maxWidth: 640, margin: "0 auto", padding: "14px 20px",
-          display: "flex", alignItems: "center", gap: 10,
-        }}>
-          <Marca />
-        </div>
-      </header>
+    <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA, display: "flex" }}>
+      <NavLateral usuario={usuario} aoSair={() => { sair(); navigate("/"); }} />
 
-      <main style={{ maxWidth: 640, margin: "0 auto", padding: "24px 20px 60px" }}>
+      <main className="ez-conteudo-com-sidebar" style={{ flex: 1, minWidth: 0, maxWidth: 640, margin: "0 auto", padding: "24px 20px 60px" }}>
         <Cartao style={{ padding: 28 }}>
           <h1 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 900, color: TINTA }}>Meu perfil</h1>
           <p style={{ margin: "0 0 20px", fontSize: 14, color: CINZA, fontWeight: 600 }}>

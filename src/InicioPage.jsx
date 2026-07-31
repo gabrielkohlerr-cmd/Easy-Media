@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ROXO, ROXO_ESCURO, ROXO_CLARO, LAVANDA, LAVANDA_2, TINTA, CINZA, VERDE, AMBAR, ROSA } from "./theme.js";
-import { Botao, Cartao, Pill, Marca } from "./components.jsx";
+import { Botao, Cartao, Pill } from "./components.jsx";
 import {
   IconeKanban, IconeCalendario, IconeAgenda, IconeRelogio, IconeGrafico, IconeIA,
 } from "./icones.jsx";
@@ -9,6 +9,7 @@ import { useAuth } from "./AuthContext.jsx";
 import { api } from "./api.js";
 import { tendenciaDoDia } from "./tendencias.js";
 import { statusPrazo, rotuloPrazo } from "./prazos.js";
+import NavLateral from "./NavLateral.jsx";
 
 const DIAS_SEMANA = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
@@ -43,7 +44,7 @@ function metricasDemo(cliente) {
 }
 
 export default function InicioPage() {
-  const { usuario } = useAuth();
+  const { usuario, sair } = useAuth();
   const navigate = useNavigate();
 
   const [clientes, setClientes] = useState([]);
@@ -115,32 +116,10 @@ export default function InicioPage() {
   if (carregando) return null;
 
   return (
-    <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA }}>
-      <header style={{
-        position: "sticky", top: 0, zIndex: 20, background: "rgba(0,0,0,.88)",
-        backdropFilter: "blur(8px)", borderBottom: "1px solid rgba(255,255,255,.1)",
-      }}>
-        <div style={{
-          maxWidth: 1160, margin: "0 auto", padding: "14px 20px",
-          display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap",
-        }}>
-          <Marca />
-          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-            <Botao pequeno variante="fantasmaClaro" onClick={() => navigate("/kanban")}>
-              <span style={{ display: "flex", alignItems: "center", gap: 6 }}><IconeKanban tamanho={14} /> Kanban</span>
-            </Botao>
-            <Botao pequeno variante="fantasmaClaro" onClick={() => navigate("/calendario")}>
-              <span style={{ display: "flex", alignItems: "center", gap: 6 }}><IconeCalendario tamanho={14} /> Calendário</span>
-            </Botao>
-            <Botao pequeno variante="fantasmaClaro" onClick={() => navigate("/agenda")}>
-              <span style={{ display: "flex", alignItems: "center", gap: 6 }}><IconeAgenda tamanho={14} /> Agenda</span>
-            </Botao>
-            <Botao pequeno variante="claro" onClick={() => navigate("/painel")}>Fila de conteúdo</Botao>
-          </div>
-        </div>
-      </header>
+    <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA, display: "flex" }}>
+      <NavLateral usuario={usuario} aoSair={() => { sair(); navigate("/"); }} />
 
-      <main style={{ maxWidth: 1160, margin: "0 auto", padding: "24px 20px 60px", display: "grid", gap: 20 }}>
+      <main className="ez-conteudo-com-sidebar" style={{ flex: 1, minWidth: 0, maxWidth: 1160, margin: "0 auto", padding: "24px 20px 60px", display: "grid", gap: 20 }}>
         <div>
           <h1 style={{ margin: 0, fontSize: 24, fontWeight: 900, color: TINTA }}>Olá, {usuario?.nome?.split(" ")[0]}</h1>
           <p style={{ margin: "4px 0 0", color: CINZA, fontWeight: 600, fontSize: 14 }}>

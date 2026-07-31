@@ -25,13 +25,6 @@ function Painel() {
       usuario={usuario}
       aoSair={() => navigate('/')}
       aoSairConta={() => { sair(); navigate('/') }}
-      aoAbrirAgencia={() => navigate('/agencia')}
-      aoAbrirPerfil={() => navigate('/perfil')}
-      aoAbrirClientes={() => navigate('/clientes')}
-      aoAbrirCalendario={() => navigate('/calendario')}
-      aoAbrirAgenda={() => navigate('/agenda')}
-      aoAbrirKanban={() => navigate('/kanban')}
-      aoAbrirInicio={usuario?.tipo === 'social_media' ? () => navigate('/inicio') : undefined}
     />
   )
 }

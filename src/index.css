@@ -24,3 +24,17 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .em-btn { transition: none; }
 }
+
+.ez-toggle-sidebar { display: none; }
+
+@media (max-width: 880px) {
+  .ez-sidebar {
+    position: fixed !important; left: -260px !important; top: 0 !important; z-index: 45;
+    transition: left .2s ease; box-shadow: 4px 0 24px rgba(0,0,0,.25);
+  }
+  .ez-sidebar.aberta { left: 0 !important; }
+  .ez-toggle-sidebar {
+    display: flex !important; position: fixed; top: 14px; left: 14px; z-index: 46;
+  }
+  main.ez-conteudo-com-sidebar { padding-top: 70px !important; }
+}

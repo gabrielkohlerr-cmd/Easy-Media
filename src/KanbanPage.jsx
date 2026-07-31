@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ROXO, LAVANDA, LAVANDA_2, TINTA, CINZA, ROSA, AMBAR } from "./theme.js";
-import { Botao, Cartao, Toast, Marca } from "./components.jsx";
+import { Botao, Cartao, Toast } from "./components.jsx";
 import {
   IconeComentario, IconeAnexo, IconeLink, IconeMais, IconeUsuarios, IconeAlerta, IconeLapis,
 } from "./icones.jsx";
 import { api } from "./api.js";
 import { statusPrazo, rotuloPrazo } from "./prazos.js";
+import { useAuth } from "./AuthContext.jsx";
+import NavLateral from "./NavLateral.jsx";
 
 const campoEstilo = {
   borderRadius: 14, border: `2px solid ${LAVANDA_2}`, padding: "10px 14px",
@@ -397,6 +399,7 @@ function DetalheCartao({ cartaoId, membrosDisponiveis, colunas, aoFechar, aoMudo
 }
 
 export default function KanbanPage() {
+  const { usuario, sair } = useAuth();
   const navigate = useNavigate();
   const [quadros, setQuadros] = useState([]);
   const [quadroAtivoId, setQuadroAtivoId] = useState(null);
@@ -469,21 +472,10 @@ export default function KanbanPage() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA }}>
-      <header style={{
-        position: "sticky", top: 0, zIndex: 20, background: "rgba(0,0,0,.88)",
-        backdropFilter: "blur(8px)", borderBottom: "1px solid rgba(255,255,255,.1)",
-      }}>
-        <div style={{
-          maxWidth: 1400, margin: "0 auto", padding: "14px 20px",
-          display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap",
-        }}>
-          <Marca />
-          <Botao pequeno variante="fantasmaClaro" onClick={() => navigate("/painel")}>Ver painel de conteúdo</Botao>
-        </div>
-      </header>
+    <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA, display: "flex" }}>
+      <NavLateral usuario={usuario} aoSair={() => { sair(); navigate("/"); }} />
 
-      <main style={{ maxWidth: 1400, margin: "0 auto", padding: "24px 20px 60px", display: "grid", gap: 20 }}>
+      <main className="ez-conteudo-com-sidebar" style={{ flex: 1, minWidth: 0, maxWidth: 1400, margin: "0 auto", padding: "24px 20px 60px", display: "grid", gap: 20 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
           <div>
             <h1 style={{ margin: 0, fontSize: 24, fontWeight: 900, color: TINTA }}>Kanban</h1>

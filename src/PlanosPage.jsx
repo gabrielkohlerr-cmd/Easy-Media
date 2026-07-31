@@ -5,6 +5,7 @@ import { Botao, Cartao } from "./components.jsx";
 import { IconeCheck, IconeEstrela } from "./icones.jsx";
 import { useAuth } from "./AuthContext.jsx";
 import { api } from "./api.js";
+import NavLateral from "./NavLateral.jsx";
 import {
   PLANOS_AGENCIA, FUNCIONALIDADES_INCLUSAS, PACOTES_CLIENTES_FREELANCER,
   formatarPreco, precoAnual, precoAnualPorMes,
@@ -235,27 +236,13 @@ function PlanoDeFreelancer() {
 export default function PlanosPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { usuario } = useAuth();
+  const { usuario, sair } = useAuth();
 
   return (
-    <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA }}>
-      <header style={{
-        position: "sticky", top: 0, zIndex: 20, background: "rgba(0,0,0,.88)",
-        backdropFilter: "blur(8px)", borderBottom: "1px solid rgba(255,255,255,.1)",
-      }}>
-        <div style={{
-          maxWidth: 1000, margin: "0 auto", padding: "14px 20px",
-          display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap",
-        }}>
-          <span style={{ fontSize: 14, fontWeight: 800, color: "#fff" }}>Planos</span>
-          <Botao
-            pequeno variante="fantasmaClaro"
-            onClick={() => navigate(usuario?.tipo === "agencia" ? "/agencia" : "/clientes")}
-          >Voltar</Botao>
-        </div>
-      </header>
+    <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA, display: "flex" }}>
+      <NavLateral usuario={usuario} aoSair={() => { sair(); navigate("/"); }} />
 
-      <main style={{ maxWidth: 1000, margin: "0 auto", padding: "24px 20px 60px" }}>
+      <main className="ez-conteudo-com-sidebar" style={{ flex: 1, minWidth: 0, maxWidth: 1000, margin: "0 auto", padding: "24px 20px 60px" }}>
         {usuario?.tipo === "agencia"
           ? <PlanosDeAgencia onboarding={location.state?.onboarding} />
           : <PlanoDeFreelancer />}

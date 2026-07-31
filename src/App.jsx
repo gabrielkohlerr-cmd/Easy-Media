@@ -9,11 +9,12 @@ import {
 import { Pill, Botao, Cartao, Toast, Marca } from "./components.jsx";
 import {
   IconeGrafico, IconeComentario, IconeAlvo, IconeImagem, IconeLapis, IconeIA,
-  IconeCaixaEntrada, IconeCheck, IconeRaio, IconeCalendario, IconeAgenda, IconeKanban, IconeCasa,
+  IconeCaixaEntrada, IconeCheck, IconeRaio, IconeCalendario,
 } from "./icones.jsx";
 import { api } from "./api.js";
 import NovoPostForm from "./NovoPostForm.jsx";
 import RevisarPostForm from "./RevisarPostForm.jsx";
+import NavLateral from "./NavLateral.jsx";
 
 /* ============ EASY MEDIA — protótipo funcional ============
    Roxo + branco · minimalista · tipografia bold arredondada
@@ -488,8 +489,7 @@ function carregarPosts() {
   return POSTS_INICIAIS;
 }
 
-export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia, aoAbrirPerfil, aoAbrirClientes, aoAbrirCalendario, aoAbrirAgenda, aoAbrirKanban, aoAbrirInicio }) {
-  const podeVerVisaoCliente = !usuario;
+export default function EasyMedia({ usuario, aoSair, aoSairConta }) {
   const [visao, setVisao] = useState("sm");
   const [posts, setPosts] = useState(carregarPosts);
   const [clientesReais, setClientesReais] = useState([]);
@@ -557,154 +557,84 @@ export default function EasyMedia({ usuario, aoSair, aoSairConta, aoAbrirAgencia
   const aoReprovar = usuario ? reprovarReal : reprovarDemo;
 
   return (
-    <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA }}>
-      <header style={{
-        position: "sticky", top: 0, zIndex: 20, background: "rgba(0,0,0,.88)",
-        backdropFilter: "blur(8px)", borderBottom: "1px solid rgba(255,255,255,.1)",
-      }}>
-        <div style={{
-          maxWidth: 960, margin: "0 auto", padding: "14px 20px",
-          display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap",
-        }}>
-          <Marca />
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            {podeVerVisaoCliente ? (
-              <div style={{ display: "flex", gap: 6, background: LAVANDA, borderRadius: 999, padding: 4 }}>
-                {[
-                  { id: "sm", rotulo: "Visão Social Media" },
-                  { id: "cliente", rotulo: "Visão Cliente" },
-                ].map(v => (
-                  <button key={v.id} onClick={() => setVisao(v.id)} className="em-btn" style={{
-                    border: "none", cursor: "pointer", fontFamily: "inherit",
-                    fontWeight: 800, fontSize: 13, padding: "10px 18px", borderRadius: 999,
-                    background: visao === v.id ? ROXO : "transparent",
-                    color: visao === v.id ? "#fff" : CINZA,
-                  }}>{v.rotulo}</button>
-                ))}
+    <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA, display: "flex" }}>
+      {usuario && <NavLateral usuario={usuario} aoSair={aoSairConta} />}
+
+      <div style={{ flex: 1, minWidth: 0 }}>
+        {!usuario && (
+          <header style={{
+            position: "sticky", top: 0, zIndex: 20, background: "rgba(0,0,0,.88)",
+            backdropFilter: "blur(8px)", borderBottom: "1px solid rgba(255,255,255,.1)",
+          }}>
+            <div style={{
+              maxWidth: 960, margin: "0 auto", padding: "14px 20px",
+              display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap",
+            }}>
+              <Marca />
+              <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                <div style={{ display: "flex", gap: 6, background: LAVANDA, borderRadius: 999, padding: 4 }}>
+                  {[
+                    { id: "sm", rotulo: "Visão Social Media" },
+                    { id: "cliente", rotulo: "Visão Cliente" },
+                  ].map(v => (
+                    <button key={v.id} onClick={() => setVisao(v.id)} className="em-btn" style={{
+                      border: "none", cursor: "pointer", fontFamily: "inherit",
+                      fontWeight: 800, fontSize: 13, padding: "10px 18px", borderRadius: 999,
+                      background: visao === v.id ? ROXO : "transparent",
+                      color: visao === v.id ? "#fff" : CINZA,
+                    }}>{v.rotulo}</button>
+                  ))}
+                </div>
+
+                <button onClick={reiniciar} className="em-btn" title="Restaura os dados de demonstração originais" style={{
+                  border: "none", background: "transparent", cursor: "pointer",
+                  fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: "rgba(255,255,255,.7)",
+                  textDecoration: "underline", padding: 0,
+                }}>Reiniciar demo</button>
+
+                {aoSair && (
+                  <button onClick={aoSair} className="em-btn" style={{
+                    border: "none", background: "transparent", cursor: "pointer",
+                    fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: "rgba(255,255,255,.7)",
+                    textDecoration: "underline", padding: 0,
+                  }}>← Voltar ao site</button>
+                )}
               </div>
-            ) : (
-              <span style={{ fontSize: 13, fontWeight: 800, color: "#fff" }}>Visão Social Media</span>
-            )}
-            {usuario && visao === "cliente" && clientesReais.length > 1 && (
-              <select
-                value={clienteVisualizado} onChange={e => setClienteVisualizado(e.target.value)}
-                style={{
-                  borderRadius: 999, border: `2px solid ${LAVANDA_2}`, padding: "6px 12px",
-                  fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: TINTA, outline: "none",
+            </div>
+          </header>
+        )}
+
+        <main className={usuario ? "ez-conteudo-com-sidebar" : undefined} style={{ maxWidth: 960, margin: "0 auto", padding: "24px 20px 60px" }}>
+          {visao === "sm"
+            ? (
+              <VisaoSocialMedia
+                posts={listaPosts}
+                clientes={clientesReais}
+                podeCriarPost={!!usuario}
+                mostrarFormulario={mostrarNovoPost}
+                aoAbrirFormulario={() => setMostrarNovoPost(true)}
+                aoFecharFormulario={() => setMostrarNovoPost(false)}
+                aoPostCriado={() => {
+                  setMostrarNovoPost(false);
+                  mostrar("✓ Post enviado pro cliente aprovar");
+                  recarregarReal();
                 }}
-              >
-                {clientesReais.map(c => <option key={c.id} value={c.nome}>{c.nome}</option>)}
-              </select>
+                aoPostReenviado={() => {
+                  mostrar("✓ Post revisado e reenviado pro cliente aprovar");
+                  recarregarReal();
+                }}
+              />
+            )
+            : (
+              <VisaoCliente
+                posts={listaPosts}
+                aoAprovar={aoAprovar}
+                aoReprovar={aoReprovar}
+                nomeCliente={usuario ? clienteVisualizado : undefined}
+              />
             )}
-
-            {!usuario && (
-              <button onClick={reiniciar} className="em-btn" title="Restaura os dados de demonstração originais" style={{
-                border: "none", background: "transparent", cursor: "pointer",
-                fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: "rgba(255,255,255,.7)",
-                textDecoration: "underline", padding: 0,
-              }}>Reiniciar demo</button>
-            )}
-
-            {usuario ? (
-              <>
-                {aoAbrirInicio && (
-                  <Botao pequeno variante="fantasmaClaro" onClick={aoAbrirInicio}>
-                    <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                      <IconeCasa tamanho={14} /> Início
-                    </span>
-                  </Botao>
-                )}
-                {usuario.tipo === "agencia" && aoAbrirAgencia && (
-                  <Botao pequeno variante="claro" onClick={aoAbrirAgencia}>Squad e clientes</Botao>
-                )}
-                {usuario.tipo === "social_media" && aoAbrirClientes && (
-                  <Botao pequeno variante="claro" onClick={aoAbrirClientes}>Clientes</Botao>
-                )}
-                {aoAbrirCalendario && (
-                  <Botao pequeno variante="fantasmaClaro" onClick={aoAbrirCalendario}>
-                    <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                      <IconeCalendario tamanho={14} /> Calendário
-                    </span>
-                  </Botao>
-                )}
-                {aoAbrirAgenda && (
-                  <Botao pequeno variante="fantasmaClaro" onClick={aoAbrirAgenda}>
-                    <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                      <IconeAgenda tamanho={14} /> Agenda
-                    </span>
-                  </Botao>
-                )}
-                {aoAbrirKanban && (
-                  <Botao pequeno variante="fantasmaClaro" onClick={aoAbrirKanban}>
-                    <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                      <IconeKanban tamanho={14} /> Kanban
-                    </span>
-                  </Botao>
-                )}
-                <button onClick={aoAbrirPerfil} className="em-btn" style={{
-                  display: "flex", alignItems: "center", gap: 8, border: "none", background: "transparent",
-                  cursor: "pointer", fontFamily: "inherit", padding: 0,
-                }}>
-                  <span style={{
-                    width: 26, height: 26, borderRadius: "50%", overflow: "hidden", background: LAVANDA_2,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: 12, fontWeight: 800, color: ROXO, flexShrink: 0,
-                  }}>
-                    {usuario.foto_perfil_url
-                      ? <img src={usuario.foto_perfil_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                      : usuario.nome?.[0]?.toUpperCase()}
-                  </span>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,.7)" }}>Olá, {usuario.nome}</span>
-                </button>
-                <button onClick={aoSairConta} className="em-btn" style={{
-                  border: "none", background: "transparent", cursor: "pointer",
-                  fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: "rgba(255,255,255,.7)",
-                  textDecoration: "underline", padding: 0,
-                }}>Sair</button>
-              </>
-            ) : (
-              aoSair && (
-                <button onClick={aoSair} className="em-btn" style={{
-                  border: "none", background: "transparent", cursor: "pointer",
-                  fontFamily: "inherit", fontWeight: 700, fontSize: 12, color: "rgba(255,255,255,.7)",
-                  textDecoration: "underline", padding: 0,
-                }}>← Voltar ao site</button>
-              )
-            )}
-          </div>
-        </div>
-      </header>
-
-      <main style={{ maxWidth: 960, margin: "0 auto", padding: "24px 20px 60px" }}>
-        {visao === "sm"
-          ? (
-            <VisaoSocialMedia
-              posts={listaPosts}
-              clientes={clientesReais}
-              podeCriarPost={!!usuario}
-              mostrarFormulario={mostrarNovoPost}
-              aoAbrirFormulario={() => setMostrarNovoPost(true)}
-              aoFecharFormulario={() => setMostrarNovoPost(false)}
-              aoPostCriado={() => {
-                setMostrarNovoPost(false);
-                mostrar("✓ Post enviado pro cliente aprovar");
-                recarregarReal();
-              }}
-              aoPostReenviado={() => {
-                mostrar("✓ Post revisado e reenviado pro cliente aprovar");
-                recarregarReal();
-              }}
-            />
-          )
-          : (
-            <VisaoCliente
-              posts={listaPosts}
-              aoAprovar={aoAprovar}
-              aoReprovar={aoReprovar}
-              nomeCliente={usuario ? clienteVisualizado : undefined}
-            />
-          )}
-      </main>
+        </main>
+      </div>
 
       <Toast msg={toast} />
     </div>

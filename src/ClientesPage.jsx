@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { LAVANDA, TINTA, CINZA } from "./theme.js";
-import { Botao, Toast, Marca } from "./components.jsx";
+import { Toast } from "./components.jsx";
 import { useAuth } from "./AuthContext.jsx";
 import CarteiraClientes from "./CarteiraClientes.jsx";
+import NavLateral from "./NavLateral.jsx";
 
 export default function ClientesPage() {
-  const { usuario } = useAuth();
+  const { usuario, sair } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [toast, setToast] = useState("");
@@ -25,24 +26,10 @@ export default function ClientesPage() {
   }, [searchParams]);
 
   return (
-    <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA }}>
-      <header style={{
-        position: "sticky", top: 0, zIndex: 20, background: "rgba(0,0,0,.88)",
-        backdropFilter: "blur(8px)", borderBottom: "1px solid rgba(255,255,255,.1)",
-      }}>
-        <div style={{
-          maxWidth: 960, margin: "0 auto", padding: "14px 20px",
-          display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap",
-        }}>
-          <Marca />
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <Botao pequeno variante="fantasmaClaro" onClick={() => navigate("/planos")}>Planos</Botao>
-            <Botao pequeno variante="fantasmaClaro" onClick={() => navigate("/painel")}>Ver painel de conteúdo</Botao>
-          </div>
-        </div>
-      </header>
+    <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA, display: "flex" }}>
+      <NavLateral usuario={usuario} aoSair={() => { sair(); navigate("/"); }} />
 
-      <main style={{ maxWidth: 960, margin: "0 auto", padding: "24px 20px 60px", display: "grid", gap: 24 }}>
+      <main className="ez-conteudo-com-sidebar" style={{ flex: 1, minWidth: 0, maxWidth: 960, margin: "0 auto", padding: "24px 20px 60px", display: "grid", gap: 24 }}>
         <div>
           <h1 style={{ margin: 0, fontSize: 24, fontWeight: 900, color: TINTA }}>Meus clientes</h1>
           <p style={{ margin: "4px 0 0", color: CINZA, fontWeight: 600, fontSize: 14 }}>

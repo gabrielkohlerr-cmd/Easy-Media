@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ROXO, ROXO_ESCURO, LAVANDA, LAVANDA_2, TINTA, CINZA, ROSA } from "./theme.js";
-import { Botao, Cartao, Toast, Marca } from "./components.jsx";
+import { Botao, Cartao, Toast } from "./components.jsx";
 import { IconeRelogio, IconePin, IconeGoogleAgenda } from "./icones.jsx";
 import { api } from "./api.js";
+import { useAuth } from "./AuthContext.jsx";
+import NavLateral from "./NavLateral.jsx";
 
 const DIAS_SEMANA = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 const NOMES_MES = [
@@ -202,6 +204,7 @@ function ModalDetalheReuniao({ reuniao, aoFechar, aoExcluir }) {
 }
 
 export default function AgendaPage() {
+  const { usuario, sair } = useAuth();
   const navigate = useNavigate();
   const [inicioSemana, setInicioSemana] = useState(inicioDaSemana(new Date()));
   const [reunioes, setReunioes] = useState([]);
@@ -261,21 +264,10 @@ export default function AgendaPage() {
   const hoje = new Date();
 
   return (
-    <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA }}>
-      <header style={{
-        position: "sticky", top: 0, zIndex: 20, background: "rgba(0,0,0,.88)",
-        backdropFilter: "blur(8px)", borderBottom: "1px solid rgba(255,255,255,.1)",
-      }}>
-        <div style={{
-          maxWidth: 1160, margin: "0 auto", padding: "14px 20px",
-          display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap",
-        }}>
-          <Marca />
-          <Botao pequeno variante="fantasmaClaro" onClick={() => navigate("/painel")}>Ver painel de conteúdo</Botao>
-        </div>
-      </header>
+    <div style={{ minHeight: "100vh", background: LAVANDA, color: TINTA, display: "flex" }}>
+      <NavLateral usuario={usuario} aoSair={() => { sair(); navigate("/"); }} />
 
-      <main style={{ maxWidth: 1160, margin: "0 auto", padding: "24px 20px 60px", display: "grid", gap: 20 }}>
+      <main className="ez-conteudo-com-sidebar" style={{ flex: 1, minWidth: 0, maxWidth: 1160, margin: "0 auto", padding: "24px 20px 60px", display: "grid", gap: 20 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
           <div>
             <h1 style={{ margin: 0, fontSize: 24, fontWeight: 900, color: TINTA }}>Agenda</h1>

@@ -9,6 +9,18 @@ compromissos, publicações e resultados numa única plataforma.
 > capô, pra não quebrar o deploy já configurado — o rebrand pra "EZ Media" é
 > só na marca/interface visível pro usuário.
 
+## Navegação
+
+Toda a navegação de quem está logado (agência e social media) fica numa
+barra lateral fixa à esquerda — ícone + nome de cada seção, com a atual
+destacada — em vez de botões no topo de cada página. No rodapé da barra
+fica o perfil (foto/nome, leva pra "Meu perfil") e "Sair". Em telas
+estreitas (celular) a barra vira uma gaveta: some por padrão e abre com o
+botão ☰ no canto superior esquerdo. A tela de demonstração anônima (sem
+login) e o portal do cliente (acesso por link, sem conta) mantiveram o
+cabeçalho no topo — são fluxos de uma tela só, sem múltiplas seções pra
+navegar.
+
 ## Perfis
 
 - **Agência** — cria conta, convida social medias pro squad (link único de
@@ -66,8 +78,8 @@ demonstração, como os do restante dos relatórios.
 Ao cadastrar uma conta de **agência**, o telefone (com DDD) passa a ser
 obrigatório, e logo depois do cadastro a agência já cai direto na tela de
 **Planos** pra escolher um pacote — não é preciso ir procurar essa opção
-depois. A tela **Planos** também fica disponível a qualquer momento pelo
-cabeçalho de Agência e de Clientes.
+depois. A tela **Planos** também fica disponível a qualquer momento pela
+barra lateral.
 
 - **Agências**: Básico (R$99,90/mês, até 15 colaboradores e 50 clientes),
   Premium (R$149,90/mês, até 40 colaboradores e 100 clientes, recomendado)
